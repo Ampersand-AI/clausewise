@@ -1,4 +1,3 @@
-
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -54,6 +53,8 @@ type CompletedDocument = {
   clauses: number;
   summary?: string;
   jurisdiction?: string;
+  parties?: string[];
+  intent?: string;
   keyFindings: {
     title: string;
     description: string;
@@ -322,30 +323,27 @@ const DocumentView = () => {
           <div className="h-6 border-l border-border"></div>
           <h1 className="text-2xl font-bold">{completedDoc.title}</h1>
           
-          <div className="ml-auto">
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1 text-destructive">
-                  <Trash2 className="h-4 w-4" />
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="ml-auto h-8 w-8 text-destructive hover:bg-destructive/10">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the document.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the document.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -394,6 +392,17 @@ const DocumentView = () => {
                     </div>
                   </div>
                   
+                  {completedDoc.parties && completedDoc.parties.length > 0 && (
+                    <div>
+                      <div className="text-sm text-muted-foreground mb-1">Parties</div>
+                      <div className="space-y-1">
+                        {completedDoc.parties.map((party, index) => (
+                          <div key={index} className="text-sm">{party}</div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
                   {completedDoc.jurisdiction && (
                     <div className="flex items-center gap-2">
                       <div className="text-sm text-muted-foreground">Jurisdiction:</div>
@@ -418,6 +427,15 @@ const DocumentView = () => {
               <Card>
                 <div className="p-6">
                   <h2 className="text-lg font-semibold mb-3">Document Summary</h2>
+                  {completedDoc.title && (
+                    <h3 className="font-medium text-md mb-3">{completedDoc.title}</h3>
+                  )}
+                  {completedDoc.intent && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium">Intent: </span>
+                      <span className="text-sm text-muted-foreground">{completedDoc.intent}</span>
+                    </div>
+                  )}
                   <p className="text-sm text-muted-foreground">
                     {completedDoc.summary}
                   </p>

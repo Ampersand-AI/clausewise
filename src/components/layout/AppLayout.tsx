@@ -31,7 +31,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               <div className="h-8 w-8 rounded-full bg-primary-gradient flex items-center justify-center text-white font-semibold">
                 C
               </div>
-              <span className="font-medium text-lg">Clauze</span>
+              <span className="font-medium text-lg">ClauseCrush</span>
             </div>
             {!isHome && (
               <div className="flex items-center gap-4">

@@ -16,7 +16,7 @@ type DocumentCardProps = {
   className?: string;
 } & (
   | { status: "analyzing"; progress: number }
-  | { status: "completed"; riskScore: number; clauses: number; summary?: string }
+  | { status: "completed"; riskScore: number; clauses: number; summary?: string; parties?: string[] }
   | { status: "error" }
 );
 
@@ -37,6 +37,7 @@ export function DocumentCard({
   const riskScore = isCompleted ? (props as { riskScore: number }).riskScore : undefined;
   const clauses = isCompleted ? (props as { clauses: number }).clauses : undefined;
   const summary = isCompleted ? (props as { summary?: string }).summary : undefined;
+  const parties = isCompleted ? (props as { parties?: string[] }).parties : undefined;
 
   return (
     <Link 
@@ -99,6 +100,12 @@ export function DocumentCard({
                   {clauses} clauses identified
                 </div>
               </div>
+              
+              {parties && parties.length > 0 && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  <span className="font-medium">Parties:</span> {parties.join(", ")}
+                </p>
+              )}
               
               {summary && (
                 <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
