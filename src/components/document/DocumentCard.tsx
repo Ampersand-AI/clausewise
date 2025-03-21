@@ -7,26 +7,26 @@ import { Link } from "react-router-dom";
 
 type DocumentStatus = "analyzing" | "completed" | "error";
 
-interface DocumentCardProps {
+type DocumentCardProps = {
   id: string;
   title: string;
   date: string;
   status: DocumentStatus;
-  progress?: number;
-  riskScore?: number;
-  clauses?: number;
+} & (
+  | { status: "analyzing"; progress: number }
+  | { status: "completed"; riskScore: number; clauses: number }
+  | { status: "error" }
+) & {
   className?: string;
-}
+};
 
 export function DocumentCard({ 
   id,
   title,
   date,
   status,
-  progress = 0,
-  riskScore,
-  clauses,
-  className 
+  className,
+  ...props 
 }: DocumentCardProps) {
   return (
     <Link 
@@ -65,28 +65,26 @@ export function DocumentCard({
             <div className="mt-4">
               <div className="flex justify-between mb-1 text-xs">
                 <span className="font-medium">Analyzing document</span>
-                <span>{progress}%</span>
+                <span>{props.progress}%</span>
               </div>
-              <Progress value={progress} className="h-1.5" />
+              <Progress value={props.progress} className="h-1.5" />
             </div>
-          ) : status === "completed" && riskScore !== undefined ? (
+          ) : status === "completed" ? (
             <div className="flex items-center gap-4 mt-4">
               <div className="flex items-center gap-2">
                 <div className={cn(
                   "h-3 w-3 rounded-full",
-                  riskScore < 30 ? "bg-success" : 
-                  riskScore < 70 ? "bg-warning" : 
+                  props.riskScore < 30 ? "bg-success" : 
+                  props.riskScore < 70 ? "bg-warning" : 
                   "bg-destructive"
                 )} />
                 <span className="text-sm font-medium">
-                  {riskScore < 30 ? "Low" : riskScore < 70 ? "Medium" : "High"} Risk
+                  {props.riskScore < 30 ? "Low" : props.riskScore < 70 ? "Medium" : "High"} Risk
                 </span>
               </div>
-              {clauses !== undefined && (
-                <div className="text-sm text-muted-foreground">
-                  {clauses} clauses identified
-                </div>
-              )}
+              <div className="text-sm text-muted-foreground">
+                {props.clauses} clauses identified
+              </div>
             </div>
           ) : null}
         </div>

@@ -14,14 +14,35 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { analyzeDocument } from "@/utils/documentAnalysis";
+
+// Define the document type more explicitly
+type AnalyzingDocument = {
+  id: string;
+  title: string;
+  date: string;
+  status: "analyzing";
+  progress: number;
+};
+
+type CompletedDocument = {
+  id: string;
+  title: string;
+  date: string;
+  status: "completed";
+  riskScore: number;
+  clauses: number;
+};
+
+type Document = AnalyzingDocument | CompletedDocument;
 
 // Sample data for documents
-const sampleDocuments = [
+const sampleDocuments: Document[] = [
   {
     id: "1",
     title: "Service Agreement",
     date: "2023-07-15",
-    status: "completed" as const,
+    status: "completed",
     riskScore: 25,
     clauses: 12,
   },
@@ -29,7 +50,7 @@ const sampleDocuments = [
     id: "2",
     title: "Non-Disclosure Agreement",
     date: "2023-08-03",
-    status: "completed" as const,
+    status: "completed",
     riskScore: 45,
     clauses: 8,
   },
@@ -37,91 +58,108 @@ const sampleDocuments = [
     id: "3",
     title: "Employment Contract",
     date: "2023-09-20",
-    status: "analyzing" as const,
+    status: "analyzing",
     progress: 65,
   },
 ];
 
 const Dashboard = () => {
-  const [documents, setDocuments] = useState(sampleDocuments);
+  const [documents, setDocuments] = useState<Document[]>(sampleDocuments);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
 
-  const handleUpload = (files: File[]) => {
+  const handleUpload = async (files: File[]) => {
+    if (files.length === 0) return;
+    
     setIsUploading(true);
     setUploadProgress(0);
     
     // Simulate file upload process
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadProgress(progress);
-      
-      if (progress >= 100) {
-        clearInterval(interval);
-        
-        // Add new document after upload completes
-        const newDocId = `doc-${Date.now()}`;
-        const newDoc = {
-          id: newDocId,
-          title: files[0].name.split('.')[0],
-          date: new Date().toISOString(),
-          status: "analyzing" as const,
-          progress: 0,
-        };
-        
-        setDocuments([newDoc, ...documents]);
-        
-        // Simulate analysis progress
-        let analysisProgress = 0;
-        const analysisInterval = setInterval(() => {
-          analysisProgress += 5;
-          
-          setDocuments(docs => 
-            docs.map(doc => 
-              doc.id === newDocId 
-                ? { ...doc, progress: analysisProgress }
-                : doc
-            )
-          );
-          
-          if (analysisProgress >= 100) {
-            clearInterval(analysisInterval);
-            
-            // Complete the analysis
-            setTimeout(() => {
-              setDocuments(docs => 
-                docs.map(doc => 
-                  doc.id === newDocId 
-                    ? { 
-                        ...doc, 
-                        status: "completed" as const, 
-                        riskScore: Math.floor(Math.random() * 100),
-                        clauses: Math.floor(Math.random() * 15) + 5,
-                      }
-                    : doc
-                )
-              );
-              
-              toast({
-                title: "Analysis completed",
-                description: `Document "${files[0].name.split('.')[0]}" has been analyzed successfully.`,
-              });
-            }, 1000);
-          }
-        }, 300);
-        
-        setIsUploading(false);
-        setIsUploadOpen(false);
-        
-        toast({
-          title: "Document uploaded",
-          description: "Your document is now being analyzed.",
-        });
-      }
+    const uploadInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        const newProgress = prev + 10;
+        if (newProgress >= 100) {
+          clearInterval(uploadInterval);
+        }
+        return newProgress;
+      });
     }, 300);
+    
+    // Add new document after upload completes
+    const newDocId = `doc-${Date.now()}`;
+    const newDoc: AnalyzingDocument = {
+      id: newDocId,
+      title: files[0].name.split('.')[0],
+      date: new Date().toISOString(),
+      status: "analyzing",
+      progress: 0,
+    };
+    
+    // Add the new document to the list
+    setDocuments(prev => [newDoc, ...prev]);
+    
+    // Wait for upload to complete
+    setTimeout(async () => {
+      clearInterval(uploadInterval);
+      setIsUploading(false);
+      setIsUploadOpen(false);
+      
+      toast({
+        title: "Document uploaded",
+        description: "Your document is now being analyzed.",
+      });
+      
+      // Simulate analysis progress
+      let analysisProgress = 0;
+      const analysisInterval = setInterval(() => {
+        analysisProgress += 5;
+        
+        setDocuments(prev => 
+          prev.map(doc => 
+            doc.id === newDocId && doc.status === "analyzing"
+              ? { ...doc, progress: analysisProgress }
+              : doc
+          )
+        );
+        
+        if (analysisProgress >= 100) {
+          clearInterval(analysisInterval);
+          
+          // Call the Anthropik API to analyze the document
+          analyzeDocument(files[0]).then(result => {
+            // Update the document with the analysis results
+            setDocuments(prev => 
+              prev.map(doc => 
+                doc.id === newDocId
+                  ? {
+                      id: doc.id,
+                      title: doc.title,
+                      date: doc.date,
+                      status: "completed" as const,
+                      riskScore: result.riskScore,
+                      clauses: result.clauses,
+                    }
+                  : doc
+              )
+            );
+            
+            toast({
+              title: "Analysis completed",
+              description: `Document "${files[0].name.split('.')[0]}" has been analyzed successfully.`,
+            });
+          }).catch(error => {
+            console.error("Error analyzing document:", error);
+            toast({
+              title: "Analysis error",
+              description: "There was an error analyzing your document. Please try again.",
+              variant: "destructive",
+            });
+          });
+        }
+      }, 300);
+    }, 3000);
   };
 
   return (
