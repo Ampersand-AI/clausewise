@@ -43,28 +43,8 @@ type ErrorDocument = {
 
 type Document = AnalyzingDocument | CompletedDocument | ErrorDocument;
 
-// Sample data for documents
-const sampleDocuments: Document[] = [
-  {
-    id: "1",
-    title: "Service Agreement",
-    date: "2023-07-15",
-    status: "completed",
-    riskScore: 25,
-    clauses: 12,
-  },
-  {
-    id: "2",
-    title: "Non-Disclosure Agreement",
-    date: "2023-08-03",
-    status: "completed",
-    riskScore: 45,
-    clauses: 8,
-  },
-];
-
 const Dashboard = () => {
-  const [documents, setDocuments] = useState<Document[]>(sampleDocuments);
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -213,7 +193,11 @@ const Dashboard = () => {
               <Upload className="h-4 w-4" />
               Upload
             </Button>
-            <Button size="sm" className="gap-1 bg-gradient-to-r from-violet-600 to-primary hover:from-violet-700 hover:to-primary/90 text-white">
+            <Button 
+              size="sm" 
+              className="gap-1 bg-gradient-to-r from-violet-600 to-primary hover:from-violet-700 hover:to-primary/90 text-white"
+              onClick={() => setIsUploadOpen(true)}
+            >
               <Plus className="h-4 w-4" />
               New Analysis
             </Button>

@@ -6,75 +6,128 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertTriangle, ArrowLeft, Download, FileText, Info, Sparkles } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
-// Sample document data
-const documentData = {
-  "1": {
-    id: "1",
-    title: "Service Agreement",
-    date: "2023-07-15",
-    parties: ["Acme Corp.", "XYZ Services Ltd."],
-    riskScore: 25,
-    clauses: [
-      {
-        id: "clause-1",
-        name: "Compensation",
-        content: "Client agrees to compensate Provider at the rate of $150 per hour for Services rendered, payable within thirty (30) days of receipt of invoice.",
-        riskLevel: "low",
-        recommendation: "Standard compensation terms. No changes recommended.",
-      },
-      {
-        id: "clause-2",
-        name: "Termination",
-        content: "Either party may terminate this Agreement with thirty (30) days written notice. Termination does not relieve Client of obligation to pay for services rendered prior to termination.",
-        riskLevel: "medium",
-        recommendation: "Consider extending notice period to 60 days for better transition planning.",
-      },
-      {
-        id: "clause-3",
-        name: "Intellectual Property",
-        content: "All materials, developments, and work product resulting from Services shall be the sole and exclusive property of Provider. Provider grants Client a perpetual, non-exclusive license to use materials for internal business purposes only.",
-        riskLevel: "high",
-        recommendation: "High risk: Provider retains ownership of all work product. Negotiate for Client ownership, especially for custom deliverables.",
-      },
-    ],
-  },
-  "2": {
-    id: "2",
-    title: "Non-Disclosure Agreement",
-    date: "2023-08-03",
-    parties: ["ABC Innovations", "Secure Solutions Inc."],
-    riskScore: 45,
-    clauses: [
-      {
-        id: "clause-1",
-        name: "Definition of Confidential Information",
-        content: "\"Confidential Information\" means any non-public information that relates to the Disclosing Party's business, including but not limited to technical, marketing, financial, personnel, planning, and other information.",
-        riskLevel: "low",
-        recommendation: "Definition is properly broad. No changes recommended.",
-      },
-      {
-        id: "clause-2",
-        name: "Term of Obligation",
-        content: "The obligations of confidentiality under this Agreement shall remain in effect for a period of three (3) years from the date of disclosure.",
-        riskLevel: "medium",
-        recommendation: "Consider whether 3 years is sufficient protection for your sensitive information. Many NDAs use 5 years or more.",
-      },
-      {
-        id: "clause-3",
-        name: "Non-Compete",
-        content: "Recipient agrees not to engage in any business activity that directly competes with Disclosing Party for a period of two (2) years within the United States.",
-        riskLevel: "high",
-        recommendation: "High risk: Non-compete clause may be overly broad and unenforceable in some jurisdictions. Consider narrowing scope or removing entirely.",
-      },
-    ],
-  },
+// Define document data types
+type AnalyzingDocument = {
+  id: string;
+  title: string;
+  date: string;
+  status: "analyzing";
+  progress: number;
 };
+
+type CompletedDocument = {
+  id: string;
+  title: string;
+  date: string;
+  status: "completed";
+  riskScore: number;
+  clauses: number;
+  parties?: string[];
+  keyFindings?: {
+    title: string;
+    description: string;
+    riskLevel: string;
+  }[];
+};
+
+type ErrorDocument = {
+  id: string;
+  title: string;
+  date: string;
+  status: "error";
+};
+
+type Document = AnalyzingDocument | CompletedDocument | ErrorDocument;
 
 const DocumentView = () => {
   const { id } = useParams<{ id: string }>();
-  const document = id && documentData[id];
+  const [document, setDocument] = useState<Document | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Simulate fetching document from a server
+  useEffect(() => {
+    const fetchDocument = async () => {
+      try {
+        // In a real app, this would be an API call
+        // Here we'll simulate looking for the document in localStorage
+        const storedDocuments = localStorage.getItem('documents');
+        let documents: Document[] = [];
+        
+        if (storedDocuments) {
+          documents = JSON.parse(storedDocuments);
+        }
+        
+        const foundDocument = documents.find(doc => doc.id === id);
+        
+        if (foundDocument) {
+          // If document is found, add some mock parties and findings for display
+          if (foundDocument.status === 'completed') {
+            const completeDoc = foundDocument as CompletedDocument;
+            if (!completeDoc.parties) {
+              completeDoc.parties = ['Your Company', 'Partner Organization'];
+            }
+            if (!completeDoc.keyFindings) {
+              completeDoc.keyFindings = [
+                {
+                  title: 'Termination Clause',
+                  description: 'Standard termination terms with 30 days notice period.',
+                  riskLevel: 'low'
+                },
+                {
+                  title: 'Payment Terms',
+                  description: 'Net 45 payment terms may create cash flow challenges.',
+                  riskLevel: 'medium'
+                },
+                {
+                  title: 'Intellectual Property',
+                  description: 'IP ownership terms favor the other party.',
+                  riskLevel: 'high'
+                }
+              ];
+            }
+            setDocument(completeDoc);
+          } else {
+            setDocument(foundDocument);
+          }
+        } else {
+          toast({
+            title: "Document not found",
+            description: "The requested document could not be found",
+            variant: "destructive"
+          });
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error("Error fetching document:", error);
+        toast({
+          title: "Error",
+          description: "There was an error loading the document",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchDocument();
+  }, [id, navigate, toast]);
+  
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="container px-4 py-16 mx-auto text-center">
+          <div className="h-8 w-8 rounded-full border-4 border-primary border-r-transparent animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading document...</p>
+        </div>
+      </AppLayout>
+    );
+  }
   
   if (!document) {
     return (
@@ -95,6 +148,78 @@ const DocumentView = () => {
     );
   }
   
+  // Handle analyzing document
+  if (document.status === "analyzing") {
+    return (
+      <AppLayout>
+        <div className="container px-4 py-8 mx-auto">
+          <div className="flex items-center gap-3 mb-6">
+            <Link to="/dashboard">
+              <Button variant="ghost" size="sm" className="gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+            <div className="h-6 border-l border-border"></div>
+            <h1 className="text-2xl font-bold">{document.title}</h1>
+          </div>
+          
+          <Card className="p-10 text-center">
+            <div className="max-w-md mx-auto">
+              <div className="h-16 w-16 rounded-full border-4 border-primary border-r-transparent animate-spin mx-auto mb-6"></div>
+              <h2 className="text-xl font-medium mb-3">Analyzing document...</h2>
+              <p className="text-muted-foreground mb-6">
+                Please wait while our AI analyzes your document. This may take a few moments.
+              </p>
+              <Progress value={document.progress} className="h-2 mb-2" />
+              <p className="text-sm text-muted-foreground">{document.progress}% complete</p>
+            </div>
+          </Card>
+        </div>
+      </AppLayout>
+    );
+  }
+  
+  // Handle error document
+  if (document.status === "error") {
+    return (
+      <AppLayout>
+        <div className="container px-4 py-8 mx-auto">
+          <div className="flex items-center gap-3 mb-6">
+            <Link to="/dashboard">
+              <Button variant="ghost" size="sm" className="gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+            <div className="h-6 border-l border-border"></div>
+            <h1 className="text-2xl font-bold">{document.title}</h1>
+          </div>
+          
+          <Card className="p-10 text-center">
+            <div className="max-w-md mx-auto">
+              <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
+                <AlertTriangle className="h-8 w-8 text-destructive" />
+              </div>
+              <h2 className="text-xl font-medium mb-3">Analysis Error</h2>
+              <p className="text-muted-foreground mb-6">
+                There was an error analyzing this document. Please try uploading it again.
+              </p>
+              <Link to="/dashboard">
+                <Button>Return to Dashboard</Button>
+              </Link>
+            </div>
+          </Card>
+        </div>
+      </AppLayout>
+    );
+  }
+  
+  // Handle completed document (type is now narrowed to CompletedDocument)
+  const completedDoc = document as CompletedDocument;
+  const parties = completedDoc.parties || [];
+  const keyFindings = completedDoc.keyFindings || [];
+  
   return (
     <AppLayout>
       <div className="container px-4 py-8 mx-auto">
@@ -106,7 +231,7 @@ const DocumentView = () => {
             </Button>
           </Link>
           <div className="h-6 border-l border-border"></div>
-          <h1 className="text-2xl font-bold">{document.title}</h1>
+          <h1 className="text-2xl font-bold">{completedDoc.title}</h1>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -120,7 +245,7 @@ const DocumentView = () => {
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Date</div>
                     <div>
-                      {new Date(document.date).toLocaleDateString("en-US", {
+                      {new Date(completedDoc.date).toLocaleDateString("en-US", {
                         month: "long",
                         day: "numeric",
                         year: "numeric",
@@ -131,7 +256,7 @@ const DocumentView = () => {
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Parties</div>
                     <div className="space-y-1">
-                      {document.parties.map((party, index) => (
+                      {parties.map((party, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <div className="h-2 w-2 rounded-full bg-primary"></div>
                           <div>{party}</div>
@@ -145,21 +270,21 @@ const DocumentView = () => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">
-                          {document.riskScore < 30 
+                          {completedDoc.riskScore < 30 
                             ? "Low Risk" 
-                            : document.riskScore < 70 
+                            : completedDoc.riskScore < 70 
                               ? "Medium Risk" 
                               : "High Risk"}
                         </span>
-                        <span className="text-sm">{document.riskScore}/100</span>
+                        <span className="text-sm">{completedDoc.riskScore}/100</span>
                       </div>
                       <Progress 
-                        value={document.riskScore} 
+                        value={completedDoc.riskScore} 
                         className="h-2"
                         indicatorClassName={
-                          document.riskScore < 30 
+                          completedDoc.riskScore < 30 
                             ? "bg-success" 
-                            : document.riskScore < 70 
+                            : completedDoc.riskScore < 70 
                               ? "bg-warning" 
                               : "bg-destructive"
                         }
@@ -189,11 +314,11 @@ const DocumentView = () => {
                     <div>
                       <div className="text-sm font-medium">Document Type</div>
                       <div className="text-sm text-muted-foreground">
-                        {document.title.includes("Service") 
+                        {completedDoc.title.includes("Service") 
                           ? "Service Agreement" 
-                          : document.title.includes("Non-Disclosure") 
+                          : completedDoc.title.includes("Non-Disclosure") 
                             ? "Non-Disclosure Agreement" 
-                            : "Contract"}
+                            : "Legal Document"}
                       </div>
                     </div>
                   </div>
@@ -205,7 +330,7 @@ const DocumentView = () => {
                     <div>
                       <div className="text-sm font-medium">Clauses Identified</div>
                       <div className="text-sm text-muted-foreground">
-                        {document.clauses.length} clauses found
+                        {completedDoc.clauses} clauses found
                       </div>
                     </div>
                   </div>
@@ -217,7 +342,7 @@ const DocumentView = () => {
                     <div>
                       <div className="text-sm font-medium">High Risk Items</div>
                       <div className="text-sm text-muted-foreground">
-                        {document.clauses.filter(c => c.riskLevel === "high").length} issues found
+                        {keyFindings.filter(c => c.riskLevel === "high").length} issues found
                       </div>
                     </div>
                   </div>
@@ -237,66 +362,89 @@ const DocumentView = () => {
               
               <TabsContent value="analysis" className="space-y-6">
                 <div className="space-y-4">
-                  {document.clauses.map((clause) => (
-                    <Card key={clause.id} className="overflow-hidden">
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-semibold">{clause.name}</h3>
-                          <RiskBadge level={clause.riskLevel} />
-                        </div>
-                        
-                        <div className="text-sm text-muted-foreground mb-4">
-                          {clause.content}
-                        </div>
-                        
-                        {clause.recommendation && (
+                  {keyFindings.length > 0 ? (
+                    keyFindings.map((clause, index) => (
+                      <Card key={index} className="overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-semibold">{clause.title}</h3>
+                            <RiskBadge level={clause.riskLevel} />
+                          </div>
+                          
+                          <div className="text-sm text-muted-foreground mb-4">
+                            {clause.description}
+                          </div>
+                          
                           <div className="bg-muted p-3 rounded-md flex gap-3">
                             <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
                             <div className="text-sm">
                               <span className="font-medium">Recommendation: </span>
-                              {clause.recommendation}
+                              {clause.riskLevel === "high" 
+                                ? "Review this clause carefully and consider renegotiation."
+                                : clause.riskLevel === "medium"
+                                  ? "Consider clarifying or amending these terms."
+                                  : "Standard terms, no changes needed."}
                             </div>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      </Card>
+                    ))
+                  ) : (
+                    <Card className="p-6 text-center">
+                      <p className="text-muted-foreground">
+                        No key findings available for this document.
+                      </p>
                     </Card>
-                  ))}
+                  )}
                 </div>
               </TabsContent>
               
               <TabsContent value="summary">
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold mb-4">Document Summary</h3>
-                  <p className="text-muted-foreground mb-4">
-                    This {document.title.toLowerCase()} establishes terms between {document.parties.join(" and ")}. 
-                    The document contains {document.clauses.length} key clauses, including:
-                  </p>
                   
-                  <ul className="space-y-2 mb-4">
-                    {document.clauses.map((clause) => (
-                      <li key={clause.id} className="flex items-start gap-2">
-                        <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-                        </div>
-                        <span>{clause.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <p className="text-muted-foreground">
-                    Overall risk assessment indicates this is a 
-                    {document.riskScore < 30 
-                      ? " low-risk" 
-                      : document.riskScore < 70 
-                        ? " medium-risk" 
-                        : " high-risk"} document with specific concerns in
-                    {document.clauses
-                      .filter(c => c.riskLevel === "high")
-                      .map(c => ` ${c.name.toLowerCase()}`)}
-                    {document.clauses.filter(c => c.riskLevel === "high").length === 0 
-                      ? " no specific areas"
-                      : ""}.
-                  </p>
+                  {parties.length > 0 ? (
+                    <>
+                      <p className="text-muted-foreground mb-4">
+                        This document establishes terms between {parties.join(" and ")}. 
+                        The document contains {completedDoc.clauses} key clauses identified by our analysis.
+                      </p>
+                      
+                      {keyFindings.length > 0 && (
+                        <>
+                          <p className="text-muted-foreground mb-2">Key clauses include:</p>
+                          <ul className="space-y-2 mb-4">
+                            {keyFindings.map((finding, index) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                                </div>
+                                <span>{finding.title}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                      
+                      <p className="text-muted-foreground">
+                        Overall risk assessment indicates this is a 
+                        {completedDoc.riskScore < 30 
+                          ? " low-risk" 
+                          : completedDoc.riskScore < 70 
+                            ? " medium-risk" 
+                            : " high-risk"} document
+                        {keyFindings.filter(c => c.riskLevel === "high").length > 0
+                          ? ` with specific concerns in ${keyFindings
+                              .filter(c => c.riskLevel === "high")
+                              .map(c => ` ${c.title.toLowerCase()}`)}.`
+                          : " with no critical issues identified."}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      No summary information is available for this document.
+                    </p>
+                  )}
                 </Card>
               </TabsContent>
               
@@ -305,27 +453,29 @@ const DocumentView = () => {
                   <h3 className="text-lg font-semibold mb-4">Key Recommendations</h3>
                   
                   <div className="space-y-4">
-                    {document.clauses
-                      .filter(clause => clause.recommendation && clause.riskLevel !== "low")
-                      .map((clause) => (
-                        <div key={clause.id} className="p-4 rounded-lg border border-border">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium">{clause.name}</h4>
-                            <RiskBadge level={clause.riskLevel} />
-                          </div>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {clause.content}
-                          </p>
-                          <div className="bg-muted p-3 rounded-md flex gap-3">
-                            <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
-                            <div className="text-sm">
-                              {clause.recommendation}
+                    {keyFindings.filter(clause => clause.riskLevel !== "low").length > 0 ? (
+                      keyFindings
+                        .filter(clause => clause.riskLevel !== "low")
+                        .map((clause, index) => (
+                          <div key={index} className="p-4 rounded-lg border border-border">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-medium">{clause.title}</h4>
+                              <RiskBadge level={clause.riskLevel} />
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              {clause.description}
+                            </p>
+                            <div className="bg-muted p-3 rounded-md flex gap-3">
+                              <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
+                              <div className="text-sm">
+                                {clause.riskLevel === "high"
+                                  ? "Consider renegotiating these terms or seeking legal advice."
+                                  : "Review and potentially clarify these terms before proceeding."}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                      
-                    {document.clauses.filter(clause => clause.recommendation && clause.riskLevel !== "low").length === 0 && (
+                        ))
+                    ) : (
                       <div className="text-center py-6">
                         <p className="text-muted-foreground">
                           No significant issues found in this document.
