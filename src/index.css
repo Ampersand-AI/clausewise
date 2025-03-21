@@ -52,28 +52,28 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 228 10% 8%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 5.9%;
+    --card: 228 12% 12%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 228 10% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 242 83.3% 67.8%;
+    --primary: 260 80% 70%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 199 95% 48%;
+    --secondary: 200 95% 55%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 228 10% 16%;
+    --muted-foreground: 228 5% 70%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 228 12% 20%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
     --success: 142 76% 36%;
@@ -82,18 +82,18 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
+    --border: 228 12% 18%;
+    --input: 228 12% 18%;
     --ring: 240 4.9% 83.9%;
 
-    --sidebar-background: 240 5.9% 10%;
+    --sidebar-background: 228 14% 14%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 260 80% 70%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent: 228 14% 20%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-border: 228 14% 20%;
+    --sidebar-ring: 260 80% 70%;
   }
 }
 
@@ -118,7 +118,7 @@
   }
 
   .glass-card-hover {
-    @apply hover:bg-white/30 dark:hover:bg-black/30 transition-all duration-300;
+    @apply hover:bg-white/30 dark:hover:bg-[rgba(80,40,120,0.3)] transition-all duration-300;
   }
 
   .text-gradient {

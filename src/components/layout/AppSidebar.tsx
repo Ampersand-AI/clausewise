@@ -53,7 +53,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title} className={location.pathname === item.path ? "active" : ""}>
+                <SidebarMenuItem key={item.title} className={location.pathname === item.path ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}>
                   <SidebarMenuButton asChild>
                     <Link to={item.path} className="flex items-center gap-3">
                       <item.icon className="h-4 w-4" />

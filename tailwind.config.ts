@@ -144,9 +144,11 @@ export default {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'glass-gradient': 'linear-gradient(119deg, rgba(255, 255, 255, 0.3) -20%, rgba(255, 255, 255, 0.05) 90%)',
-				'glass-gradient-dark': 'linear-gradient(119deg, rgba(20, 20, 40, 0.7) -20%, rgba(20, 20, 40, 0.2) 90%)',
+				'glass-gradient-dark': 'linear-gradient(119deg, rgba(60, 30, 110, 0.3) -20%, rgba(60, 30, 110, 0.05) 90%)',
 				'primary-gradient': 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #0EA5E9 100%)',
 				'primary-gradient-hover': 'linear-gradient(135deg, #4F46E5 0%, #3730A3 50%, #0891B2 100%)',
+				'dark-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6D28D9 100%)',
+				'dark-gradient-hover': 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #5B21B6 100%)',
 			},
 		},
 	},

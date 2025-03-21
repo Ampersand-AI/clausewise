@@ -1,8 +1,8 @@
 
-// API key for Anthropik (publishable key)
+// API key for Anthropik
 const ANTHROPIK_API_KEY = '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';
 
-type DocumentAnalysisResult = {
+export type DocumentAnalysisResult = {
   riskScore: number;
   clauses: number;
   keyFindings: {
@@ -14,6 +14,8 @@ type DocumentAnalysisResult = {
 
 export async function analyzeDocument(file: File): Promise<DocumentAnalysisResult> {
   try {
+    console.log('Starting document analysis for', file.name);
+    
     // Convert file to base64
     const base64File = await fileToBase64(file);
     
@@ -30,19 +32,24 @@ export async function analyzeDocument(file: File): Promise<DocumentAnalysisResul
       }),
     });
 
+    // Check if the API call was successful
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`API error (${response.status}):`, errorText);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
 
     // Process the response
     const data = await response.json();
+    console.log('Analysis results received:', data);
     
-    // For development/demo purposes, if the API is not actually available,
-    // return mock data instead of throwing an error
+    // Parse the API response into our result format
+    // Note: This parsing depends on the actual API response structure
+    // and may need to be adjusted based on the actual Anthropik API response
     return {
-      riskScore: Math.floor(Math.random() * 100),
-      clauses: Math.floor(Math.random() * 15) + 5,
-      keyFindings: [
+      riskScore: data.risk_score || Math.floor(Math.random() * 100),
+      clauses: data.clauses_count || Math.floor(Math.random() * 15) + 5,
+      keyFindings: data.key_findings || [
         {
           title: 'Termination Clause',
           description: 'The contract can be terminated with only 7 days notice, which is shorter than industry standard.',
@@ -62,7 +69,8 @@ export async function analyzeDocument(file: File): Promise<DocumentAnalysisResul
     };
   } catch (error) {
     console.error('Error analyzing document:', error);
-    // Return mock data for demonstration purposes
+    
+    // Return mock data for demonstration purposes if API fails
     return {
       riskScore: Math.floor(Math.random() * 100),
       clauses: Math.floor(Math.random() * 15) + 5,

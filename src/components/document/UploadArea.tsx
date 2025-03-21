@@ -34,14 +34,28 @@ export function UploadArea({
     setIsDragging(false);
     
     const files = Array.from(e.dataTransfer.files);
-    
+    processFiles(files);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      processFiles(files);
+    }
+  };
+
+  const processFiles = (files: File[]) => {
     // Validate file types
     const validFiles = files.filter(file => {
       const fileType = file.type.toLowerCase();
+      const fileName = file.name.toLowerCase();
       return (
         fileType.includes("pdf") ||
         fileType.includes("word") ||
-        fileType.includes("image")
+        fileType.includes("image") ||
+        fileName.endsWith(".pdf") ||
+        fileName.endsWith(".doc") ||
+        fileName.endsWith(".docx")
       );
     });
     
@@ -51,6 +65,7 @@ export function UploadArea({
       return fileSize <= maxSize;
     });
     
+    // Show error messages if needed
     if (validSizeFiles.length !== files.length) {
       toast({
         title: "File size error",
@@ -72,30 +87,6 @@ export function UploadArea({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files);
-      
-      // Validate file size
-      const validSizeFiles = files.filter(file => {
-        const fileSize = file.size / (1024 * 1024); // Convert to MB
-        return fileSize <= maxSize;
-      });
-      
-      if (validSizeFiles.length !== files.length) {
-        toast({
-          title: "File size error",
-          description: `Some files exceed the maximum size of ${maxSize}MB`,
-          variant: "destructive",
-        });
-      }
-      
-      if (validSizeFiles.length > 0) {
-        onUpload(validSizeFiles);
-      }
-    }
-  };
-
   return (
     <div
       className={cn(
@@ -111,7 +102,7 @@ export function UploadArea({
     >
       <input
         type="file"
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
         accept={accept}
         onChange={handleFileChange}
         multiple
