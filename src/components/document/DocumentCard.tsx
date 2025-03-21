@@ -28,6 +28,15 @@ export function DocumentCard({
   className,
   ...props 
 }: DocumentCardProps) {
+  // Type guards to safely access properties
+  const isAnalyzing = status === "analyzing";
+  const isCompleted = status === "completed";
+  
+  // Safely access properties based on status
+  const progress = isAnalyzing ? (props as { progress: number }).progress : undefined;
+  const riskScore = isCompleted ? (props as { riskScore: number }).riskScore : undefined;
+  const clauses = isCompleted ? (props as { clauses: number }).clauses : undefined;
+
   return (
     <Link 
       to={`/document/${id}`}
@@ -61,31 +70,31 @@ export function DocumentCard({
             <StatusBadge status={status} />
           </div>
           
-          {status === "analyzing" && (
+          {isAnalyzing && progress !== undefined && (
             <div className="mt-4">
               <div className="flex justify-between mb-1 text-xs">
                 <span className="font-medium">Analyzing document</span>
-                <span>{props.progress}%</span>
+                <span>{progress}%</span>
               </div>
-              <Progress value={props.progress} className="h-1.5" />
+              <Progress value={progress} className="h-1.5" />
             </div>
           )}
           
-          {status === "completed" && (
+          {isCompleted && riskScore !== undefined && clauses !== undefined && (
             <div className="flex items-center gap-4 mt-4">
               <div className="flex items-center gap-2">
                 <div className={cn(
                   "h-3 w-3 rounded-full",
-                  props.riskScore < 30 ? "bg-success" : 
-                  props.riskScore < 70 ? "bg-warning" : 
+                  riskScore < 30 ? "bg-success" : 
+                  riskScore < 70 ? "bg-warning" : 
                   "bg-destructive"
                 )} />
                 <span className="text-sm font-medium">
-                  {props.riskScore < 30 ? "Low" : props.riskScore < 70 ? "Medium" : "High"} Risk
+                  {riskScore < 30 ? "Low" : riskScore < 70 ? "Medium" : "High"} Risk
                 </span>
               </div>
               <div className="text-sm text-muted-foreground">
-                {props.clauses} clauses identified
+                {clauses} clauses identified
               </div>
             </div>
           )}
