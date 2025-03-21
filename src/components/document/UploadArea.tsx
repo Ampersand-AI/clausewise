@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { UploadIcon } from "lucide-react";
+import { AlertCircle, FileText, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -9,20 +9,24 @@ interface UploadAreaProps {
   className?: string;
   accept?: string;
   maxSize?: number;
+  isUploading?: boolean;
 }
 
 export function UploadArea({
   onUpload,
   className,
-  accept = ".pdf,.docx,.doc,.jpg,.jpeg,.png",
+  accept = ".pdf,.docx,.doc,.jpg,.jpeg,.png,.txt",
   maxSize = 10, // MB
+  isUploading = false,
 }: UploadAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
+    setError(null);
   };
 
   const handleDragLeave = () => {
@@ -32,12 +36,33 @@ export function UploadArea({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    setError(null);
+    
+    if (isUploading) {
+      toast({
+        title: "Upload in progress",
+        description: "Please wait until the current upload is complete",
+        variant: "destructive",
+      });
+      return;
+    }
     
     const files = Array.from(e.dataTransfer.files);
     processFiles(files);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
+    
+    if (isUploading) {
+      toast({
+        title: "Upload in progress",
+        description: "Please wait until the current upload is complete",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       processFiles(files);
@@ -45,6 +70,11 @@ export function UploadArea({
   };
 
   const processFiles = (files: File[]) => {
+    if (files.length === 0) {
+      setError("No files selected");
+      return;
+    }
+    
     // Validate file types
     const validFiles = files.filter(file => {
       const fileType = file.type.toLowerCase();
@@ -52,10 +82,13 @@ export function UploadArea({
       return (
         fileType.includes("pdf") ||
         fileType.includes("word") ||
+        fileType.includes("document") ||
         fileType.includes("image") ||
+        fileType.includes("text") ||
         fileName.endsWith(".pdf") ||
         fileName.endsWith(".doc") ||
-        fileName.endsWith(".docx")
+        fileName.endsWith(".docx") ||
+        fileName.endsWith(".txt")
       );
     });
     
@@ -67,6 +100,7 @@ export function UploadArea({
     
     // Show error messages if needed
     if (validSizeFiles.length !== files.length) {
+      setError(`Some files exceed the maximum size of ${maxSize}MB`);
       toast({
         title: "File size error",
         description: `Some files exceed the maximum size of ${maxSize}MB`,
@@ -75,15 +109,19 @@ export function UploadArea({
     }
     
     if (validFiles.length !== files.length) {
+      setError("Please upload PDF, Word, or text files only");
       toast({
         title: "Unsupported file type",
-        description: "Please upload PDF, Word, or image files only",
+        description: "Please upload PDF, Word, or text files only",
         variant: "destructive",
       });
     }
     
     if (validSizeFiles.length > 0) {
       onUpload(validSizeFiles);
+      setError(null);
+    } else {
+      setError("No valid files to upload");
     }
   };
 
@@ -92,8 +130,9 @@ export function UploadArea({
       className={cn(
         "relative p-8 border-2 border-dashed rounded-xl transition-all duration-300 ease-in-out",
         isDragging 
-          ? "border-primary bg-primary/5 scale-[1.01]" 
+          ? "border-primary bg-primary/10 scale-[1.01]" 
           : "border-border hover:border-primary/50 hover:bg-muted/30",
+        isUploading && "opacity-50 cursor-not-allowed",
         className
       )}
       onDragOver={handleDragOver}
@@ -102,22 +141,44 @@ export function UploadArea({
     >
       <input
         type="file"
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        className={cn(
+          "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10",
+          isUploading && "pointer-events-none"
+        )}
         accept={accept}
         onChange={handleFileChange}
         multiple
+        disabled={isUploading}
       />
       <div className="flex flex-col items-center justify-center gap-3 text-center">
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center animate-float">
+        <div className={cn(
+          "w-16 h-16 rounded-full flex items-center justify-center",
+          isDragging ? "bg-primary/20" : "bg-primary/10",
+          "animate-float"
+        )}>
           <UploadIcon className="h-8 w-8 text-primary" />
         </div>
         <h3 className="text-xl font-medium">Upload your document</h3>
         <p className="text-muted-foreground max-w-md">
-          Drag and drop your PDF, Word, or image files here, or click to browse
+          Drag and drop your PDF, Word, or text files here, or click to browse
         </p>
         <div className="mt-2 text-xs text-muted-foreground">
-          Supported formats: PDF, DOCX, JPG, PNG • Max size: {maxSize}MB
+          Supported formats: PDF, DOCX, TXT, JPG, PNG • Max size: {maxSize}MB
         </div>
+        
+        {error && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4" />
+            <span>{error}</span>
+          </div>
+        )}
+        
+        {isUploading && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-primary">
+            <FileText className="h-4 w-4 animate-pulse" />
+            <span>Processing document...</span>
+          </div>
+        )}
       </div>
     </div>
   );

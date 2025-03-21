@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
 import { UploadArea } from "@/components/document/UploadArea";
 import { useState } from "react";
-import { ListFilter, Plus, Upload } from "lucide-react";
+import { Clipboard, ListFilter, Plus, Upload } from "lucide-react";
 import { 
   Dialog, 
   DialogContent, 
@@ -34,7 +34,14 @@ type CompletedDocument = {
   clauses: number;
 };
 
-type Document = AnalyzingDocument | CompletedDocument;
+type ErrorDocument = {
+  id: string;
+  title: string;
+  date: string;
+  status: "error";
+};
+
+type Document = AnalyzingDocument | CompletedDocument | ErrorDocument;
 
 // Sample data for documents
 const sampleDocuments: Document[] = [
@@ -54,13 +61,6 @@ const sampleDocuments: Document[] = [
     riskScore: 45,
     clauses: 8,
   },
-  {
-    id: "3",
-    title: "Employment Contract",
-    date: "2023-09-20",
-    status: "analyzing",
-    progress: 65,
-  },
 ];
 
 const Dashboard = () => {
@@ -79,31 +79,31 @@ const Dashboard = () => {
     // Simulate file upload process
     const uploadInterval = setInterval(() => {
       setUploadProgress(prev => {
-        const newProgress = prev + 10;
+        const newProgress = prev + 5;
         if (newProgress >= 100) {
           clearInterval(uploadInterval);
         }
         return newProgress;
       });
-    }, 300);
+    }, 200);
     
-    // Add new document after upload completes
-    const newDocId = `doc-${Date.now()}`;
-    const newDoc: AnalyzingDocument = {
-      id: newDocId,
-      title: files[0].name.split('.')[0],
-      date: new Date().toISOString(),
-      status: "analyzing",
-      progress: 0,
-    };
-    
-    // Add the new document to the list
-    setDocuments(prev => [newDoc, ...prev]);
-    
-    // Wait for upload to complete
-    setTimeout(async () => {
+    try {
+      // Add new document after upload completes
+      const newDocId = `doc-${Date.now()}`;
+      const newDoc: AnalyzingDocument = {
+        id: newDocId,
+        title: files[0].name.split('.')[0],
+        date: new Date().toISOString(),
+        status: "analyzing",
+        progress: 0,
+      };
+      
+      // Add the new document to the list
+      setDocuments(prev => [newDoc, ...prev]);
+      
+      // Wait for upload to complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
       clearInterval(uploadInterval);
-      setIsUploading(false);
       setIsUploadOpen(false);
       
       toast({
@@ -127,7 +127,7 @@ const Dashboard = () => {
         if (analysisProgress >= 100) {
           clearInterval(analysisInterval);
           
-          // Call the Anthropik API to analyze the document
+          // Call the API to analyze the document
           analyzeDocument(files[0]).then(result => {
             // Update the document with the analysis results
             setDocuments(prev => 
@@ -151,15 +151,42 @@ const Dashboard = () => {
             });
           }).catch(error => {
             console.error("Error analyzing document:", error);
+            
+            // Update document to error state
+            setDocuments(prev => 
+              prev.map(doc => 
+                doc.id === newDocId
+                  ? {
+                      id: doc.id,
+                      title: doc.title,
+                      date: doc.date,
+                      status: "error" as const,
+                    }
+                  : doc
+              )
+            );
+            
             toast({
               title: "Analysis error",
               description: "There was an error analyzing your document. Please try again.",
               variant: "destructive",
             });
+          }).finally(() => {
+            setIsUploading(false);
           });
         }
       }, 300);
-    }, 3000);
+    } catch (error) {
+      console.error("Upload error:", error);
+      clearInterval(uploadInterval);
+      setIsUploading(false);
+      
+      toast({
+        title: "Upload error",
+        description: "There was an error uploading your document. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -167,7 +194,7 @@ const Dashboard = () => {
       <div className="container px-4 py-8 mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-br from-primary to-violet-500 dark:from-primary dark:to-indigo-300 text-transparent bg-clip-text">Dashboard</h1>
             <p className="text-muted-foreground mt-1">
               Manage and analyze your legal documents
             </p>
@@ -180,13 +207,13 @@ const Dashboard = () => {
             </Button>
             <Button 
               size="sm" 
-              className="gap-1 bg-primary-gradient hover:bg-primary-gradient-hover"
+              className="gap-1 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white"
               onClick={() => setIsUploadOpen(true)}
             >
               <Upload className="h-4 w-4" />
               Upload
             </Button>
-            <Button size="sm" className="gap-1">
+            <Button size="sm" className="gap-1 bg-gradient-to-r from-violet-600 to-primary hover:from-violet-700 hover:to-primary/90 text-white">
               <Plus className="h-4 w-4" />
               New Analysis
             </Button>
@@ -200,13 +227,15 @@ const Dashboard = () => {
         </div>
         
         {documents.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">
-              No documents found. Upload your first document to get started.
+          <div className="text-center py-12 border-2 border-dashed border-border rounded-xl p-8 bg-muted/10">
+            <Clipboard className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-xl font-medium mb-2">No documents found</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Upload your first document to get started with AI-powered legal document analysis.
             </p>
             <Button 
               onClick={() => setIsUploadOpen(true)}
-              className="gap-1 bg-primary-gradient hover:bg-primary-gradient-hover"
+              className="gap-2 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white"
             >
               <Upload className="h-4 w-4" />
               Upload Document
@@ -218,26 +247,30 @@ const Dashboard = () => {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Upload Document</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-center text-xl">Upload Document</DialogTitle>
+            <DialogDescription className="text-center">
               Upload your legal document for AI-powered analysis
             </DialogDescription>
           </DialogHeader>
           
-          {isUploading ? (
+          {isUploading && uploadProgress < 100 ? (
             <div className="py-6">
               <div className="mb-4 text-center">
                 <p className="font-medium mb-2">Uploading document...</p>
                 <p className="text-sm text-muted-foreground mb-4">
                   Please wait while your document is being uploaded.
                 </p>
-                <Progress value={uploadProgress} className="h-2" />
+                <Progress 
+                  value={uploadProgress} 
+                  className="h-2" 
+                  indicatorClassName="bg-gradient-to-r from-primary to-violet-600" 
+                />
                 <p className="text-sm mt-2">{uploadProgress}%</p>
               </div>
             </div>
           ) : (
             <div className="py-4">
-              <UploadArea onUpload={handleUpload} />
+              <UploadArea onUpload={handleUpload} isUploading={isUploading} />
             </div>
           )}
         </DialogContent>
