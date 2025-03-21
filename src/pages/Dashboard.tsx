@@ -1,4 +1,3 @@
-
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
@@ -21,7 +20,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -153,7 +151,7 @@ const Dashboard = () => {
                 doc.id === newDocId
                   ? {
                       id: doc.id,
-                      title: doc.title,
+                      title: result.documentTitle || doc.title,
                       date: doc.date,
                       status: "completed" as const,
                       riskScore: result.riskScore,
@@ -172,7 +170,7 @@ const Dashboard = () => {
                 doc.id === newDocId
                   ? {
                       id: doc.id,
-                      title: doc.title,
+                      title: result.documentTitle || doc.title,
                       date: doc.date,
                       status: "completed" as const,
                       riskScore: result.riskScore,
@@ -187,7 +185,7 @@ const Dashboard = () => {
             
             toast({
               title: "Analysis completed",
-              description: `Document "${files[0].name.split('.')[0]}" has been analyzed successfully.`,
+              description: `Document "${result.documentTitle || files[0].name.split('.')[0]}" has been analyzed successfully.`,
             });
           }).catch(error => {
             console.error("Error analyzing document:", error);
@@ -208,7 +206,7 @@ const Dashboard = () => {
             
             toast({
               title: "Analysis error",
-              description: "There was an error analyzing your document. Please try again.",
+              description: error.message || "There was an error analyzing your document. Please try again.",
               variant: "destructive",
             });
           }).finally(() => {
@@ -306,14 +304,14 @@ const Dashboard = () => {
             <Clipboard className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-xl font-medium mb-2">No documents found</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Upload your first document to get started with AI-powered legal document analysis.
+              Upload your first document or paste agreement text to get started with AI-powered legal document analysis.
             </p>
             <Button 
               onClick={() => setIsUploadOpen(true)}
               className="gap-2 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white"
             >
               <Upload className="h-4 w-4" />
-              Upload Document
+              Analyze Document
             </Button>
           </div>
         )}
@@ -322,18 +320,18 @@ const Dashboard = () => {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Upload Document</DialogTitle>
+            <DialogTitle className="text-center text-xl">Analyze Document</DialogTitle>
             <DialogDescription className="text-center">
-              Upload your legal document for AI-powered analysis
+              Upload a document or paste agreement text for AI-powered analysis
             </DialogDescription>
           </DialogHeader>
           
           {isUploading && uploadProgress < 100 ? (
             <div className="py-6">
               <div className="mb-4 text-center">
-                <p className="font-medium mb-2">Uploading document...</p>
+                <p className="font-medium mb-2">Processing document...</p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Please wait while your document is being uploaded.
+                  Please wait while your document is being analyzed.
                 </p>
                 <Progress 
                   value={uploadProgress} 
