@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, ArrowLeft, Download, FileText, Info, Sparkles } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CheckCircle2, Copy, AlertTriangle, ArrowLeft, Download, FileText, Info, Sparkles, HelpCircle, CheckCheck } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +33,8 @@ type CompletedDocument = {
     title: string;
     description: string;
     riskLevel: string;
+    extractedText?: string;
+    mitigationOptions?: string[];
   }[];
 };
 
@@ -46,6 +51,7 @@ const DocumentView = () => {
   const { id } = useParams<{ id: string }>();
   const [document, setDocument] = useState<Document | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -86,6 +92,19 @@ const DocumentView = () => {
     
     fetchDocument();
   }, [id, navigate, toast]);
+
+  const copyToClipboard = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    toast({
+      title: "Copied to clipboard",
+      description: "The text has been copied to your clipboard",
+    });
+    
+    setTimeout(() => {
+      setCopiedIndex(null);
+    }, 2000);
+  };
   
   if (loading) {
     return (
@@ -356,6 +375,91 @@ const DocumentView = () => {
                             {clause.description}
                           </div>
                           
+                          {/* Extracted Text Section */}
+                          {clause.extractedText && (
+                            <div className="mb-4">
+                              <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                                <span>Extracted Text</span>
+                                <HoverCard>
+                                  <HoverCardTrigger asChild>
+                                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                  </HoverCardTrigger>
+                                  <HoverCardContent className="w-80">
+                                    <p className="text-sm">
+                                      This is the actual text extracted from your document that our AI identified as relevant to this issue.
+                                    </p>
+                                  </HoverCardContent>
+                                </HoverCard>
+                              </h4>
+                              <div className="relative">
+                                <div className="bg-muted p-3 rounded-md text-sm italic border-l-4 border-primary/30">
+                                  "{clause.extractedText}"
+                                </div>
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  className="absolute top-1 right-1 h-8 w-8 p-0"
+                                  onClick={() => copyToClipboard(clause.extractedText || "", index)}
+                                >
+                                  {copiedIndex === index ? (
+                                    <CheckCheck className="h-4 w-4 text-success" />
+                                  ) : (
+                                    <Copy className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Mitigation Options */}
+                          {clause.mitigationOptions && clause.mitigationOptions.length > 0 && clause.riskLevel !== 'low' && (
+                            <div>
+                              <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                                <span>Suggested Alternatives</span>
+                                <HoverCard>
+                                  <HoverCardTrigger asChild>
+                                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                  </HoverCardTrigger>
+                                  <HoverCardContent className="w-80">
+                                    <p className="text-sm">
+                                      These are AI-suggested ways to mitigate or rephrase the problematic clause in your document.
+                                    </p>
+                                  </HoverCardContent>
+                                </HoverCard>
+                              </h4>
+                              <div className="space-y-2">
+                                {clause.mitigationOptions.map((option, optionIndex) => (
+                                  <div key={optionIndex} className="relative">
+                                    <div className="rounded-md border border-border p-3 bg-background text-sm">
+                                      <div className="flex gap-2 items-start">
+                                        <div className="mt-0.5">
+                                          <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                                          </div>
+                                        </div>
+                                        <div>{option}</div>
+                                      </div>
+                                    </div>
+                                    <Button 
+                                      size="sm" 
+                                      variant="ghost" 
+                                      className="absolute top-1 right-1 h-8 w-8 p-0"
+                                      onClick={() => copyToClipboard(option, index * 100 + optionIndex)}
+                                    >
+                                      {copiedIndex === (index * 100 + optionIndex) ? (
+                                        <CheckCheck className="h-4 w-4 text-success" />
+                                      ) : (
+                                        <Copy className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          <Separator className="my-4" />
+                          
                           <div className="bg-muted p-3 rounded-md flex gap-3">
                             <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
                             <div className="text-sm">
@@ -438,6 +542,42 @@ const DocumentView = () => {
                             <p className="text-sm text-muted-foreground mb-3">
                               {clause.description}
                             </p>
+                            
+                            {/* Extracted Text for Recommendation */}
+                            {clause.extractedText && (
+                              <div className="mb-3 bg-muted/50 p-3 rounded-md text-sm italic">
+                                <div className="flex gap-2">
+                                  <div className="text-muted-foreground font-medium">Current:</div>
+                                  <div>"{clause.extractedText}"</div>
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Suggested Alternatives in Recommendations */}
+                            {clause.mitigationOptions && clause.mitigationOptions.length > 0 && (
+                              <div className="space-y-2 mb-3">
+                                <div className="text-sm font-medium">Suggested Alternatives:</div>
+                                {clause.mitigationOptions.map((option, optionIndex) => (
+                                  <div key={optionIndex} className="flex gap-2 items-start bg-background p-2 rounded-md border border-border text-sm">
+                                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                                    <div>{option}</div>
+                                    <Button 
+                                      size="sm" 
+                                      variant="ghost" 
+                                      className="ml-auto h-6 w-6 p-0"
+                                      onClick={() => copyToClipboard(option, index * 1000 + optionIndex)}
+                                    >
+                                      {copiedIndex === (index * 1000 + optionIndex) ? (
+                                        <CheckCheck className="h-3 w-3 text-success" />
+                                      ) : (
+                                        <Copy className="h-3 w-3" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            
                             <div className="bg-muted p-3 rounded-md flex gap-3">
                               <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
                               <div className="text-sm">
