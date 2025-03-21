@@ -26,8 +26,7 @@ type CompletedDocument = {
   status: "completed";
   riskScore: number;
   clauses: number;
-  parties?: string[];
-  keyFindings?: {
+  keyFindings: {
     title: string;
     description: string;
     riskLevel: string;
@@ -50,12 +49,10 @@ const DocumentView = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Simulate fetching document from a server
+  // Fetch document from localStorage
   useEffect(() => {
     const fetchDocument = async () => {
       try {
-        // In a real app, this would be an API call
-        // Here we'll simulate looking for the document in localStorage
         const storedDocuments = localStorage.getItem('documents');
         let documents: Document[] = [];
         
@@ -66,35 +63,7 @@ const DocumentView = () => {
         const foundDocument = documents.find(doc => doc.id === id);
         
         if (foundDocument) {
-          // If document is found, add some mock parties and findings for display
-          if (foundDocument.status === 'completed') {
-            const completeDoc = foundDocument as CompletedDocument;
-            if (!completeDoc.parties) {
-              completeDoc.parties = ['Your Company', 'Partner Organization'];
-            }
-            if (!completeDoc.keyFindings) {
-              completeDoc.keyFindings = [
-                {
-                  title: 'Termination Clause',
-                  description: 'Standard termination terms with 30 days notice period.',
-                  riskLevel: 'low'
-                },
-                {
-                  title: 'Payment Terms',
-                  description: 'Net 45 payment terms may create cash flow challenges.',
-                  riskLevel: 'medium'
-                },
-                {
-                  title: 'Intellectual Property',
-                  description: 'IP ownership terms favor the other party.',
-                  riskLevel: 'high'
-                }
-              ];
-            }
-            setDocument(completeDoc);
-          } else {
-            setDocument(foundDocument);
-          }
+          setDocument(foundDocument);
         } else {
           toast({
             title: "Document not found",
@@ -122,8 +91,14 @@ const DocumentView = () => {
     return (
       <AppLayout>
         <div className="container px-4 py-16 mx-auto text-center">
-          <div className="h-8 w-8 rounded-full border-4 border-primary border-r-transparent animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading document...</p>
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-primary border-r-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <FileText className="h-8 w-8 text-primary animate-pulse" />
+            </div>
+          </div>
+          <p className="text-muted-foreground">Retrieving document details...</p>
         </div>
       </AppLayout>
     );
@@ -166,12 +141,29 @@ const DocumentView = () => {
           
           <Card className="p-10 text-center">
             <div className="max-w-md mx-auto">
-              <div className="h-16 w-16 rounded-full border-4 border-primary border-r-transparent animate-spin mx-auto mb-6"></div>
-              <h2 className="text-xl font-medium mb-3">Analyzing document...</h2>
+              <div className="relative w-24 h-24 mx-auto mb-6">
+                {/* AI-inspired circular rings animation */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-violet-600 rounded-full opacity-20 animate-pulse"></div>
+                <div className="absolute inset-[-4px] border-2 border-primary/30 border-dashed rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>
+                <div className="absolute inset-[-8px] border-2 border-primary/20 border-dashed rounded-full animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-background rounded-full p-3">
+                    <FileText className="h-8 w-8 text-primary animate-pulse" />
+                  </div>
+                </div>
+              </div>
+              <h2 className="text-xl font-medium mb-3">AI analyzing document...</h2>
               <p className="text-muted-foreground mb-6">
-                Please wait while our AI analyzes your document. This may take a few moments.
+                Our AI is processing and extracting insights from your document. This may take a few moments.
               </p>
-              <Progress value={document.progress} className="h-2 mb-2" />
+              <div className="relative h-2 mb-2 overflow-hidden rounded-full bg-primary/10">
+                <div className="absolute inset-0 flex">
+                  <div className="w-1/2 bg-gradient-to-r from-primary to-violet-600"></div>
+                  <div className="w-1/2 bg-gradient-to-r from-violet-600 to-primary"></div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }}></div>
+              </div>
               <p className="text-sm text-muted-foreground">{document.progress}% complete</p>
             </div>
           </Card>
@@ -217,7 +209,6 @@ const DocumentView = () => {
   
   // Handle completed document (type is now narrowed to CompletedDocument)
   const completedDoc = document as CompletedDocument;
-  const parties = completedDoc.parties || [];
   const keyFindings = completedDoc.keyFindings || [];
   
   return (
@@ -250,18 +241,6 @@ const DocumentView = () => {
                         day: "numeric",
                         year: "numeric",
                       })}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-1">Parties</div>
-                    <div className="space-y-1">
-                      {parties.map((party, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-primary"></div>
-                          <div>{party}</div>
-                        </div>
-                      ))}
                     </div>
                   </div>
                   
@@ -318,7 +297,9 @@ const DocumentView = () => {
                           ? "Service Agreement" 
                           : completedDoc.title.includes("Non-Disclosure") 
                             ? "Non-Disclosure Agreement" 
-                            : "Legal Document"}
+                            : completedDoc.title.includes("Letter") 
+                              ? "Letter of Intent"
+                              : "Legal Document"}
                       </div>
                     </div>
                   </div>
@@ -403,48 +384,40 @@ const DocumentView = () => {
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold mb-4">Document Summary</h3>
                   
-                  {parties.length > 0 ? (
+                  <p className="text-muted-foreground mb-4">
+                    This document contains {completedDoc.clauses} key clauses identified by our analysis.
+                  </p>
+                  
+                  {keyFindings.length > 0 && (
                     <>
-                      <p className="text-muted-foreground mb-4">
-                        This document establishes terms between {parties.join(" and ")}. 
-                        The document contains {completedDoc.clauses} key clauses identified by our analysis.
-                      </p>
-                      
-                      {keyFindings.length > 0 && (
-                        <>
-                          <p className="text-muted-foreground mb-2">Key clauses include:</p>
-                          <ul className="space-y-2 mb-4">
-                            {keyFindings.map((finding, index) => (
-                              <li key={index} className="flex items-start gap-2">
-                                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                  <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-                                </div>
-                                <span>{finding.title}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
-                      
-                      <p className="text-muted-foreground">
-                        Overall risk assessment indicates this is a 
-                        {completedDoc.riskScore < 30 
-                          ? " low-risk" 
-                          : completedDoc.riskScore < 70 
-                            ? " medium-risk" 
-                            : " high-risk"} document
-                        {keyFindings.filter(c => c.riskLevel === "high").length > 0
-                          ? ` with specific concerns in ${keyFindings
-                              .filter(c => c.riskLevel === "high")
-                              .map(c => ` ${c.title.toLowerCase()}`)}.`
-                          : " with no critical issues identified."}
-                      </p>
+                      <p className="text-muted-foreground mb-2">Key clauses include:</p>
+                      <ul className="space-y-2 mb-4">
+                        {keyFindings.map((finding, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                            </div>
+                            <span>{finding.title}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      No summary information is available for this document.
-                    </p>
                   )}
+                  
+                  <p className="text-muted-foreground">
+                    Overall risk assessment indicates this is a 
+                    {completedDoc.riskScore < 30 
+                      ? " low-risk" 
+                      : completedDoc.riskScore < 70 
+                        ? " medium-risk" 
+                        : " high-risk"} document
+                    {keyFindings.filter(c => c.riskLevel === "high").length > 0
+                      ? ` with specific concerns in ${keyFindings
+                          .filter(c => c.riskLevel === "high")
+                          .map(c => c.title.toLowerCase())
+                          .join(", ")}.`
+                      : " with no critical issues identified."}
+                  </p>
                 </Card>
               </TabsContent>
               

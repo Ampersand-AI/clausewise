@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
 import { UploadArea } from "@/components/document/UploadArea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Clipboard, ListFilter, Plus, Upload } from "lucide-react";
 import { 
   Dialog, 
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { analyzeDocument } from "@/utils/documentAnalysis";
+import { analyzeDocument, DocumentAnalysisResult } from "@/utils/documentAnalysis";
 
 // Define the document type more explicitly
 type AnalyzingDocument = {
@@ -32,6 +32,11 @@ type CompletedDocument = {
   status: "completed";
   riskScore: number;
   clauses: number;
+  keyFindings: {
+    title: string;
+    description: string;
+    riskLevel: 'low' | 'medium' | 'high';
+  }[];
 };
 
 type ErrorDocument = {
@@ -49,6 +54,23 @@ const Dashboard = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
+
+  // Load documents from localStorage on initial render
+  useEffect(() => {
+    const storedDocs = localStorage.getItem('documents');
+    if (storedDocs) {
+      try {
+        setDocuments(JSON.parse(storedDocs));
+      } catch (error) {
+        console.error("Error parsing documents from localStorage:", error);
+      }
+    }
+  }, []);
+
+  // Save documents to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('documents', JSON.stringify(documents));
+  }, [documents]);
 
   const handleUpload = async (files: File[]) => {
     if (files.length === 0) return;
@@ -108,7 +130,7 @@ const Dashboard = () => {
           clearInterval(analysisInterval);
           
           // Call the API to analyze the document
-          analyzeDocument(files[0]).then(result => {
+          analyzeDocument(files[0]).then((result: DocumentAnalysisResult) => {
             // Update the document with the analysis results
             setDocuments(prev => 
               prev.map(doc => 
@@ -120,10 +142,28 @@ const Dashboard = () => {
                       status: "completed" as const,
                       riskScore: result.riskScore,
                       clauses: result.clauses,
+                      keyFindings: result.keyFindings
                     }
                   : doc
               )
             );
+            
+            // Save the updated documents to localStorage
+            localStorage.setItem('documents', JSON.stringify(
+              documents.map(doc => 
+                doc.id === newDocId
+                  ? {
+                      id: doc.id,
+                      title: doc.title,
+                      date: doc.date,
+                      status: "completed" as const,
+                      riskScore: result.riskScore,
+                      clauses: result.clauses,
+                      keyFindings: result.keyFindings
+                    }
+                  : doc
+              )
+            ));
             
             toast({
               title: "Analysis completed",

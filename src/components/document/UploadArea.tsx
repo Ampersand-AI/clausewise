@@ -133,7 +133,7 @@ export function UploadArea({
           ? "border-primary bg-primary/10 scale-[1.01]" 
           : "border-border hover:border-primary/50 hover:bg-muted/30",
         isUploading && "opacity-50 cursor-not-allowed",
-        "dark:bg-slate-900/20 dark:border-slate-700 dark:hover:border-violet-500/50",
+        "dark:bg-slate-900/30 dark:border-violet-700/50 dark:hover:border-violet-500",
         className
       )}
       onDragOver={handleDragOver}
@@ -153,14 +153,15 @@ export function UploadArea({
       />
       <div className="flex flex-col items-center justify-center gap-3 text-center">
         <div className={cn(
-          "w-16 h-16 rounded-full flex items-center justify-center",
+          "relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden",
           isDragging 
             ? "bg-primary/20" 
             : "bg-primary/10",
-          "dark:bg-gradient-to-br dark:from-violet-600/20 dark:to-primary/20",
-          "animate-float"
+          "dark:bg-gradient-to-br dark:from-violet-600/30 dark:to-primary/30",
         )}>
-          <UploadIcon className="h-8 w-8 text-primary dark:text-violet-400" />
+          {/* Add shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }}></div>
+          <UploadIcon className="h-8 w-8 text-primary dark:text-violet-400 relative z-10" />
         </div>
         <h3 className="text-xl font-medium">Upload your document</h3>
         <p className="text-muted-foreground max-w-md">
