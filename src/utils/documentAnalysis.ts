@@ -2,12 +2,15 @@
 // API keys
 const ANTHROPIK_API_KEY = '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';
 const OPENAI_API_KEY = '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';
+const OCRSPACE_API_KEY = 'ed07758ff988957';
 
 export type DocumentAnalysisResult = {
   riskScore: number;
   clauses: number;
   summary: string;
   jurisdiction?: string;
+  documentTitle?: string;
+  parties?: string[];
   keyFindings: {
     title: string;
     description: string;
@@ -21,36 +24,146 @@ export async function analyzeDocument(file: File): Promise<DocumentAnalysisResul
   try {
     console.log('Starting document analysis for', file.name);
     
-    // Convert file to base64
-    const base64File = await fileToBase64(file);
+    // Extract text content from the document using appropriate method
+    const textContent = await extractTextFromDocument(file);
+    
+    if (!textContent || textContent.trim().length < 50) {
+      console.warn('Extracted text is too short or empty:', textContent);
+      throw new Error('Could not extract sufficient text from document. Please try another file.');
+    }
+    
+    console.log('Text successfully extracted, length:', textContent.length);
     
     // Try OpenAI API first
     try {
-      return await analyzeWithOpenAI(file, base64File);
+      return await analyzeWithOpenAI(file, textContent);
     } catch (openAIError) {
       console.error('OpenAI analysis failed, falling back to Anthropik:', openAIError);
       // Fall back to Anthropik API
-      return await analyzeWithAnthropik(base64File);
+      return await analyzeWithAnthropik(textContent);
     }
   } catch (error) {
     console.error('Error analyzing document:', error);
-    throw new Error('Failed to analyze document. Please try again.');
+    throw new Error('Failed to analyze document. Please try again with a different file format or contact support.');
   }
 }
 
-async function analyzeWithOpenAI(file: File, base64File: string): Promise<DocumentAnalysisResult> {
+async function extractTextFromDocument(file: File): Promise<string> {
+  const fileType = file.type.toLowerCase();
+  const fileName = file.name.toLowerCase();
+  
+  // For images and PDFs, use OCR Space
+  if (fileType.includes('image') || 
+      fileName.endsWith('.jpg') || 
+      fileName.endsWith('.jpeg') || 
+      fileName.endsWith('.png') || 
+      fileName.endsWith('.pdf')) {
+    return await extractTextWithOCR(file);
+  }
+  
+  // For text files and Word docs
+  if (fileType.includes('text') || fileName.endsWith('.txt')) {
+    return await readTextFile(file);
+  }
+  
+  // For Word documents, we'll extract text and then analyze
+  if (fileType.includes('word') || 
+      fileType.includes('document') || 
+      fileName.endsWith('.doc') || 
+      fileName.endsWith('.docx')) {
+    // First try OCR as a reliable method for all document types
+    try {
+      return await extractTextWithOCR(file);
+    } catch (error) {
+      console.error('OCR extraction failed, falling back to base64:', error);
+      // Fall back to base64 encoding if OCR fails
+      const base64 = await fileToBase64(file);
+      return `Base64 encoded document: ${base64.substring(0, 2000)}...`;
+    }
+  }
+  
+  // Default fallback for other file types
+  const base64 = await fileToBase64(file);
+  return `Base64 encoded document: ${base64.substring(0, 2000)}...`;
+}
+
+async function extractTextWithOCR(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('apikey', OCRSPACE_API_KEY);
+  formData.append('language', 'eng');
+  formData.append('isOverlayRequired', 'false');
+  formData.append('detectOrientation', 'true');
+  formData.append('scale', 'true');
+  formData.append('OCREngine', '2'); // More accurate engine
+
+  try {
+    const response = await fetch('https://api.ocr.space/parse/image', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('OCR Space API error:', errorData);
+      throw new Error(`OCR Space API error: ${response.status} - ${errorData}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.IsErroredOnProcessing) {
+      throw new Error(`OCR processing error: ${data.ErrorMessage}`);
+    }
+
+    // Extract the parsed text
+    let extractedText = '';
+    if (data.ParsedResults && data.ParsedResults.length > 0) {
+      extractedText = data.ParsedResults.map((result: any) => result.ParsedText).join('\n');
+    }
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      throw new Error('OCR could not extract any text from the document');
+    }
+
+    return extractedText;
+  } catch (error) {
+    console.error('Error with OCR processing:', error);
+    throw error;
+  }
+}
+
+async function readTextFile(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target && typeof e.target.result === 'string') {
+        resolve(e.target.result);
+      } else {
+        reject(new Error('Failed to read text file'));
+      }
+    };
+    reader.onerror = () => reject(new Error('Error reading text file'));
+    reader.readAsText(file);
+  });
+}
+
+async function analyzeWithOpenAI(file: File, textContent: string): Promise<DocumentAnalysisResult> {
   const prompt = `
     Analyze this legal document and provide the following:
-    1. A short summary or gist (3-5 sentences) describing what the agreement is about
-    2. The jurisdiction that governs this agreement (if mentioned)
-    3. A risk score from 0-100 (higher means more risk)
-    4. Number of clauses identified
-    5. Key findings with their risk levels (low, medium, high)
-    6. For each key finding, extract the specific text from the document that represents this clause or issue
-    7. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
+    1. The document title or agreement name
+    2. The names of the parties involved in the agreement (if mentioned)
+    3. A concise summary (3-5 sentences) describing the document's purpose and key provisions
+    4. The jurisdiction that governs this agreement (if mentioned)
+    5. A risk score from 0-100 (higher means more risk)
+    6. Number of clauses identified
+    7. Key findings with their risk levels (low, medium, high)
+    8. For each key finding, extract the specific text from the document that represents this clause or issue
+    9. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
     
     Format the response as a JSON object with these fields:
     {
+      "document_title": "string",
+      "parties": ["string", "string"],
       "summary": "string",
       "jurisdiction": "string or null if not found",
       "risk_score": number,
@@ -65,6 +178,8 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
         }
       ]
     }
+
+    IMPORTANT: If this is NOT a legal document or contract, please indicate this clearly with a special flag.
   `;
   
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -78,7 +193,7 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
       messages: [
         {
           "role": "system",
-          "content": "You are a legal document analyzer. Analyze the document content and provide a structured JSON response with summary, jurisdiction, detailed extracts and mitigation options."
+          "content": "You are a legal document analyzer specializing in contract analysis. Your task is to identify parties, extract key clauses, assess risks, and provide mitigation options. Only analyze if the document appears to be a legal document; otherwise, indicate it's not a legal document."
         },
         {
           "role": "user",
@@ -89,7 +204,7 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
             },
             {
               "type": "text",
-              "text": `Document content (base64): ${base64File.substring(0, 500)}...`
+              "text": `Document content: ${textContent.substring(0, 15000)}`
             }
           ]
         }
@@ -107,7 +222,14 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
   const data = await response.json();
   const content = JSON.parse(data.choices[0].message.content);
   
+  // Check if the API flagged this as not a legal document
+  if (content.not_legal_document === true) {
+    throw new Error('This does not appear to be a legal document. Please upload a contract or legal agreement for analysis.');
+  }
+  
   return {
+    documentTitle: content.document_title || file.name,
+    parties: content.parties || [],
     riskScore: content.risk_score || Math.floor(Math.random() * 60) + 20,
     clauses: content.clauses_count || Math.floor(Math.random() * 10) + 5,
     summary: content.summary || "No summary available for this document.",
@@ -122,7 +244,7 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
   };
 }
 
-async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysisResult> {
+async function analyzeWithAnthropik(textContent: string): Promise<DocumentAnalysisResult> {
   try {
     // Call Anthropik API for document analysis
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -135,7 +257,7 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
       body: JSON.stringify({
         model: "claude-3-opus-20240229",
         max_tokens: 4000,
-        system: "You are a legal document analyzer. Analyze the provided document and return a detailed JSON with summary, jurisdiction, risk_score (0-100), clauses_count (number), and key_findings (array of objects with title, description, risk_level, extracted_text, and mitigation_options).",
+        system: "You are a legal document analyzer specializing in contract analysis. Your task is to identify parties, extract key clauses, assess risks, and provide mitigation options. Only analyze if the document appears to be a legal document; otherwise, indicate it's not a legal document.",
         messages: [
           {
             role: "user",
@@ -143,22 +265,27 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
               {
                 type: "text",
                 text: `Analyze this legal document in detail and provide: 
-                1. A short summary or gist (3-5 sentences) describing what the agreement is about
-                2. The jurisdiction that governs this agreement (if mentioned)
-                3. A risk score from 0-100 (higher means more risk)
-                4. Number of clauses identified
-                5. Key findings with their risk levels (low, medium, high)
-                6. For each key finding, extract the specific text from the document that represents this clause or issue
-                7. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
+                1. The document title or agreement name
+                2. The names of the parties involved in the agreement (if mentioned)
+                3. A concise summary (3-5 sentences) describing the document's purpose and key provisions
+                4. The jurisdiction that governs this agreement (if mentioned)
+                5. A risk score from 0-100 (higher means more risk)
+                6. Number of clauses identified
+                7. Key findings with their risk levels (low, medium, high)
+                8. For each key finding, extract the specific text from the document that represents this clause or issue
+                9. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
                 
-                Document content (base64): ${base64File.substring(0, 500)}...
+                Document content: ${textContent.substring(0, 15000)}
                 
                 Format your response ONLY as a JSON object like this:
                 {
+                  "document_title": "string",
+                  "parties": ["string", "string"],
                   "summary": "string",
                   "jurisdiction": "string or null if not found",
                   "risk_score": number,
                   "clauses_count": number,
+                  "not_legal_document": boolean,
                   "key_findings": [
                     {
                       "title": "string",
@@ -168,7 +295,9 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
                       "mitigation_options": ["string", "string", "string"]
                     }
                   ]
-                }`
+                }
+
+                IMPORTANT: If this is NOT a legal document or contract, set not_legal_document to true.`
               }
             ]
           }
@@ -202,8 +331,15 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
       throw new Error('Failed to extract valid JSON from Anthropik response');
     }
     
+    // Check if the API flagged this as not a legal document
+    if (jsonContent.not_legal_document === true) {
+      throw new Error('This does not appear to be a legal document. Please upload a contract or legal agreement for analysis.');
+    }
+    
     // Parse the API response into our result format
     return {
+      documentTitle: jsonContent.document_title || "Unknown Document",
+      parties: jsonContent.parties || [],
       riskScore: jsonContent.risk_score || Math.floor(Math.random() * 60) + 20,
       clauses: jsonContent.clauses_count || Math.floor(Math.random() * 10) + 5,
       summary: jsonContent.summary || "No summary available for this document.",

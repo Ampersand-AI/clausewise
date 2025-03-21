@@ -88,7 +88,10 @@ export function UploadArea({
         fileName.endsWith(".pdf") ||
         fileName.endsWith(".doc") ||
         fileName.endsWith(".docx") ||
-        fileName.endsWith(".txt")
+        fileName.endsWith(".txt") ||
+        fileName.endsWith(".jpg") ||
+        fileName.endsWith(".jpeg") ||
+        fileName.endsWith(".png")
       );
     });
     
@@ -109,10 +112,10 @@ export function UploadArea({
     }
     
     if (validFiles.length !== files.length) {
-      setError("Please upload PDF, Word, or text files only");
+      setError("Please upload PDF, Word, image, or text files only");
       toast({
         title: "Unsupported file type",
-        description: "Please upload PDF, Word, or text files only",
+        description: "Please upload PDF, Word, image, or text files only",
         variant: "destructive",
       });
     }
@@ -165,7 +168,7 @@ export function UploadArea({
         </div>
         <h3 className="text-xl font-medium">Upload your document</h3>
         <p className="text-muted-foreground max-w-md">
-          Drag and drop your PDF, Word, or text files here, or click to browse
+          Drag and drop your legal documents here, or click to browse
         </p>
         <div className="mt-2 text-xs text-muted-foreground">
           Supported formats: PDF, DOCX, TXT, JPG, PNG • Max size: {maxSize}MB
