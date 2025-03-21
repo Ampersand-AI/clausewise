@@ -7,18 +7,18 @@ import { Link } from "react-router-dom";
 
 type DocumentStatus = "analyzing" | "completed" | "error";
 
+// Define props with proper type discrimination
 type DocumentCardProps = {
   id: string;
   title: string;
   date: string;
   status: DocumentStatus;
+  className?: string;
 } & (
   | { status: "analyzing"; progress: number }
   | { status: "completed"; riskScore: number; clauses: number }
   | { status: "error" }
-) & {
-  className?: string;
-};
+);
 
 export function DocumentCard({ 
   id,
@@ -61,7 +61,7 @@ export function DocumentCard({
             <StatusBadge status={status} />
           </div>
           
-          {status === "analyzing" ? (
+          {status === "analyzing" && (
             <div className="mt-4">
               <div className="flex justify-between mb-1 text-xs">
                 <span className="font-medium">Analyzing document</span>
@@ -69,7 +69,9 @@ export function DocumentCard({
               </div>
               <Progress value={props.progress} className="h-1.5" />
             </div>
-          ) : status === "completed" ? (
+          )}
+          
+          {status === "completed" && (
             <div className="flex items-center gap-4 mt-4">
               <div className="flex items-center gap-2">
                 <div className={cn(
@@ -86,7 +88,7 @@ export function DocumentCard({
                 {props.clauses} clauses identified
               </div>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
     </Link>
