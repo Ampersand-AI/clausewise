@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
 import { UploadArea } from "@/components/document/UploadArea";
 import { useState, useEffect } from "react";
-import { Clipboard, ListFilter, Plus, Upload } from "lucide-react";
+import { Clipboard, ListFilter, Plus, Upload, Trash2 } from "lucide-react";
 import { 
   Dialog, 
   DialogContent, 
@@ -12,6 +12,17 @@ import {
   DialogTitle, 
   DialogDescription 
 } from "@/components/ui/dialog";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument, DocumentAnalysisResult } from "@/utils/documentAnalysis";
@@ -32,10 +43,14 @@ type CompletedDocument = {
   status: "completed";
   riskScore: number;
   clauses: number;
+  summary?: string;
+  jurisdiction?: string;
   keyFindings: {
     title: string;
     description: string;
     riskLevel: 'low' | 'medium' | 'high';
+    extractedText?: string;
+    mitigationOptions?: string[];
   }[];
 };
 
@@ -53,6 +68,7 @@ const Dashboard = () => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Load documents from localStorage on initial render
@@ -142,6 +158,8 @@ const Dashboard = () => {
                       status: "completed" as const,
                       riskScore: result.riskScore,
                       clauses: result.clauses,
+                      summary: result.summary,
+                      jurisdiction: result.jurisdiction,
                       keyFindings: result.keyFindings
                     }
                   : doc
@@ -159,6 +177,8 @@ const Dashboard = () => {
                       status: "completed" as const,
                       riskScore: result.riskScore,
                       clauses: result.clauses,
+                      summary: result.summary,
+                      jurisdiction: result.jurisdiction,
                       keyFindings: result.keyFindings
                     }
                   : doc
@@ -209,12 +229,33 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteDocument = (documentId: string) => {
+    try {
+      const updatedDocuments = documents.filter(doc => doc.id !== documentId);
+      setDocuments(updatedDocuments);
+      
+      toast({
+        title: "Document deleted",
+        description: "The document has been successfully deleted",
+      });
+      
+      setDocumentToDelete(null);
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      toast({
+        title: "Error",
+        description: "There was an error deleting the document",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="container px-4 py-8 mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-br from-primary to-violet-500 dark:from-primary dark:to-indigo-300 text-transparent bg-clip-text">Dashboard</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-br from-primary to-violet-500 dark:from-primary dark:to-indigo-300 text-transparent bg-clip-text">ClauseCrush</h1>
             <p className="text-muted-foreground mt-1">
               Manage and analyze your legal documents
             </p>
@@ -246,7 +287,17 @@ const Dashboard = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {documents.map((doc) => (
-            <DocumentCard key={doc.id} {...doc} />
+            <div key={doc.id} className="group relative">
+              <DocumentCard {...doc} />
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 text-destructive border-destructive hover:bg-destructive hover:text-white"
+                onClick={() => setDocumentToDelete(doc.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           ))}
         </div>
         
@@ -299,6 +350,26 @@ const Dashboard = () => {
           )}
         </DialogContent>
       </Dialog>
+      
+      <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the document.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => documentToDelete && handleDeleteDocument(documentToDelete)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppLayout>
   );
 };

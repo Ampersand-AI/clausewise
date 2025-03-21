@@ -7,8 +7,31 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CheckCircle2, Copy, AlertTriangle, ArrowLeft, Download, FileText, Info, Sparkles, HelpCircle, CheckCheck } from "lucide-react";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { 
+  CheckCircle2, 
+  Copy, 
+  AlertTriangle, 
+  ArrowLeft, 
+  Download, 
+  FileText, 
+  Info, 
+  Sparkles, 
+  HelpCircle, 
+  CheckCheck, 
+  Trash2,
+  Globe
+} from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +52,8 @@ type CompletedDocument = {
   status: "completed";
   riskScore: number;
   clauses: number;
+  summary?: string;
+  jurisdiction?: string;
   keyFindings: {
     title: string;
     description: string;
@@ -52,6 +77,7 @@ const DocumentView = () => {
   const [document, setDocument] = useState<Document | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -104,6 +130,34 @@ const DocumentView = () => {
     setTimeout(() => {
       setCopiedIndex(null);
     }, 2000);
+  };
+  
+  const handleDeleteDocument = () => {
+    try {
+      const storedDocuments = localStorage.getItem('documents');
+      let documents: Document[] = [];
+      
+      if (storedDocuments) {
+        documents = JSON.parse(storedDocuments);
+      }
+      
+      const updatedDocuments = documents.filter(doc => doc.id !== id);
+      localStorage.setItem('documents', JSON.stringify(updatedDocuments));
+      
+      toast({
+        title: "Document deleted",
+        description: "The document has been successfully deleted",
+      });
+      
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      toast({
+        title: "Error",
+        description: "There was an error deleting the document",
+        variant: "destructive"
+      });
+    }
   };
   
   if (loading) {
@@ -205,6 +259,31 @@ const DocumentView = () => {
             </Link>
             <div className="h-6 border-l border-border"></div>
             <h1 className="text-2xl font-bold">{document.title}</h1>
+            
+            <div className="ml-auto">
+              <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1 text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the document.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
           
           <Card className="p-10 text-center">
@@ -242,6 +321,31 @@ const DocumentView = () => {
           </Link>
           <div className="h-6 border-l border-border"></div>
           <h1 className="text-2xl font-bold">{completedDoc.title}</h1>
+          
+          <div className="ml-auto">
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1 text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the document.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -289,6 +393,16 @@ const DocumentView = () => {
                       />
                     </div>
                   </div>
+                  
+                  {completedDoc.jurisdiction && (
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm text-muted-foreground">Jurisdiction:</div>
+                      <Badge variant="outline" className="gap-1">
+                        <Globe className="h-3 w-3" />
+                        <span>{completedDoc.jurisdiction}</span>
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -299,6 +413,17 @@ const DocumentView = () => {
                 </Button>
               </div>
             </Card>
+            
+            {completedDoc.summary && (
+              <Card>
+                <div className="p-6">
+                  <h2 className="text-lg font-semibold mb-3">Document Summary</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {completedDoc.summary}
+                  </p>
+                </div>
+              </Card>
+            )}
             
             <Card>
               <div className="p-6">
@@ -318,7 +443,9 @@ const DocumentView = () => {
                             ? "Non-Disclosure Agreement" 
                             : completedDoc.title.includes("Letter") 
                               ? "Letter of Intent"
-                              : "Legal Document"}
+                              : completedDoc.title.includes("Partnership")
+                                ? "Partnership Agreement"
+                                : "Legal Document"}
                       </div>
                     </div>
                   </div>
@@ -488,9 +615,30 @@ const DocumentView = () => {
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold mb-4">Document Summary</h3>
                   
-                  <p className="text-muted-foreground mb-4">
-                    This document contains {completedDoc.clauses} key clauses identified by our analysis.
-                  </p>
+                  {completedDoc.summary ? (
+                    <div className="mb-6 p-4 bg-muted/50 rounded-lg border border-border">
+                      <div className="flex gap-3">
+                        <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                        <p className="text-muted-foreground">
+                          {completedDoc.summary}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground mb-4">
+                      This document contains {completedDoc.clauses} key clauses identified by our analysis.
+                    </p>
+                  )}
+                  
+                  {completedDoc.jurisdiction && (
+                    <div className="mb-4 p-3 bg-primary/5 rounded-lg flex items-center gap-3">
+                      <Globe className="h-5 w-5 text-primary" />
+                      <div>
+                        <div className="text-sm font-medium">Governing Law</div>
+                        <div className="text-sm text-muted-foreground">{completedDoc.jurisdiction}</div>
+                      </div>
+                    </div>
+                  )}
                   
                   {keyFindings.length > 0 && (
                     <>

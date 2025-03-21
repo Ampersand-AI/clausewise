@@ -6,6 +6,8 @@ const OPENAI_API_KEY = 'sk-proj-Ytz1s-hFJBMkX-0zj0xUfcrsmsIpwuucCOqGjOd1tTfex53s
 export type DocumentAnalysisResult = {
   riskScore: number;
   clauses: number;
+  summary: string;
+  jurisdiction?: string;
   keyFindings: {
     title: string;
     description: string;
@@ -39,14 +41,18 @@ export async function analyzeDocument(file: File): Promise<DocumentAnalysisResul
 async function analyzeWithOpenAI(file: File, base64File: string): Promise<DocumentAnalysisResult> {
   const prompt = `
     Analyze this legal document and provide the following:
-    1. A risk score from 0-100 (higher means more risk)
-    2. Number of clauses identified
-    3. Key findings with their risk levels (low, medium, high)
-    4. For each key finding, extract the specific text from the document that represents this clause or issue
-    5. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
+    1. A short summary or gist (3-5 sentences) describing what the agreement is about
+    2. The jurisdiction that governs this agreement (if mentioned)
+    3. A risk score from 0-100 (higher means more risk)
+    4. Number of clauses identified
+    5. Key findings with their risk levels (low, medium, high)
+    6. For each key finding, extract the specific text from the document that represents this clause or issue
+    7. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
     
     Format the response as a JSON object with these fields:
     {
+      "summary": "string",
+      "jurisdiction": "string or null if not found",
       "risk_score": number,
       "clauses_count": number,
       "key_findings": [
@@ -72,7 +78,7 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
       messages: [
         {
           "role": "system",
-          "content": "You are a legal document analyzer. Analyze the document content and provide a structured JSON response with detailed extracts and mitigation options."
+          "content": "You are a legal document analyzer. Analyze the document content and provide a structured JSON response with summary, jurisdiction, detailed extracts and mitigation options."
         },
         {
           "role": "user",
@@ -104,6 +110,8 @@ async function analyzeWithOpenAI(file: File, base64File: string): Promise<Docume
   return {
     riskScore: content.risk_score || Math.floor(Math.random() * 60) + 20,
     clauses: content.clauses_count || Math.floor(Math.random() * 10) + 5,
+    summary: content.summary || "No summary available for this document.",
+    jurisdiction: content.jurisdiction || undefined,
     keyFindings: content.key_findings ? content.key_findings.map(finding => ({
       title: finding.title,
       description: finding.description,
@@ -127,7 +135,7 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
       body: JSON.stringify({
         model: "claude-3-opus-20240229",
         max_tokens: 4000,
-        system: "You are a legal document analyzer. Analyze the provided document and return a detailed JSON with risk_score (0-100), clauses_count (number), and key_findings (array of objects with title, description, risk_level, extracted_text, and mitigation_options).",
+        system: "You are a legal document analyzer. Analyze the provided document and return a detailed JSON with summary, jurisdiction, risk_score (0-100), clauses_count (number), and key_findings (array of objects with title, description, risk_level, extracted_text, and mitigation_options).",
         messages: [
           {
             role: "user",
@@ -135,16 +143,20 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
               {
                 type: "text",
                 text: `Analyze this legal document in detail and provide: 
-                1. A risk score from 0-100 (higher means more risk)
-                2. Number of clauses identified
-                3. Key findings with their risk levels (low, medium, high)
-                4. For each key finding, extract the specific text from the document that represents this clause or issue
-                5. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
+                1. A short summary or gist (3-5 sentences) describing what the agreement is about
+                2. The jurisdiction that governs this agreement (if mentioned)
+                3. A risk score from 0-100 (higher means more risk)
+                4. Number of clauses identified
+                5. Key findings with their risk levels (low, medium, high)
+                6. For each key finding, extract the specific text from the document that represents this clause or issue
+                7. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause
                 
                 Document content (base64): ${base64File.substring(0, 500)}...
                 
                 Format your response ONLY as a JSON object like this:
                 {
+                  "summary": "string",
+                  "jurisdiction": "string or null if not found",
                   "risk_score": number,
                   "clauses_count": number,
                   "key_findings": [
@@ -194,6 +206,8 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
     return {
       riskScore: jsonContent.risk_score || Math.floor(Math.random() * 60) + 20,
       clauses: jsonContent.clauses_count || Math.floor(Math.random() * 10) + 5,
+      summary: jsonContent.summary || "No summary available for this document.",
+      jurisdiction: jsonContent.jurisdiction || undefined,
       keyFindings: jsonContent.key_findings ? jsonContent.key_findings.map(finding => ({
         title: finding.title,
         description: finding.description,
@@ -208,6 +222,7 @@ async function analyzeWithAnthropik(base64File: string): Promise<DocumentAnalysi
     return {
       riskScore: Math.floor(Math.random() * 60) + 20,
       clauses: Math.floor(Math.random() * 10) + 5,
+      summary: "Unable to generate summary due to analysis error.",
       keyFindings: generateFallbackKeyFindings()
     };
   }

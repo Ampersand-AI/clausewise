@@ -16,7 +16,7 @@ type DocumentCardProps = {
   className?: string;
 } & (
   | { status: "analyzing"; progress: number }
-  | { status: "completed"; riskScore: number; clauses: number }
+  | { status: "completed"; riskScore: number; clauses: number; summary?: string }
   | { status: "error" }
 );
 
@@ -36,6 +36,7 @@ export function DocumentCard({
   const progress = isAnalyzing ? (props as { progress: number }).progress : undefined;
   const riskScore = isCompleted ? (props as { riskScore: number }).riskScore : undefined;
   const clauses = isCompleted ? (props as { clauses: number }).clauses : undefined;
+  const summary = isCompleted ? (props as { summary?: string }).summary : undefined;
 
   return (
     <Link 
@@ -81,21 +82,29 @@ export function DocumentCard({
           )}
           
           {isCompleted && riskScore !== undefined && clauses !== undefined && (
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center gap-2">
-                <div className={cn(
-                  "h-3 w-3 rounded-full",
-                  riskScore < 30 ? "bg-success" : 
-                  riskScore < 70 ? "bg-warning" : 
-                  "bg-destructive"
-                )} />
-                <span className="text-sm font-medium">
-                  {riskScore < 30 ? "Low" : riskScore < 70 ? "Medium" : "High"} Risk
-                </span>
+            <div className="flex flex-col gap-2 mt-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className={cn(
+                    "h-3 w-3 rounded-full",
+                    riskScore < 30 ? "bg-success" : 
+                    riskScore < 70 ? "bg-warning" : 
+                    "bg-destructive"
+                  )} />
+                  <span className="text-sm font-medium">
+                    {riskScore < 30 ? "Low" : riskScore < 70 ? "Medium" : "High"} Risk
+                  </span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {clauses} clauses identified
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                {clauses} clauses identified
-              </div>
+              
+              {summary && (
+                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                  {summary}
+                </p>
+              )}
             </div>
           )}
         </div>
