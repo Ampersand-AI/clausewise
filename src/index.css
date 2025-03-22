@@ -6,65 +6,53 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 24 10% 10%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 24 10% 10%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 24 10% 10%;
-    --primary: 24 94% 53%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 30 60% 50%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 30 10% 96%;
-    --muted-foreground: 24 5% 45%;
-    --accent: 30 40% 90%;
-    --accent-foreground: 24 10% 10%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 30 10% 90%;
-    --input: 30 10% 90%;
-    --ring: 24 94% 53%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
     
-    /* Enhanced Glass UI Variables */
-    --glass: 0 0% 100% / 7%;
-    --glass-light: 0 0% 100% / 12%;
-    --glass-dark: 0 0% 0% / 5%;
-    --glass-border: 0 0% 100% / 15%;
-    
     /* Success/Warning colors */
-    --success-foreground: 0 0% 98%;
+    --success-foreground: 210 40% 98%;
     --success: 142 72% 29%;
-    --warning-foreground: 0 0% 98%;
+    --warning-foreground: 210 40% 98%;
     --warning: 38 92% 50%;
   }
  
   .dark {
-    --background: 24 20% 6%;
+    --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 24 20% 6%;
+    --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
-    --popover: 24 20% 6%;
+    --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 24 94% 53%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 30 60% 50%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 24 10% 12%;
-    --muted-foreground: 24 5% 64%;
-    --accent: 24 10% 12%;
-    --accent-foreground: 0 0% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 24 10% 12%;
-    --input: 24 10% 12%;
-    --ring: 24 94% 53%;
-    
-    /* Enhanced Glass UI Variables */
-    --glass: 24 15% 10% / 50%;
-    --glass-light: 24 15% 15% / 60%;
-    --glass-dark: 24 15% 5% / 75%;
-    --glass-border: 24 15% 30% / 15%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
 }
  
@@ -77,135 +65,17 @@
   }
 }
 
-/* Enhanced Glass UI Styles */
-.glass-card {
-  @apply bg-glass backdrop-blur-md border border-glass-border rounded-lg;
+/* Card with border glow */
+.default-card {
+  @apply border border-border/60 bg-card shadow-md;
 }
 
-.glass-card-hover {
-  @apply hover:bg-glass-light transition-colors duration-300;
+/* Form elements */
+.form-input-default {
+  @apply bg-background border border-border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300;
 }
 
-.hover-scale {
-  @apply transition-transform duration-300 hover:scale-[1.01] hover:-translate-y-0.5;
-}
-
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-orange-brown-gradient;
-}
-
-/* Enhanced Animations */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.5s ease forwards;
-  opacity: 0;
-}
-
-/* Enhanced Glow effect styles */
-.glow-effect {
-  @apply shadow-[0_0_15px_rgba(249,115,22,0.6)] transition-shadow duration-300;
-}
-
-.glow-effect:hover {
-  @apply shadow-[0_0_25px_rgba(249,115,22,0.7)];
-}
-
-/* Animated glow */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
-  }
-}
-
-.animate-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-/* Update App.css to use the new orange-brown theme */
-body {
-  background-color: #121210;
-  background-image: 
-    radial-gradient(circle at 25% 15%, rgba(249, 115, 22, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 75% 85%, rgba(181, 119, 61, 0.15) 0%, transparent 40%);
-  min-height: 100vh;
-  color: #e1e2e5;
-}
-
-/* Custom button styles */
-.lawbit-button {
-  @apply bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover text-white transition-all duration-300;
-}
-
-/* Premium UI elements */
-.premium-badge {
-  @apply bg-orange-brown-gradient text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm;
-}
-
-.premium-card {
-  @apply border border-lawbit-orange-400/30 bg-gradient-to-r from-lawbit-orange-50/10 to-lawbit-brown-50/10 backdrop-blur-sm;
-}
-
-/* Enhanced form elements */
-.form-input-glass {
-  @apply bg-glass backdrop-blur-md border border-glass-border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lawbit-orange-500/50 focus:border-lawbit-orange-400/50 transition-all duration-300;
-}
-
-/* Enhanced glassmorphism UI */
-.glassmorphism {
-  @apply backdrop-blur-md bg-glass border border-glass-border rounded-lg shadow-lg;
-}
-
-.glassmorphism-hover {
-  @apply hover:bg-glass-light transition-all duration-300;
-}
-
-/* Enhanced usage stats styling */
-.usage-stat-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.05) 100%);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.usage-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
-}
-
-/* Orange-brown gradient text (enhanced) */
-.text-gradient-glow {
-  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
-}
-
-/* Enhanced orange-brown UI elements */
-.bg-orange-brown-gradient {
-  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
-}
-
-.bg-orange-brown-gradient-hover {
-  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
-}
-
-/* Card with orange-brown border glow */
-.orange-glow-card {
-  @apply glassmorphism border border-lawbit-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.2)];
-}
-
-.orange-glow-card:hover {
-  @apply shadow-[0_0_25px_rgba(249,115,22,0.4)] border-lawbit-orange-500/40 transition-all duration-300;
+/* Card with backdrop */
+.backdrop-card {
+  @apply bg-background/80 backdrop-blur-md border border-border/50 shadow-md;
 }
