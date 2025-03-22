@@ -7,10 +7,10 @@
 }
 
 body {
-  background-color: #121212;
+  background-color: #121210;
   background-image: 
-    radial-gradient(circle at 25% 15%, rgba(255, 108, 54, 0.07) 0%, transparent 40%),
-    radial-gradient(circle at 75% 85%, rgba(255, 108, 54, 0.05) 0%, transparent 40%);
+    radial-gradient(circle at 25% 15%, rgba(249, 115, 22, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 75% 85%, rgba(181, 119, 61, 0.15) 0%, transparent 40%);
   min-height: 100vh;
   color: #e1e2e5;
 }
@@ -23,11 +23,11 @@ body {
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em rgba(255, 108, 54, 0.6));
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.6));
 }
 
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em rgba(255, 108, 54, 0.6));
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.6));
 }
 
 @keyframes logo-spin {
@@ -55,30 +55,30 @@ body {
 
 /* Glow effect */
 .glow-button {
-  box-shadow: 0 0 15px rgba(255, 108, 54, 0.3);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
   transition: box-shadow 0.3s ease;
 }
 
 .glow-button:hover {
-  box-shadow: 0 0 25px rgba(255, 108, 54, 0.5);
+  box-shadow: 0 0 25px rgba(249, 115, 22, 0.7);
 }
 
 .glow-effect {
-  box-shadow: 0 0 15px rgba(255, 108, 54, 0.2);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
   transition: box-shadow 0.3s ease;
 }
 
 .glow-effect:hover {
-  box-shadow: 0 0 25px rgba(255, 108, 54, 0.4);
+  box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
 }
 
 /* Animated glow */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(255, 108, 54, 0.2);
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 108, 54, 0.4);
+    box-shadow: 0 0 30px rgba(249, 115, 22, 0.7);
   }
 }
 
@@ -88,46 +88,46 @@ body {
 
 /* Usage stats styling */
 .usage-stat-card {
-  background: rgba(39, 39, 42, 0.4);
-  border-radius: 8px;
-  padding: 0.75rem;
-  border: 1px solid rgba(63, 63, 70, 0.5);
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.05) 100%);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(249, 115, 22, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .usage-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 108, 54, 0.15);
+  box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
 }
 
 .usage-progress {
-  height: 6px;
-  border-radius: 3px;
+  height: 8px;
+  border-radius: 4px;
   overflow: hidden;
-  background-color: rgba(63, 63, 70, 0.8);
+  background-color: rgba(249, 115, 22, 0.1);
   margin-top: 8px;
 }
 
 .usage-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #FF6C36 0%, #FF8651 100%);
-  border-radius: 3px;
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  border-radius: 4px;
   transition: width 0.5s ease;
 }
 
-/* Orange gradient button */
-.orange-button {
-  background: linear-gradient(90deg, #FF6C36 0%, #FF8651 100%);
+/* Orange-brown gradient button */
+.orange-brown-button {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
   transition: background 0.3s ease;
 }
 
-.orange-button:hover {
-  background: linear-gradient(90deg, #F35A21 0%, #FF7842 100%);
+.orange-brown-button:hover {
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
 }
 
-/* Orange gradient text */
+/* Orange-brown gradient text */
 .text-gradient {
-  background: linear-gradient(90deg, #FF6C36 0%, #FF8651 100%);
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -135,12 +135,12 @@ body {
 }
 
 /* Animated gradient background */
-.bg-orange-gradient {
-  background: linear-gradient(90deg, #FF6C36 0%, #FF8651 100%);
+.bg-orange-brown-gradient {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
 }
 
-.bg-orange-gradient-hover {
-  background: linear-gradient(90deg, #F35A21 0%, #FF7842 100%);
+.bg-orange-brown-gradient-hover {
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
 }
 
 @keyframes shimmer {
@@ -158,25 +158,25 @@ body {
 
 /* Glass card effect */
 .glass-card {
-  background-color: rgba(39, 39, 42, 0.5);
+  background-color: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(63, 63, 70, 0.5);
+  border: 1px solid rgba(249, 115, 22, 0.1);
 }
 
 /* Premium badge */
 .premium-badge {
-  background: linear-gradient(90deg, #FF6C36 0%, #FF8651 100%);
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  box-shadow: 0 0 10px rgba(255, 108, 54, 0.3);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
 }
 
 /* Add main content glow effect */
 .main-content {
-  box-shadow: 0 0 20px rgba(255, 108, 54, 0.2);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
   transition: box-shadow 0.3s ease;
   border-radius: 1rem;
   overflow: hidden;
@@ -184,8 +184,8 @@ body {
 
 /* Consistent form styling */
 .form-input {
-  background-color: rgba(39, 39, 42, 0.5);
-  border: 1px solid rgba(63, 63, 70, 0.5);
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(249, 115, 22, 0.2);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   color: #e1e2e5;
@@ -193,14 +193,14 @@ body {
 }
 
 .form-input:focus {
-  border-color: rgba(255, 108, 54, 0.5);
-  box-shadow: 0 0 0 2px rgba(255, 108, 54, 0.1);
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
   outline: none;
 }
 
 /* Consistent button styling */
 .app-button {
-  background: linear-gradient(90deg, #FF6C36 0%, #FF8651 100%);
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
   color: white;
   border-radius: 0.5rem;
   padding: 0.75rem 1.5rem;
@@ -209,7 +209,7 @@ body {
 }
 
 .app-button:hover {
-  background: linear-gradient(90deg, #F35A21 0%, #FF7842 100%);
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 108, 54, 0.3);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
 }

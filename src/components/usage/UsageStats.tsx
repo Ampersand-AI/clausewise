@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 type UsageItem = {
   label: string;
@@ -20,44 +21,46 @@ type UsageItem = {
 };
 
 const UsageStats: React.FC = () => {
-  // Mock usage data - in a real app, this would come from an API
+  // Updated usage data with tokens, created contracts, and analyzed contracts
   const usageStats: UsageItem[] = [
-    { label: "AI Credits", used: 2500, total: 10000, unit: "credits" },
-    { label: "Storage", used: 142, total: 500, unit: "MB" },
-    { label: "Documents", used: 15, total: 50, unit: "files" }
+    { label: "AI Tokens", used: 2500, total: 10000, unit: "tokens" },
+    { label: "Created Contracts", used: 8, total: 15, unit: "documents" },
+    { label: "Analyzed Contracts", used: 12, total: 25, unit: "documents" }
   ];
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="text-orange-500 hover:text-orange-400">
+        <Button variant="glass" size="icon" className="text-lawbit-orange-500 hover:text-lawbit-orange-400 rounded-full glow-effect">
           <BarChart3 className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 bg-zinc-900/95 border border-zinc-700 backdrop-blur-md">
-        <DropdownMenuLabel className="text-orange-500">Your Usage</DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-zinc-700" />
-        <div className="p-2">
+      <DropdownMenuContent className="w-80 backdrop-blur-md bg-glass border-glass-border shadow-lg">
+        <DropdownMenuLabel className="text-lawbit-orange-500 text-lg">Usage Stats</DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-lawbit-orange-500/20" />
+        <div className="p-4">
           <DropdownMenuGroup>
             {usageStats.map((item, index) => (
-              <div key={index} className="mb-3 last:mb-0 p-3 bg-zinc-800/50 rounded-lg border border-zinc-700/50">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-200">{item.label}</span>
-                  <span className="text-xs text-gray-400">{item.used} / {item.total} {item.unit}</span>
+              <div key={index} className="usage-stat-card mb-4 last:mb-0 p-3 backdrop-blur-md bg-glass-light rounded-lg border border-lawbit-orange-300/20">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium text-lawbit-orange-400">{item.label}</span>
+                  <span className="text-xs text-foreground/80">{item.used} / {item.total} {item.unit}</span>
                 </div>
-                <div className="mt-2 h-2 bg-zinc-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-orange-600 to-orange-400"
-                    style={{ width: `${Math.min(100, (item.used / item.total) * 100)}%` }}
-                  />
+                <Progress 
+                  value={(item.used / item.total) * 100} 
+                  className="h-2 bg-lawbit-orange-200/20 dark:bg-lawbit-orange-900/20"
+                  indicatorClassName="bg-orange-brown-gradient"
+                />
+                <div className="mt-1 text-xs text-right text-muted-foreground">
+                  {Math.round((item.used / item.total) * 100)}% used
                 </div>
               </div>
             ))}
           </DropdownMenuGroup>
         </div>
-        <DropdownMenuSeparator className="bg-zinc-700" />
-        <DropdownMenuItem className="gap-2 text-gray-400 hover:text-gray-200">
-          <AlertCircle className="h-4 w-4" />
+        <DropdownMenuSeparator className="bg-lawbit-orange-500/20" />
+        <DropdownMenuItem className="gap-2 text-muted-foreground hover:text-foreground">
+          <AlertCircle className="h-4 w-4 text-lawbit-orange-500" />
           <span>Usage limits reset on the 1st</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
