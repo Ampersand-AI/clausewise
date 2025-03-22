@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
@@ -817,4 +818,55 @@ const Dashboard = () => {
           </div>
           
           <AlertDialogHeader className="pt-14">
-            <AlertDialogTitle className="text-center
+            <AlertDialogTitle className="text-center">Upgrade to Premium</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              {upgradeReason === "contracts" 
+                ? "You've reached your free contract generation limit. Upgrade to premium to create more contracts."
+                : "You've reached your free document analysis limit. Upgrade to premium to analyze more documents."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4 text-lawbit-orange-500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 12.5L10.5 15L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <p className="text-sm">{isPremium ? "10" : "5"} document analyses per month</p>
+              </div>
+              <div className="flex items-center">
+                <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4 text-lawbit-orange-500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 12.5L10.5 15L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <p className="text-sm">{isPremium ? "5" : "2"} contract generations per month</p>
+              </div>
+              <div className="flex items-center">
+                <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4 text-lawbit-orange-500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 12.5L10.5 15L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <p className="text-sm">Priority support</p>
+              </div>
+            </div>
+          </div>
+          
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-white text-gray-900 hover:bg-gray-100 border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:border-gray-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleUpgrade}
+              className="orange-brown-button glow-button text-white"
+            >
+              Upgrade Now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </AppLayout>
+  );
+};
+
+export default Dashboard;
