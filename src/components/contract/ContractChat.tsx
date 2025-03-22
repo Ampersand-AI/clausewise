@@ -38,6 +38,7 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
   const [contract, setContract] = useState<GeneratedContract | null>(null);
   const [copied, setCopied] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   
   // Initial message on component mount
@@ -54,11 +55,21 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
 
   // Scroll to bottom of chat when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      // Using scrollIntoView with a slight delay to ensure DOM updates are complete
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    }
   }, [messages]);
 
-  const handleUserInput = () => {
+  const handleUserInput = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
     if (!input.trim() || !currentField) return;
+    
+    // Save current scroll position
+    const currentScrollPos = chatContainerRef.current?.scrollTop || 0;
     
     // Add user message
     const userMessage: Message = {
@@ -78,6 +89,11 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
     
     // Process to next field based on current field
     processNextField(currentField);
+    
+    // Restore scroll position
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = currentScrollPos;
+    }
   };
 
   const handleOptionSelect = (option: string) => {
@@ -422,9 +438,12 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
   return (
     <div className="w-full grid grid-cols-1 gap-6">
       {/* Chat area */}
-      <div className="relative border rounded-lg shadow-sm bg-white dark:bg-gray-800 overflow-hidden flex flex-col">
+      <div className="relative border rounded-lg shadow-sm bg-white dark:bg-bento-gray-800 overflow-hidden flex flex-col">
         {/* Messages container */}
-        <div className="h-[360px] overflow-y-auto p-4 space-y-4">
+        <div 
+          ref={chatContainerRef}
+          className="h-[360px] overflow-y-auto p-4 space-y-4 scrollbar-none"
+        >
           {messages.map((message) => (
             <div 
               key={message.id} 
@@ -434,7 +453,7 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
                 className={`max-w-[80%] p-3 rounded-lg ${
                   message.role === 'user' 
                     ? 'bg-lovable-gradient text-white' 
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                    : 'bg-bento-gray-100 dark:bg-bento-gray-700 text-bento-gray-900 dark:text-bento-gray-100'
                 }`}
               >
                 <p>{message.content}</p>
@@ -460,13 +479,13 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
         </div>
         
         {/* Input area */}
-        <div className="p-3 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-          <div className="flex gap-2">
+        <div className="p-3 border-t border-bento-gray-200 dark:border-bento-gray-700 bg-bento-gray-50 dark:bg-bento-gray-800">
+          <form onSubmit={handleUserInput} className="flex gap-2">
             <Textarea 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="min-h-[60px] resize-none bg-white dark:bg-gray-700"
+              className="min-h-[60px] resize-none bg-white text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-700 dark:text-bento-gray-100 dark:border-bento-gray-700"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -476,24 +495,24 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
               disabled={isGenerating || !currentField}
             />
             <Button
-              className="shrink-0 bg-lovable-gradient"
+              type="submit"
+              className="shrink-0 bg-lovable-gradient hover:bg-lovable-gradient-hover transition-all duration-300"
               size="icon"
-              onClick={handleUserInput}
               disabled={isGenerating || !input.trim() || !currentField}
             >
               <Send className="h-4 w-4" />
             </Button>
-          </div>
+          </form>
         </div>
       </div>
       
       {/* Contract preview */}
       {contract && (
         <div className="space-y-4">
-          <div className="relative overflow-auto max-h-[600px] border border-gray-200 rounded-lg p-4 bg-white dark:bg-gray-800 dark:border-gray-700 text-sm shadow-inner">
+          <div className="relative overflow-auto max-h-[600px] border border-bento-gray-200 rounded-lg p-6 bg-white dark:bg-bento-gray-800 dark:border-bento-gray-700 text-sm shadow-inner">
             <div id="contract-preview" className="min-h-[200px]">
-              <h2 className="text-lg font-bold mb-4">{contract.title}</h2>
-              <div className="whitespace-pre-line">{contract.content}</div>
+              <h2 className="text-xl font-bold mb-4">{contract.title}</h2>
+              <div className="whitespace-pre-line text-bento-gray-900 dark:text-bento-gray-100">{contract.content}</div>
             </div>
           </div>
           
@@ -502,28 +521,28 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
               variant="outline"
               onClick={regenerateContract}
               disabled={isGenerating}
-              className="bg-white border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+              className="bg-white border-bento-gray-200 hover:bg-bento-gray-50 text-bento-gray-600 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700 dark:text-bento-gray-400"
             >
               <RefreshCw className="h-4 w-4 mr-2" /> Redraft
             </Button>
             <Button 
               variant="outline"
               onClick={handleDownloadPDF}
-              className="bg-white border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+              className="bg-white border-bento-gray-200 hover:bg-bento-gray-50 text-bento-gray-600 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700 dark:text-bento-gray-400"
             >
               <Download className="h-4 w-4 mr-2" /> PDF
             </Button>
             <Button 
               variant="outline"
               onClick={handleDownloadWord}
-              className="bg-white border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+              className="bg-white border-bento-gray-200 hover:bg-bento-gray-50 text-bento-gray-600 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700 dark:text-bento-gray-400"
             >
               <Download className="h-4 w-4 mr-2" /> Word
             </Button>
             <Button 
               variant="outline"
               onClick={handleCopyText}
-              className="bg-white border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+              className="bg-white border-bento-gray-200 hover:bg-bento-gray-50 text-bento-gray-600 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700 dark:text-bento-gray-400"
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             </Button>
@@ -531,7 +550,7 @@ const ContractChat: React.FC<ContractChatProps> = ({ onGenerate }) => {
           
           {/* Risk Analysis */}
           <div className="space-y-3">
-            <h3 className="font-medium">Risk Analysis</h3>
+            <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100">Risk Analysis</h3>
             {contract.riskAnalysis.map((item, index) => (
               <div 
                 key={index} 
