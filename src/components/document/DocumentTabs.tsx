@@ -65,13 +65,41 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
               <p>No document analyses yet</p>
             </div>
           ) : (
-            documents.map((doc) => (
-              <DocumentCard 
-                key={doc.id} 
-                {...doc} 
-                onDelete={onDelete}
-              />
-            ))
+            documents.map((doc) => {
+              // Ensure we pass the correct props based on document status
+              if (doc.status === "analyzing" && doc.progress !== undefined) {
+                return (
+                  <DocumentCard 
+                    key={doc.id} 
+                    {...doc} 
+                    status="analyzing"
+                    progress={doc.progress}
+                    onDelete={onDelete}
+                  />
+                );
+              } else if (doc.status === "completed" && doc.riskScore !== undefined) {
+                return (
+                  <DocumentCard 
+                    key={doc.id} 
+                    {...doc} 
+                    status="completed"
+                    riskScore={doc.riskScore}
+                    onDelete={onDelete}
+                  />
+                );
+              } else {
+                return (
+                  <DocumentCard 
+                    key={doc.id} 
+                    id={doc.id}
+                    title={doc.title}
+                    date={doc.date}
+                    status="error"
+                    onDelete={onDelete}
+                  />
+                );
+              }
+            })
           )}
         </div>
       </TabsContent>
@@ -91,7 +119,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
                 title={contract.title}
                 date={contract.date}
                 status="completed"
-                riskScore={contract.riskScore}
+                riskScore={contract.riskScore || 0}  // Ensure riskScore is always provided for completed status
                 clauses={contract.riskAnalysis.length}
                 keyFindings={contract.riskAnalysis}
                 onDelete={onDelete}
