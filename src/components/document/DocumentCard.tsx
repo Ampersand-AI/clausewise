@@ -92,29 +92,27 @@ export function DocumentCard(props: DocumentCardProps) {
         to={`/document/${id}`}
         className={cn(
           "group relative block rounded-lg p-5 transition-all duration-300",
-          "border border-bento-orange-200 bg-white/80 shadow-sm hover:shadow-md dark:bg-bento-brown-800/90 dark:border-bento-brown-700",
+          "border border-gray-800 bg-gray-900 shadow-md hover:shadow-lg",
           "transform transition-transform hover:scale-105 hover:-translate-y-1",
-          "backdrop-blur-sm",
           status === "analyzing" && "animate-pulse",
-          "overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-bento-yellow-500/0 before:via-bento-orange-500/10 before:to-bento-brown-600/0 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-1000 before:ease-in-out",
           className
         )}
       >
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-lg bg-bento-yellow-50 dark:bg-bento-yellow-100/10 flex items-center justify-center flex-shrink-0 border border-bento-yellow-100 dark:border-bento-yellow-500/20 transition-colors group-hover:bg-bento-orange-50 dark:group-hover:bg-bento-orange-100/10 group-hover:rotate-3 transition-transform duration-300">
+          <div className="h-12 w-12 rounded-lg bg-gray-800 flex items-center justify-center flex-shrink-0 border border-gray-700">
             {status === "analyzing" ? (
-              <File className="h-6 w-6 text-bento-yellow-500 group-hover:text-bento-orange-500 transition-colors" />
+              <File className="h-6 w-6 text-gray-400" />
             ) : (
-              <FileText className="h-6 w-6 text-bento-orange-500 group-hover:text-bento-brown-600 transition-colors" />
+              <FileText className="h-6 w-6 text-gray-300" />
             )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start mb-1">
-              <h3 className="font-semibold text-lg truncate group-hover:text-bento-orange-500 transition-colors">
+              <h3 className="font-semibold text-lg truncate text-gray-100">
                 {title}
               </h3>
               
-              {/* Moved risk badge here */}
+              {/* Risk badge */}
               {isCompleted && riskScore !== undefined && (
                 <Badge 
                   variant={riskInfo.color as "success" | "warning" | "destructive"} 
@@ -126,7 +124,7 @@ export function DocumentCard(props: DocumentCardProps) {
             </div>
             
             <div className="flex items-center gap-3 mt-1">
-              <span className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
+              <span className="text-sm text-gray-400">
                 {formattedDate}
               </span>
               <StatusBadge status={status} />
@@ -135,10 +133,10 @@ export function DocumentCard(props: DocumentCardProps) {
             {isAnalyzing && progress !== undefined && (
               <div className="mt-4">
                 <div className="flex justify-between mb-1 text-xs">
-                  <span className="font-medium text-bento-gray-700 dark:text-bento-gray-300">Analyzing document</span>
-                  <span className="text-bento-gray-600 dark:text-bento-gray-400">{progress}%</span>
+                  <span className="font-medium text-gray-300">Analyzing document</span>
+                  <span className="text-gray-400">{progress}%</span>
                 </div>
-                <Progress value={progress} className="h-1.5" indicatorClassName="bg-gradient-to-r from-bento-yellow-500 to-bento-brown-600" />
+                <Progress value={progress} className="h-1.5" indicatorClassName="bg-blue-500" />
               </div>
             )}
             
@@ -146,27 +144,27 @@ export function DocumentCard(props: DocumentCardProps) {
               <div className="flex flex-col gap-2 mt-4">
                 <div className="flex items-center gap-4">
                   {clauses !== undefined && (
-                    <div className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
+                    <div className="text-sm text-gray-400">
                       {clauses} clauses identified
                     </div>
                   )}
                 </div>
                 
                 {parties && parties.length > 0 && (
-                  <p className="text-sm text-bento-gray-500 dark:text-bento-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     <span className="font-medium">Parties:</span> {parties.join(", ")}
                   </p>
                 )}
                 
                 {summary && (
-                  <p className="text-sm text-bento-gray-600 dark:text-bento-gray-400 line-clamp-2 mt-1">
+                  <p className="text-sm text-gray-400 line-clamp-2 mt-1">
                     {summary}
                   </p>
                 )}
                 
                 {keyFindings && keyFindings.length > 0 && (
                   <div className="mt-2">
-                    <p className="text-xs font-medium text-bento-gray-600 dark:text-bento-gray-400">Key findings:</p>
+                    <p className="text-xs font-medium text-gray-400">Key findings:</p>
                     <div className="flex gap-1 mt-1 flex-wrap">
                       {keyFindings.slice(0, 2).map((finding, idx) => (
                         <Badge 
@@ -178,7 +176,7 @@ export function DocumentCard(props: DocumentCardProps) {
                         </Badge>
                       ))}
                       {keyFindings.length > 2 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="dark" className="text-xs">
                           +{keyFindings.length - 2} more
                         </Badge>
                       )}
@@ -195,7 +193,7 @@ export function DocumentCard(props: DocumentCardProps) {
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-bento-brown-800 text-destructive border-destructive hover:bg-destructive hover:text-white dark:border-destructive"
+          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-gray-300 border-gray-700 hover:bg-red-900 hover:text-white"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -212,7 +210,7 @@ export function DocumentCard(props: DocumentCardProps) {
 function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-blue-200 bg-blue-50 text-blue-600 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+      <Badge variant="dark" className="text-xs font-normal text-blue-300">
         Analyzing
       </Badge>
     );
@@ -220,14 +218,14 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   if (status === "error") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400">
+      <Badge variant="dark" className="text-xs font-normal text-red-300">
         Error
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-normal border-green-200 bg-green-50 text-green-600 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400">
+    <Badge variant="dark" className="text-xs font-normal text-green-300">
       Completed
     </Badge>
   );

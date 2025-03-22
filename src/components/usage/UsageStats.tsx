@@ -31,36 +31,36 @@ const UsageStats: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="glass" size="icon" className="text-lawbit-orange-500 hover:text-lawbit-orange-400 rounded-full glow-effect">
+        <Button variant="outline" size="icon" className="text-gray-400 hover:text-gray-200 border-gray-800 bg-gray-900 rounded-full">
           <BarChart3 className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 backdrop-blur-md bg-glass border-glass-border shadow-lg">
-        <DropdownMenuLabel className="text-lawbit-orange-500 text-lg">Usage Stats</DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-lawbit-orange-500/20" />
+      <DropdownMenuContent className="w-80 bg-gray-900 border-gray-800 shadow-lg">
+        <DropdownMenuLabel className="text-orange-500 text-lg">Usage Stats</DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-gray-800" />
         <div className="p-4">
           <DropdownMenuGroup>
             {usageStats.map((item, index) => (
-              <div key={index} className="usage-stat-card mb-4 last:mb-0 p-3 backdrop-blur-md bg-glass-light rounded-lg border border-lawbit-orange-300/20">
+              <div key={index} className="usage-stat-card mb-4 last:mb-0 p-3 bg-gray-800/80 rounded-lg border border-gray-700">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-lawbit-orange-400">{item.label}</span>
-                  <span className="text-xs text-foreground/80">{item.used} / {item.total} {item.unit}</span>
+                  <span className="text-sm font-medium text-gray-300">{item.label}</span>
+                  <span className="text-xs text-gray-400">{item.used} / {item.total} {item.unit}</span>
                 </div>
                 <Progress 
                   value={(item.used / item.total) * 100} 
-                  className="h-2 bg-lawbit-orange-200/20 dark:bg-lawbit-orange-900/20"
-                  indicatorClassName="bg-orange-brown-gradient"
+                  className="h-2 bg-gray-700"
+                  indicatorClassName="bg-orange-500"
                 />
-                <div className="mt-1 text-xs text-right text-muted-foreground">
+                <div className="mt-1 text-xs text-right text-gray-400">
                   {Math.round((item.used / item.total) * 100)}% used
                 </div>
               </div>
             ))}
           </DropdownMenuGroup>
         </div>
-        <DropdownMenuSeparator className="bg-lawbit-orange-500/20" />
-        <DropdownMenuItem className="gap-2 text-muted-foreground hover:text-foreground">
-          <AlertCircle className="h-4 w-4 text-lawbit-orange-500" />
+        <DropdownMenuSeparator className="bg-gray-800" />
+        <DropdownMenuItem className="gap-2 text-gray-400 hover:text-gray-200 focus:bg-gray-800">
+          <AlertCircle className="h-4 w-4 text-orange-500" />
           <span>Usage limits reset on the 1st</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
