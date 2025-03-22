@@ -10,6 +10,7 @@ import DocumentView from "./pages/DocumentView";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
+// Create a QueryClient for data fetching
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

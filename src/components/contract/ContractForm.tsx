@@ -183,11 +183,24 @@ const ContractForm: React.FC<ContractFormProps> = ({ onGenerate }) => {
     });
     
     try {
-      const blob = new Blob([contract.content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      // Create a blob with the content
+      const preface = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>${contract.title}</title>
+</head>
+<body>
+<h2>${contract.title}</h2>
+`;
+      
+      const postface = `</body></html>`;
+      const fullHtml = preface + contract.content.replace(/\n/g, '<br>') + postface;
+      
+      const blob = new Blob([fullHtml], { type: 'application/msword' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${contract.title.replace(/\s+/g, '_')}.docx`;
+      a.download = `${contract.title.replace(/\s+/g, '_')}.doc`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

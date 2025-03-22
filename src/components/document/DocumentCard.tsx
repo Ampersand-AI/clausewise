@@ -9,39 +9,63 @@ import { Trash2 } from "lucide-react";
 
 type DocumentStatus = "analyzing" | "completed" | "error";
 
-// Define props with proper type discrimination
-type DocumentCardProps = {
+type KeyFinding = {
+  title: string;
+  description: string;
+  riskLevel: 'low' | 'medium' | 'high';
+  extractedText?: string;
+  mitigationOptions?: string[];
+  redraftedClauses?: string[];
+};
+
+// Base properties shared by all document types
+type BaseDocumentCardProps = {
   id: string;
   title: string;
   date: string;
   status: DocumentStatus;
   className?: string;
   onDelete?: (id: string) => void;
-} & (
-  | { status: "analyzing"; progress: number }
-  | { status: "completed"; riskScore: number; clauses: number; summary?: string; parties?: string[] }
-  | { status: "error" }
-);
+  keyFindings?: KeyFinding[];
+};
 
-export function DocumentCard({ 
-  id,
-  title,
-  date,
-  status,
-  className,
-  onDelete,
-  ...props 
-}: DocumentCardProps) {
+// Type for analyzing documents
+type AnalyzingDocumentProps = BaseDocumentCardProps & {
+  status: "analyzing";
+  progress: number;
+};
+
+// Type for completed documents
+type CompletedDocumentProps = BaseDocumentCardProps & {
+  status: "completed";
+  riskScore: number;
+  clauses?: number;
+  summary?: string;
+  parties?: string[];
+};
+
+// Type for error documents
+type ErrorDocumentProps = BaseDocumentCardProps & {
+  status: "error";
+};
+
+// Union type to represent all possible document types
+type DocumentCardProps = AnalyzingDocumentProps | CompletedDocumentProps | ErrorDocumentProps;
+
+export function DocumentCard(props: DocumentCardProps) {
+  const { id, title, date, status, className, onDelete } = props;
+
   // Type guards to safely access properties
   const isAnalyzing = status === "analyzing";
   const isCompleted = status === "completed";
   
   // Safely access properties based on status
-  const progress = isAnalyzing ? (props as { progress: number }).progress : undefined;
-  const riskScore = isCompleted ? (props as { riskScore: number }).riskScore : undefined;
-  const clauses = isCompleted ? (props as { clauses: number }).clauses : undefined;
-  const summary = isCompleted ? (props as { summary?: string }).summary : undefined;
-  const parties = isCompleted ? (props as { parties?: string[] }).parties : undefined;
+  const progress = isAnalyzing ? (props as AnalyzingDocumentProps).progress : undefined;
+  const riskScore = isCompleted ? (props as CompletedDocumentProps).riskScore : undefined;
+  const clauses = isCompleted ? (props as CompletedDocumentProps).clauses : undefined;
+  const summary = isCompleted ? (props as CompletedDocumentProps).summary : undefined;
+  const parties = isCompleted ? (props as CompletedDocumentProps).parties : undefined;
+  const keyFindings = props.keyFindings;
 
   // Format date to show time as well
   const formattedDate = new Date(date).toLocaleString("en-US", {
@@ -71,6 +95,7 @@ export function DocumentCard({
           "border border-bento-gray-200 bg-white shadow-sm hover:shadow-md dark:bg-bento-gray-800 dark:border-bento-gray-700",
           "transform transition-transform hover:scale-102 hover:-translate-y-1",
           status === "analyzing" && "animate-pulse",
+          "card-shine", // Add shine effect
           className
         )}
       >
@@ -114,12 +139,14 @@ export function DocumentCard({
               </div>
             )}
             
-            {isCompleted && riskScore !== undefined && clauses !== undefined && (
+            {isCompleted && riskScore !== undefined && (
               <div className="flex flex-col gap-2 mt-4">
                 <div className="flex items-center gap-4">
-                  <div className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
-                    {clauses} clauses identified
-                  </div>
+                  {clauses !== undefined && (
+                    <div className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
+                      {clauses} clauses identified
+                    </div>
+                  )}
                 </div>
                 
                 {parties && parties.length > 0 && (
@@ -132,6 +159,28 @@ export function DocumentCard({
                   <p className="text-sm text-bento-gray-600 dark:text-bento-gray-400 line-clamp-2 mt-1">
                     {summary}
                   </p>
+                )}
+                
+                {keyFindings && keyFindings.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-xs font-medium text-bento-gray-600 dark:text-bento-gray-400">Key findings:</p>
+                    <div className="flex gap-1 mt-1 flex-wrap">
+                      {keyFindings.slice(0, 2).map((finding, idx) => (
+                        <Badge 
+                          key={idx} 
+                          variant={finding.riskLevel === 'low' ? 'success' : finding.riskLevel === 'medium' ? 'warning' : 'destructive'}
+                          className="text-xs"
+                        >
+                          {finding.title}
+                        </Badge>
+                      ))}
+                      {keyFindings.length > 2 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{keyFindings.length - 2} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -180,4 +229,3 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
     </Badge>
   );
 }
-

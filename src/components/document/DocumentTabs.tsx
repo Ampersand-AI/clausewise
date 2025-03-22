@@ -10,6 +10,7 @@ type Document = {
   title: string;
   date: string;
   status: "analyzing" | "completed" | "error";
+  progress?: number;
   riskScore?: number;
   clauses?: number;
   summary?: string;
@@ -91,6 +92,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
                 date={contract.date}
                 status="completed"
                 riskScore={contract.riskScore}
+                clauses={contract.riskAnalysis.length}
                 keyFindings={contract.riskAnalysis}
                 onDelete={onDelete}
               />
