@@ -38,7 +38,8 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
       const response = await api.get(`/documents/${id}`);
       console.log("info: GET request to /documents/" + id);
       console.log("info: Fetched document:", response.data);
-      return response.data;
+      // Ensure we're returning a properly typed Document object
+      return response.data as Document;
     },
     retry: 1,
   });

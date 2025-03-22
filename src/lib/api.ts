@@ -24,7 +24,7 @@ class ApiClient {
       const id = endpoint.split("/").pop();
       return {
         data: {
-          id: id,
+          id: id || "",
           name: "Sample Agreement",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
