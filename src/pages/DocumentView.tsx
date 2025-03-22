@@ -1,3 +1,5 @@
+
+import { useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +36,8 @@ import {
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 // Define document data types
 type AnalyzingDocument = {
@@ -79,6 +83,7 @@ const DocumentView = () => {
   const [loading, setLoading] = useState(true);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const documentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -161,6 +166,53 @@ const DocumentView = () => {
     }
   };
   
+  const handleDownloadPDF = async () => {
+    if (!document || document.status !== "completed" || !documentRef.current) {
+      toast({
+        title: "Error",
+        description: "Unable to generate PDF at this time",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      toast({
+        title: "Generating PDF",
+        description: "Please wait while we prepare your document...",
+      });
+      
+      const element = documentRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: "#121212",
+        logging: false
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`${document.title.replace(/\s+/g, '_')}_analysis.pdf`);
+      
+      toast({
+        title: "PDF Downloaded",
+        description: "Your document analysis has been downloaded as a PDF",
+      });
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast({
+        title: "Error",
+        description: "There was an error generating the PDF",
+        variant: "destructive"
+      });
+    }
+  };
+  
   if (loading) {
     return (
       <AppLayout>
@@ -172,7 +224,7 @@ const DocumentView = () => {
               <FileText className="h-8 w-8 text-primary animate-pulse" />
             </div>
           </div>
-          <p className="text-muted-foreground">Retrieving document details...</p>
+          <p className="text-slate-400">Retrieving document details...</p>
         </div>
       </AppLayout>
     );
@@ -182,12 +234,12 @@ const DocumentView = () => {
     return (
       <AppLayout>
         <div className="container px-4 py-16 mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Document Not Found</h1>
-          <p className="text-muted-foreground mb-6">
+          <h1 className="text-2xl font-bold mb-4 text-white">Document Not Found</h1>
+          <p className="text-slate-400 mb-6">
             The document you're looking for doesn't exist or has been removed.
           </p>
           <Link to="/dashboard">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 bg-slate-800 border-slate-700 text-white hover:bg-slate-700">
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
@@ -204,16 +256,16 @@ const DocumentView = () => {
         <div className="container px-4 py-8 mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1">
+              <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-slate-800">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
             </Link>
-            <div className="h-6 border-l border-border"></div>
-            <h1 className="text-2xl font-bold">{document.title}</h1>
+            <div className="h-6 border-l border-slate-700"></div>
+            <h1 className="text-2xl font-bold text-white">{document.title}</h1>
           </div>
           
-          <Card className="p-10 text-center">
+          <Card className="p-10 text-center bg-[#1A1F2C] border-slate-700">
             <div className="max-w-md mx-auto">
               <div className="relative w-24 h-24 mx-auto mb-6">
                 {/* AI-inspired circular rings animation */}
@@ -221,16 +273,16 @@ const DocumentView = () => {
                 <div className="absolute inset-[-4px] border-2 border-primary/30 border-dashed rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>
                 <div className="absolute inset-[-8px] border-2 border-primary/20 border-dashed rounded-full animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-background rounded-full p-3">
+                  <div className="bg-[#121212] rounded-full p-3">
                     <FileText className="h-8 w-8 text-primary animate-pulse" />
                   </div>
                 </div>
               </div>
-              <h2 className="text-xl font-medium mb-3">AI analyzing document...</h2>
-              <p className="text-muted-foreground mb-6">
+              <h2 className="text-xl font-medium mb-3 text-white">AI analyzing document...</h2>
+              <p className="text-slate-400 mb-6">
                 Our AI is processing and extracting insights from your document. This may take a few moments.
               </p>
-              <div className="relative h-2 mb-2 overflow-hidden rounded-full bg-primary/10">
+              <div className="relative h-2 mb-2 overflow-hidden rounded-full bg-slate-800">
                 <div className="absolute inset-0 flex">
                   <div className="w-1/2 bg-gradient-to-r from-primary to-violet-600"></div>
                   <div className="w-1/2 bg-gradient-to-r from-violet-600 to-primary"></div>
@@ -238,7 +290,7 @@ const DocumentView = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                 <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }}></div>
               </div>
-              <p className="text-sm text-muted-foreground">{document.progress}% complete</p>
+              <p className="text-sm text-slate-400">{document.progress}% complete</p>
             </div>
           </Card>
         </div>
@@ -253,31 +305,31 @@ const DocumentView = () => {
         <div className="container px-4 py-8 mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1">
+              <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-slate-800">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
             </Link>
-            <div className="h-6 border-l border-border"></div>
-            <h1 className="text-2xl font-bold">{document.title}</h1>
+            <div className="h-6 border-l border-slate-700"></div>
+            <h1 className="text-2xl font-bold text-white">{document.title}</h1>
             
             <div className="ml-auto">
               <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1 text-destructive">
+                  <Button variant="outline" size="sm" className="gap-1 bg-transparent border-destructive text-destructive hover:bg-destructive/10">
                     <Trash2 className="h-4 w-4" />
                     Delete
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="bg-[#1A1F2C] border-slate-700 text-white">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="text-slate-400">
                       This action cannot be undone. This will permanently delete the document.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="bg-slate-800 text-white hover:bg-slate-700">Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                       Delete
                     </AlertDialogAction>
@@ -287,17 +339,17 @@ const DocumentView = () => {
             </div>
           </div>
           
-          <Card className="p-10 text-center">
+          <Card className="p-10 text-center bg-[#1A1F2C] border-slate-700">
             <div className="max-w-md mx-auto">
               <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="h-8 w-8 text-destructive" />
               </div>
-              <h2 className="text-xl font-medium mb-3">Analysis Error</h2>
-              <p className="text-muted-foreground mb-6">
+              <h2 className="text-xl font-medium mb-3 text-white">Analysis Error</h2>
+              <p className="text-slate-400 mb-6">
                 There was an error analyzing this document. Please try uploading it again.
               </p>
               <Link to="/dashboard">
-                <Button>Return to Dashboard</Button>
+                <Button className="bg-slate-800 text-white hover:bg-slate-700">Return to Dashboard</Button>
               </Link>
             </div>
           </Card>
@@ -309,19 +361,28 @@ const DocumentView = () => {
   // Handle completed document (type is now narrowed to CompletedDocument)
   const completedDoc = document as CompletedDocument;
   const keyFindings = completedDoc.keyFindings || [];
+
+  // Format date to include time
+  const formattedDate = new Date(completedDoc.date).toLocaleString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
   
   return (
     <AppLayout>
-      <div className="container px-4 py-8 mx-auto">
+      <div ref={documentRef} className="container px-4 py-8 mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <Link to="/dashboard">
-            <Button variant="ghost" size="sm" className="gap-1">
+            <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-slate-800">
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
           </Link>
-          <div className="h-6 border-l border-border"></div>
-          <h1 className="text-2xl font-bold">{completedDoc.title}</h1>
+          <div className="h-6 border-l border-slate-700"></div>
+          <h1 className="text-2xl font-bold text-white">{completedDoc.title}</h1>
           
           <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
             <AlertDialogTrigger asChild>
@@ -329,15 +390,15 @@ const DocumentView = () => {
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-[#1A1F2C] border-slate-700 text-white">
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription className="text-slate-400">
                   This action cannot be undone. This will permanently delete the document.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-slate-800 text-white hover:bg-slate-700">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   Delete
                 </AlertDialogAction>
@@ -349,24 +410,20 @@ const DocumentView = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left sidebar - Document info */}
           <div className="space-y-6">
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden bg-[#1A1F2C] border-slate-700 text-white">
               <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Document Information</h2>
                 
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-muted-foreground mb-1">Date</div>
-                    <div>
-                      {new Date(completedDoc.date).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                    <div className="text-sm text-slate-400 mb-1">Date & Time</div>
+                    <div className="text-slate-200">
+                      {formattedDate}
                     </div>
                   </div>
                   
                   <div>
-                    <div className="text-sm text-muted-foreground mb-1">Risk Assessment</div>
+                    <div className="text-sm text-slate-400 mb-1">Risk Assessment</div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">
@@ -380,13 +437,13 @@ const DocumentView = () => {
                       </div>
                       <Progress 
                         value={completedDoc.riskScore} 
-                        className="h-2"
+                        className="h-2 bg-slate-800"
                         indicatorClassName={
                           completedDoc.riskScore < 30 
-                            ? "bg-success" 
+                            ? "bg-green-500" 
                             : completedDoc.riskScore < 70 
-                              ? "bg-warning" 
-                              : "bg-destructive"
+                              ? "bg-yellow-500" 
+                              : "bg-red-500"
                         }
                       />
                     </div>
@@ -394,8 +451,8 @@ const DocumentView = () => {
                   
                   {completedDoc.parties && completedDoc.parties.length > 0 && (
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Parties</div>
-                      <div className="space-y-1">
+                      <div className="text-sm text-slate-400 mb-1">Parties</div>
+                      <div className="space-y-1 text-slate-200">
                         {completedDoc.parties.map((party, index) => (
                           <div key={index} className="text-sm">{party}</div>
                         ))}
@@ -405,8 +462,8 @@ const DocumentView = () => {
                   
                   {completedDoc.jurisdiction && (
                     <div className="flex items-center gap-2">
-                      <div className="text-sm text-muted-foreground">Jurisdiction:</div>
-                      <Badge variant="outline" className="gap-1">
+                      <div className="text-sm text-slate-400">Jurisdiction:</div>
+                      <Badge variant="outline" className="gap-1 bg-slate-800 border-slate-600 text-slate-200">
                         <Globe className="h-3 w-3" />
                         <span>{completedDoc.jurisdiction}</span>
                       </Badge>
@@ -415,46 +472,29 @@ const DocumentView = () => {
                 </div>
               </div>
               
-              <div className="border-t border-border p-4">
-                <Button className="w-full gap-2" variant="outline">
+              <div className="border-t border-slate-700 p-4">
+                <Button 
+                  className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" 
+                  onClick={handleDownloadPDF}
+                >
                   <Download className="h-4 w-4" />
                   Download Analysis
                 </Button>
               </div>
             </Card>
             
-            {completedDoc.summary && (
-              <Card>
-                <div className="p-6">
-                  <h2 className="text-lg font-semibold mb-3">Document Summary</h2>
-                  {completedDoc.title && (
-                    <h3 className="font-medium text-md mb-3">{completedDoc.title}</h3>
-                  )}
-                  {completedDoc.intent && (
-                    <div className="mb-3">
-                      <span className="text-sm font-medium">Intent: </span>
-                      <span className="text-sm text-muted-foreground">{completedDoc.intent}</span>
-                    </div>
-                  )}
-                  <p className="text-sm text-muted-foreground">
-                    {completedDoc.summary}
-                  </p>
-                </div>
-              </Card>
-            )}
-            
-            <Card>
+            <Card className="bg-[#1A1F2C] border-slate-700 text-white">
               <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Key Information</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <FileText className="h-4 w-4 text-primary" />
+                    <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
+                      <FileText className="h-4 w-4 text-indigo-400" />
                     </div>
                     <div>
                       <div className="text-sm font-medium">Document Type</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-slate-400">
                         {completedDoc.title.includes("Service") 
                           ? "Service Agreement" 
                           : completedDoc.title.includes("Non-Disclosure") 
@@ -469,24 +509,24 @@ const DocumentView = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Info className="h-4 w-4 text-primary" />
+                    <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
+                      <Info className="h-4 w-4 text-indigo-400" />
                     </div>
                     <div>
                       <div className="text-sm font-medium">Clauses Identified</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-slate-400">
                         {completedDoc.clauses} clauses found
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <AlertTriangle className="h-4 w-4 text-primary" />
+                    <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
+                      <AlertTriangle className="h-4 w-4 text-indigo-400" />
                     </div>
                     <div>
                       <div className="text-sm font-medium">High Risk Items</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-slate-400">
                         {keyFindings.filter(c => c.riskLevel === "high").length} issues found
                       </div>
                     </div>
@@ -498,38 +538,37 @@ const DocumentView = () => {
           
           {/* Main content - Clauses */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="analysis">
-              <TabsList className="mb-6">
-                <TabsTrigger value="analysis">Analysis</TabsTrigger>
-                <TabsTrigger value="summary">Summary</TabsTrigger>
-                <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+            <Tabs defaultValue="analysis" className="text-white">
+              <TabsList className="mb-6 bg-slate-800">
+                <TabsTrigger value="analysis" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Analysis</TabsTrigger>
+                <TabsTrigger value="summary" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Summary</TabsTrigger>
               </TabsList>
               
               <TabsContent value="analysis" className="space-y-6">
                 <div className="space-y-4">
                   {keyFindings.length > 0 ? (
                     keyFindings.map((clause, index) => (
-                      <Card key={index} className="overflow-hidden">
+                      <Card key={index} className="overflow-hidden bg-[#1A1F2C] border-slate-700 text-white">
                         <div className="p-6">
                           <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold">{clause.title}</h3>
+                            <h3 className="font-semibold text-white">{clause.title}</h3>
                             <RiskBadge level={clause.riskLevel} />
                           </div>
                           
-                          <div className="text-sm text-muted-foreground mb-4">
+                          <div className="text-sm text-slate-400 mb-4">
                             {clause.description}
                           </div>
                           
                           {/* Extracted Text Section */}
                           {clause.extractedText && (
                             <div className="mb-4">
-                              <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                              <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-slate-200">
                                 <span>Extracted Text</span>
                                 <HoverCard>
                                   <HoverCardTrigger asChild>
-                                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                    <HelpCircle className="h-4 w-4 text-slate-400 cursor-help" />
                                   </HoverCardTrigger>
-                                  <HoverCardContent className="w-80">
+                                  <HoverCardContent className="w-80 bg-slate-900 border-slate-700 text-slate-200">
                                     <p className="text-sm">
                                       This is the actual text extracted from your document that our AI identified as relevant to this issue.
                                     </p>
@@ -537,17 +576,17 @@ const DocumentView = () => {
                                 </HoverCard>
                               </h4>
                               <div className="relative">
-                                <div className="bg-muted p-3 rounded-md text-sm italic border-l-4 border-primary/30">
+                                <div className="bg-slate-800 p-3 rounded-md text-sm italic border-l-4 border-indigo-600/30 text-slate-300">
                                   "{clause.extractedText}"
                                 </div>
                                 <Button 
                                   size="sm" 
                                   variant="ghost" 
-                                  className="absolute top-1 right-1 h-8 w-8 p-0"
+                                  className="absolute top-1 right-1 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-700"
                                   onClick={() => copyToClipboard(clause.extractedText || "", index)}
                                 >
                                   {copiedIndex === index ? (
-                                    <CheckCheck className="h-4 w-4 text-success" />
+                                    <CheckCheck className="h-4 w-4 text-green-500" />
                                   ) : (
                                     <Copy className="h-4 w-4" />
                                   )}
@@ -556,43 +595,43 @@ const DocumentView = () => {
                             </div>
                           )}
                           
-                          {/* Mitigation Options */}
+                          {/* Mitigation Options - Show only 2 */}
                           {clause.mitigationOptions && clause.mitigationOptions.length > 0 && clause.riskLevel !== 'low' && (
                             <div>
-                              <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                              <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-slate-200">
                                 <span>Suggested Alternatives</span>
                                 <HoverCard>
                                   <HoverCardTrigger asChild>
-                                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                    <HelpCircle className="h-4 w-4 text-slate-400 cursor-help" />
                                   </HoverCardTrigger>
-                                  <HoverCardContent className="w-80">
+                                  <HoverCardContent className="w-80 bg-slate-900 border-slate-700 text-slate-200">
                                     <p className="text-sm">
-                                      These are AI-suggested ways to mitigate or rephrase the problematic clause in your document.
+                                      These are AI-suggested alternatives for the problematic clause in your document.
                                     </p>
                                   </HoverCardContent>
                                 </HoverCard>
                               </h4>
                               <div className="space-y-2">
-                                {clause.mitigationOptions.map((option, optionIndex) => (
+                                {clause.mitigationOptions.slice(0, 2).map((option, optionIndex) => (
                                   <div key={optionIndex} className="relative">
-                                    <div className="rounded-md border border-border p-3 bg-background text-sm">
+                                    <div className="rounded-md border border-slate-700 p-3 bg-slate-800 text-sm">
                                       <div className="flex gap-2 items-start">
                                         <div className="mt-0.5">
-                                          <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                                          <div className="h-4 w-4 rounded-full bg-indigo-600/10 flex items-center justify-center flex-shrink-0">
+                                            <div className="h-1.5 w-1.5 rounded-full bg-indigo-400"></div>
                                           </div>
                                         </div>
-                                        <div>{option}</div>
+                                        <div className="text-slate-300">{option}</div>
                                       </div>
                                     </div>
                                     <Button 
                                       size="sm" 
                                       variant="ghost" 
-                                      className="absolute top-1 right-1 h-8 w-8 p-0"
+                                      className="absolute top-1 right-1 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-700"
                                       onClick={() => copyToClipboard(option, index * 100 + optionIndex)}
                                     >
                                       {copiedIndex === (index * 100 + optionIndex) ? (
-                                        <CheckCheck className="h-4 w-4 text-success" />
+                                        <CheckCheck className="h-4 w-4 text-green-500" />
                                       ) : (
                                         <Copy className="h-4 w-4" />
                                       )}
@@ -603,11 +642,11 @@ const DocumentView = () => {
                             </div>
                           )}
                           
-                          <Separator className="my-4" />
+                          <Separator className="my-4 bg-slate-700" />
                           
-                          <div className="bg-muted p-3 rounded-md flex gap-3">
-                            <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
-                            <div className="text-sm">
+                          <div className="bg-slate-800 p-3 rounded-md flex gap-3">
+                            <Sparkles className="h-5 w-5 text-indigo-400 flex-shrink-0" />
+                            <div className="text-sm text-slate-300">
                               <span className="font-medium">Recommendation: </span>
                               {clause.riskLevel === "high" 
                                 ? "Review this clause carefully and consider renegotiation."
@@ -620,8 +659,8 @@ const DocumentView = () => {
                       </Card>
                     ))
                   ) : (
-                    <Card className="p-6 text-center">
-                      <p className="text-muted-foreground">
+                    <Card className="p-6 text-center bg-[#1A1F2C] border-slate-700">
+                      <p className="text-slate-400">
                         No key findings available for this document.
                       </p>
                     </Card>
@@ -630,51 +669,51 @@ const DocumentView = () => {
               </TabsContent>
               
               <TabsContent value="summary">
-                <Card className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Document Summary</h3>
+                <Card className="p-6 bg-[#1A1F2C] border-slate-700">
+                  <h3 className="text-lg font-semibold mb-4 text-white">Document Summary</h3>
                   
                   {completedDoc.summary ? (
-                    <div className="mb-6 p-4 bg-muted/50 rounded-lg border border-border">
+                    <div className="mb-6 p-4 bg-slate-800 rounded-lg border border-slate-700">
                       <div className="flex gap-3">
-                        <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                        <p className="text-muted-foreground">
+                        <Info className="h-5 w-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-slate-300">
                           {completedDoc.summary}
                         </p>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-slate-400 mb-4">
                       This document contains {completedDoc.clauses} key clauses identified by our analysis.
                     </p>
                   )}
                   
                   {completedDoc.jurisdiction && (
-                    <div className="mb-4 p-3 bg-primary/5 rounded-lg flex items-center gap-3">
-                      <Globe className="h-5 w-5 text-primary" />
+                    <div className="mb-4 p-3 bg-slate-800 rounded-lg flex items-center gap-3">
+                      <Globe className="h-5 w-5 text-indigo-400" />
                       <div>
-                        <div className="text-sm font-medium">Governing Law</div>
-                        <div className="text-sm text-muted-foreground">{completedDoc.jurisdiction}</div>
+                        <div className="text-sm font-medium text-white">Governing Law</div>
+                        <div className="text-sm text-slate-400">{completedDoc.jurisdiction}</div>
                       </div>
                     </div>
                   )}
                   
                   {keyFindings.length > 0 && (
                     <>
-                      <p className="text-muted-foreground mb-2">Key clauses include:</p>
+                      <p className="text-slate-400 mb-2">Key clauses include:</p>
                       <ul className="space-y-2 mb-4">
                         {keyFindings.map((finding, index) => (
                           <li key={index} className="flex items-start gap-2">
-                            <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                            <div className="h-5 w-5 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="h-1.5 w-1.5 rounded-full bg-indigo-400"></div>
                             </div>
-                            <span>{finding.title}</span>
+                            <span className="text-slate-300">{finding.title}</span>
                           </li>
                         ))}
                       </ul>
                     </>
                   )}
                   
-                  <p className="text-muted-foreground">
+                  <p className="text-slate-400">
                     Overall risk assessment indicates this is a 
                     {completedDoc.riskScore < 30 
                       ? " low-risk" 
@@ -690,80 +729,6 @@ const DocumentView = () => {
                   </p>
                 </Card>
               </TabsContent>
-              
-              <TabsContent value="recommendations" className="space-y-6">
-                <Card className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Key Recommendations</h3>
-                  
-                  <div className="space-y-4">
-                    {keyFindings.filter(clause => clause.riskLevel !== "low").length > 0 ? (
-                      keyFindings
-                        .filter(clause => clause.riskLevel !== "low")
-                        .map((clause, index) => (
-                          <div key={index} className="p-4 rounded-lg border border-border">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-medium">{clause.title}</h4>
-                              <RiskBadge level={clause.riskLevel} />
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-3">
-                              {clause.description}
-                            </p>
-                            
-                            {/* Extracted Text for Recommendation */}
-                            {clause.extractedText && (
-                              <div className="mb-3 bg-muted/50 p-3 rounded-md text-sm italic">
-                                <div className="flex gap-2">
-                                  <div className="text-muted-foreground font-medium">Current:</div>
-                                  <div>"{clause.extractedText}"</div>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {/* Suggested Alternatives in Recommendations */}
-                            {clause.mitigationOptions && clause.mitigationOptions.length > 0 && (
-                              <div className="space-y-2 mb-3">
-                                <div className="text-sm font-medium">Suggested Alternatives:</div>
-                                {clause.mitigationOptions.map((option, optionIndex) => (
-                                  <div key={optionIndex} className="flex gap-2 items-start bg-background p-2 rounded-md border border-border text-sm">
-                                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-                                    <div>{option}</div>
-                                    <Button 
-                                      size="sm" 
-                                      variant="ghost" 
-                                      className="ml-auto h-6 w-6 p-0"
-                                      onClick={() => copyToClipboard(option, index * 1000 + optionIndex)}
-                                    >
-                                      {copiedIndex === (index * 1000 + optionIndex) ? (
-                                        <CheckCheck className="h-3 w-3 text-success" />
-                                      ) : (
-                                        <Copy className="h-3 w-3" />
-                                      )}
-                                    </Button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            
-                            <div className="bg-muted p-3 rounded-md flex gap-3">
-                              <Sparkles className="h-5 w-5 text-secondary flex-shrink-0" />
-                              <div className="text-sm">
-                                {clause.riskLevel === "high"
-                                  ? "Consider renegotiating these terms or seeking legal advice."
-                                  : "Review and potentially clarify these terms before proceeding."}
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                    ) : (
-                      <div className="text-center py-6">
-                        <p className="text-muted-foreground">
-                          No significant issues found in this document.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -775,7 +740,7 @@ const DocumentView = () => {
 function RiskBadge({ level }: { level: string }) {
   if (level === "low") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400">
+      <Badge variant="outline" className="text-xs font-normal border-green-600 bg-green-950/20 text-green-400">
         Low Risk
       </Badge>
     );
@@ -783,14 +748,14 @@ function RiskBadge({ level }: { level: string }) {
   
   if (level === "medium") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400">
+      <Badge variant="outline" className="text-xs font-normal border-yellow-600 bg-yellow-950/20 text-yellow-400">
         Medium Risk
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-normal border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
+    <Badge variant="outline" className="text-xs font-normal border-red-600 bg-red-950/20 text-red-400">
       High Risk
     </Badge>
   );

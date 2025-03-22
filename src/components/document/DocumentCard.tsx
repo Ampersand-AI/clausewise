@@ -39,6 +39,15 @@ export function DocumentCard({
   const summary = isCompleted ? (props as { summary?: string }).summary : undefined;
   const parties = isCompleted ? (props as { parties?: string[] }).parties : undefined;
 
+  // Format date to show time as well
+  const formattedDate = new Date(date).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
   return (
     <Link 
       to={`/document/${id}`}
@@ -63,11 +72,7 @@ export function DocumentCard({
           </h3>
           <div className="flex items-center gap-3 mt-1">
             <span className="text-sm text-muted-foreground">
-              {new Date(date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
+              {formattedDate}
             </span>
             <StatusBadge status={status} />
           </div>

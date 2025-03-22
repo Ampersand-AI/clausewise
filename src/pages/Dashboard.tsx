@@ -1,12 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
-import { Upload, Image, FileText, Mic, Send, Plus, FileUp, Trash2, ListFilter } from "lucide-react";
+import { Upload, FileText, Mic, Send, ListFilter, Trash2, MicOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { analyzeDocument, DocumentAnalysisResult } from "@/utils/documentAnalysis";
+import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
 import { 
   AlertDialog,
@@ -61,7 +61,74 @@ const Dashboard = () => {
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [documentText, setDocumentText] = useState("");
   const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
   const { toast } = useToast();
+  
+  // Voice recognition setup
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  
+  // Initialize speech recognition
+  useEffect(() => {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      
+      recognitionRef.current.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('');
+        
+        setDocumentText(transcript);
+      };
+      
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setIsRecording(false);
+        toast({
+          title: "Voice recognition error",
+          description: `Error: ${event.error}. Please try again.`,
+          variant: "destructive",
+        });
+      };
+    }
+    
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [toast]);
+  
+  const toggleRecording = () => {
+    if (!recognitionRef.current) {
+      toast({
+        title: "Voice recognition not supported",
+        description: "Your browser doesn't support voice recognition.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+      toast({
+        title: "Voice recording stopped",
+        description: "You can now edit the transcribed text or analyze it.",
+      });
+    } else {
+      setDocumentText("");
+      recognitionRef.current.start();
+      setIsRecording(true);
+      toast({
+        title: "Voice recording started",
+        description: "Speak clearly into your microphone. The text will appear as you speak.",
+      });
+    }
+  };
 
   // Load documents from localStorage on initial render
   useEffect(() => {
@@ -240,6 +307,10 @@ const Dashboard = () => {
       clearInterval(analysisInterval);
       setIsAnalyzing(false);
       setDocumentText("");
+      setIsRecording(false);
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
     }
   };
 
@@ -281,29 +352,29 @@ const Dashboard = () => {
         </div>
 
         {/* Chat-like interface */}
-        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-lg shadow-lg overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div className="w-full max-w-2xl bg-[#1A1F2C] rounded-lg shadow-lg overflow-hidden border border-slate-800">
           {isAnalyzing ? (
             <div className="p-6 space-y-4">
-              <h3 className="text-lg font-medium text-center">Analyzing Document...</h3>
+              <h3 className="text-lg font-medium text-center text-white">Analyzing Document...</h3>
               <div className="relative pt-1">
-                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-slate-200 dark:bg-slate-700">
+                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-slate-700">
                   <div 
                     className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-[length:200%_200%] animate-[shimmer_2s_infinite]" 
                     style={{ width: `${analysisProgress}%` }}
                   ></div>
                 </div>
-                <div className="text-sm text-center mt-2 text-slate-600 dark:text-slate-400">
+                <div className="text-sm text-center mt-2 text-slate-400">
                   {analysisProgress}% - Extracting information and analyzing content
                 </div>
               </div>
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 p-4">
-                <h3 className="font-medium">Analyze Document</h3>
+              <div className="flex items-center justify-between border-b border-slate-800 p-4">
+                <h3 className="font-medium text-white">Analyze Legal Document or Clauses</h3>
                 <div className="flex space-x-2">
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <div className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400">
+                    <div className="p-2 rounded-md hover:bg-slate-800 text-indigo-400">
                       <Upload className="h-5 w-5" />
                     </div>
                     <input 
@@ -319,27 +390,27 @@ const Dashboard = () => {
               <div className="p-4">
                 <Textarea 
                   placeholder="Paste your legal document text here for analysis..."
-                  className="min-h-[200px] text-sm focus:ring-indigo-500 resize-none"
+                  className="min-h-[200px] text-sm focus:ring-indigo-500 resize-none bg-slate-800 text-slate-200 border-slate-700"
                   value={documentText}
                   onChange={(e) => setDocumentText(e.target.value)}
                 />
               </div>
-              <div className="border-t border-slate-200 dark:border-slate-800 p-4 flex justify-between items-center">
-                <div className="flex space-x-2">
-                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400">
-                    <Image className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400">
-                    <Mic className="h-4 w-4" />
+              <div className="border-t border-slate-800 p-4 flex justify-between items-center">
+                <div>
+                  <Button 
+                    variant={isRecording ? "destructive" : "ghost"} 
+                    size="sm" 
+                    className={isRecording ? "text-white" : "text-indigo-400"}
+                    onClick={toggleRecording}
+                  >
+                    {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
+                    {isRecording ? "Stop" : "Record"}
                   </Button>
                 </div>
                 <Button 
                   onClick={() => analyzeTextDocument(documentText)}
                   disabled={!documentText.trim() || documentText.trim().length < 50}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
                 >
                   <Send className="h-4 w-4 mr-1" /> Analyze
                 </Button>
@@ -352,8 +423,8 @@ const Dashboard = () => {
         {documents.length > 0 && (
           <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">Recent Documents</h2>
-              <Button variant="outline" size="sm" className="gap-1 text-slate-600 dark:text-slate-400">
+              <h2 className="text-xl font-semibold text-slate-200">Recent Documents</h2>
+              <Button variant="outline" size="sm" className="gap-1 text-slate-400 border-slate-700 bg-slate-800 hover:bg-slate-700">
                 <ListFilter className="h-4 w-4" />
                 Filter
               </Button>
@@ -365,7 +436,7 @@ const Dashboard = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 text-destructive border-destructive hover:bg-destructive hover:text-white"
+                    className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/80 text-destructive border-destructive hover:bg-destructive hover:text-white"
                     onClick={() => setDocumentToDelete(doc.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -378,15 +449,15 @@ const Dashboard = () => {
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-slate-900 border-slate-700 text-white">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-slate-400">
               This action cannot be undone. This will permanently delete the document.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-slate-800 text-white hover:bg-slate-700">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => documentToDelete && handleDeleteDocument(documentToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
