@@ -24,7 +24,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ModeToggle from "@/components/contract/ModeToggle";
-import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
+import ContractChat from "@/components/contract/ContractChat";
+import { GeneratedContract } from "@/components/contract/ContractForm";
 import DocumentTabs from "@/components/document/DocumentTabs";
 
 // Define document types
@@ -439,10 +440,14 @@ const Dashboard = () => {
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
           <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-lovable-gradient shadow-sm overflow-hidden">
-            <div className="w-full h-full bg-lovable-gradient opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
+            <img 
+              src="/lovable-uploads/685f9d8f-3d98-458c-82d3-043a700e63d0.png" 
+              alt="Lawbit Logo" 
+              className="h-full w-full object-contain"
+            />
           </div>
           <h1 className="text-3xl font-bold text-center lovable-text-gradient">
-            ClauseCrush
+            Lawbit
           </h1>
           <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
             Create and analyze legal documents with AI. Draft contracts or upload existing documents.
@@ -480,7 +485,7 @@ const Dashboard = () => {
                 {mode === "create" ? (
                   <div className="p-4">
                     <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-4 text-center">Create Legal Contract</h3>
-                    <ContractForm onGenerate={handleGenerateContract} />
+                    <ContractChat onGenerate={handleGenerateContract} />
                   </div>
                 ) : (
                   <div className="p-4">
@@ -599,7 +604,7 @@ const Dashboard = () => {
             <DocumentTabs 
               documents={filteredDocuments} 
               contracts={contracts}
-              onDelete={handleDeleteDocument}
+              onDelete={setDocumentToDelete}
             />
           </div>
         )}
