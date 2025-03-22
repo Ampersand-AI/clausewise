@@ -5,29 +5,29 @@
 
 @layer base {
   :root {
-    --background: 210 30% 98%;
-    --foreground: 225 15% 15%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 225 15% 15%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 225 15% 15%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 260 83% 65%;
+    --primary: 246 76% 67%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 5% 65%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 246 76% 96%;
+    --accent-foreground: 246 76% 50%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 210 40% 98%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
@@ -35,46 +35,46 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 246 76% 67%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-foreground: 246 76% 25%;
+    --sidebar-primary: 246 76% 67%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 260 83% 96%;
-    --sidebar-accent-foreground: 260 83% 45%;
+    --sidebar-accent: 246 76% 96%;
+    --sidebar-accent-foreground: 246 76% 50%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 260 83% 65%;
+    --sidebar-ring: 246 76% 67%;
   }
 
   .dark {
-    --background: 225 15% 10%;
-    --foreground: 0 0% 98%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 228 12% 13%;
-    --card-foreground: 0 0% 98%;
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 225 15% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 260 80% 70%;
+    --primary: 246 76% 67%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 5% 30%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 228 10% 16%;
-    --muted-foreground: 228 5% 70%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 228 12% 20%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 246 76% 25%;
+    --accent-foreground: 246 76% 80%;
 
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 210 40% 98%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
@@ -82,18 +82,18 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 228 12% 18%;
-    --input: 228 12% 18%;
-    --ring: 240 4.9% 83.9%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 246 76% 67%;
 
-    --sidebar-background: 225 15% 12%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 260 80% 70%;
+    --sidebar-background: 222 47% 13%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 246 76% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 80% 22%;
-    --sidebar-accent-foreground: 260 80% 80%;
-    --sidebar-border: 228 14% 20%;
-    --sidebar-ring: 260 80% 70%;
+    --sidebar-accent: 246 76% 25%;
+    --sidebar-accent-foreground: 246 76% 80%;
+    --sidebar-border: 222 47% 20%;
+    --sidebar-ring: 246 76% 67%;
   }
 }
 
@@ -144,11 +144,11 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 .bg-primary-gradient {
-  @apply bg-gradient-to-r from-purple-500 via-violet-500 to-purple-600;
+  @apply bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600;
 }
 
 .bg-primary-gradient-hover {
-  @apply bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700;
+  @apply bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700;
 }
 
 .card-shine {
