@@ -19,7 +19,7 @@ export function HeroGeometric({
   className,
 }: HeroGeometricProps) {
   return (
-    <div className={cn("relative overflow-hidden py-20 md:py-32", className)}>
+    <div className={cn("relative py-20 md:py-32", className)}>
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center space-y-8 text-center">
           {badge && (

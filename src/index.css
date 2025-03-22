@@ -29,32 +29,12 @@
 }
 
 @layer components {
-  .startup-nav {
-    @apply bg-white border-b border-gray-200;
-  }
-  
   .startup-button {
     @apply inline-flex h-10 items-center justify-center gap-2 rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
   }
   
   .startup-button-outline {
     @apply inline-flex h-10 items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
-  }
-  
-  .startup-section {
-    @apply py-20;
-  }
-  
-  .startup-card {
-    @apply rounded-xl border border-gray-200 bg-white p-6 shadow-sm;
-  }
-  
-  .startup-gradient-text {
-    @apply text-black;
-  }
-  
-  .startup-hero {
-    @apply relative overflow-hidden;
   }
 }
 
