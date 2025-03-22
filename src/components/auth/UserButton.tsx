@@ -11,10 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function UserButton() {
   const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
   
   if (loading) {
     return (
@@ -38,7 +39,7 @@ export function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 rounded-full glow-effect">
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full glow-effect animate-glow">
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
             <AvatarFallback className="bg-orange-brown-gradient text-white">{userInitials}</AvatarFallback>
@@ -53,19 +54,19 @@ export function UserButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => window.location.href = '/profile'}>
+        <DropdownMenuItem onClick={() => navigate('/profile')}>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => window.location.href = '/settings'}>
+        <DropdownMenuItem onClick={() => navigate('/settings')}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Account Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => window.location.href = '/subscription'}>
+        <DropdownMenuItem onClick={() => navigate('/subscription')}>
           <CreditCard className="mr-2 h-4 w-4" />
           <span>Subscription</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => window.location.href = '/support'}>
+        <DropdownMenuItem onClick={() => navigate('/support')}>
           <HelpCircle className="mr-2 h-4 w-4" />
           <span>Help & Support</span>
         </DropdownMenuItem>

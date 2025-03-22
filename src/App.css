@@ -72,6 +72,49 @@ body {
   box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
 }
 
+/* Animated glow */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(249, 115, 22, 0.7);
+  }
+}
+
+.animate-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Usage stats styling */
+.usage-stat-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.05) 100%);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(249, 115, 22, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.usage-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
+}
+
+.usage-progress {
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: rgba(249, 115, 22, 0.1);
+  margin-top: 8px;
+}
+
+.usage-progress-bar {
+  height: 100%;
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
 /* Orange-brown gradient button */
 .orange-brown-button {
   background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
