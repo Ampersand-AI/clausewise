@@ -1,9 +1,8 @@
-
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain, FileText, ListChecks, Shield, Scale, BookOpen, Sparkles, Star, Check } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ModeToggle } from "@/components/mode-toggle";
+import { HeroGeometric } from "@/components/ui/shape-landing-hero";
 
 const Index = () => {
   return (
@@ -37,42 +36,13 @@ const Index = () => {
         </div>
       </nav>
       
-      {/* Hero Section */}
-      <section className="startup-hero pt-32 pb-20">
-        <div className="container mx-auto px-4 text-center">
-          <div className="inline-block mb-4 rounded-full bg-gray-800 px-3 py-1 text-sm font-medium text-orange-500">
-            AI-Powered Legal Documents
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
-            Transform Legal Documents with <span className="startup-gradient-text">AI Intelligence</span>
-          </h1>
-          
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-            Lawbit simplifies legal document creation and analysis with powerful AI, making complex legal processes accessible to everyone.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-            <Link to="/dashboard">
-              <button className="startup-button">
-                Get Started
-                <ArrowRight className="h-5 w-5" />
-              </button>
-            </Link>
-            <button className="startup-button-outline">
-              Learn More
-            </button>
-          </div>
-          
-          <div className="max-w-5xl mx-auto bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-            <img 
-              src="https://images.unsplash.com/photo-1607703703674-df96af81dffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" 
-              alt="Lawbit Dashboard" 
-              className="w-full h-auto"
-            />
-          </div>
-        </div>
-      </section>
+      {/* Hero Section - Replaced with HeroGeometric */}
+      <HeroGeometric 
+        badge="AI-Powered Legal Documents"
+        title1="Transform Legal Documents"
+        title2="with AI Intelligence"
+        description="Lawbit simplifies legal document creation and analysis with powerful AI, making complex legal processes accessible to everyone."
+      />
       
       {/* Features Section */}
       <section id="features" className="startup-section bg-black/95">
