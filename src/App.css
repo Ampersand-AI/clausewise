@@ -173,3 +173,43 @@ body {
   font-weight: 600;
   box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
 }
+
+/* Add main content glow effect */
+.main-content {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+  transition: box-shadow 0.3s ease;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+/* Consistent form styling */
+.form-input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #e1e2e5;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
+  outline: none;
+}
+
+/* Consistent button styling */
+.app-button {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.app-button:hover {
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}

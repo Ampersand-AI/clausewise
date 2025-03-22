@@ -46,7 +46,7 @@ export function UserButton() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56 backdrop-blur-md bg-glass border-glass-border" align="end" forceMount>
         <DropdownMenuLabel>
           <div className="flex flex-col">
             <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
