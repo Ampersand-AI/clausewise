@@ -10,17 +10,17 @@ type ModeToggleProps = {
 const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
   return (
     <div className="flex justify-center mb-8">
-      <div className="relative rounded-xl p-0.5 glow-effect animate-glow">
+      <div className="relative rounded-xl p-0.5 animate-glow">
         <ToggleGroup 
           type="single" 
           value={mode} 
           onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-          className="border border-glass-border p-1 rounded-lg bg-[#1e1e24] backdrop-blur-sm w-[350px]"
+          className="border border-glass-border p-1 rounded-lg backdrop-blur-md bg-glass shadow-lg w-[350px]"
         >
           <ToggleGroupItem 
             value="create" 
-            className={`data-[state=on]:bg-orange-brown-gradient data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 ${
-              mode === "create" ? "" : "text-foreground/70"
+            className={`data-[state=on]:bg-orange-brown-gradient data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
+              mode === "create" ? "shadow-lg" : "text-foreground/70 hover:text-foreground/90 hover:bg-glass-light"
             }`}
           >
             <FileText className="h-5 w-5" />
@@ -28,8 +28,8 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
           </ToggleGroupItem>
           <ToggleGroupItem 
             value="analyze" 
-            className={`data-[state=on]:bg-orange-brown-gradient data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 ${
-              mode === "analyze" ? "" : "text-foreground/70"
+            className={`data-[state=on]:bg-orange-brown-gradient data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
+              mode === "analyze" ? "shadow-lg" : "text-foreground/70 hover:text-foreground/90 hover:bg-glass-light"
             }`}
           >
             <Search className="h-5 w-5" />

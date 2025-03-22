@@ -26,7 +26,7 @@
     --ring: 24 94% 53%;
     --radius: 0.5rem;
     
-    /* Glass UI Variables */
+    /* Enhanced Glass UI Variables */
     --glass: 0 0% 100% / 7%;
     --glass-light: 0 0% 100% / 12%;
     --glass-dark: 0 0% 0% / 5%;
@@ -60,8 +60,8 @@
     --input: 24 10% 12%;
     --ring: 24 94% 53%;
     
-    /* Glass UI Variables */
-    --glass: 24 15% 10% / 60%;
+    /* Enhanced Glass UI Variables */
+    --glass: 24 15% 10% / 50%;
     --glass-light: 24 15% 15% / 60%;
     --glass-dark: 24 15% 5% / 75%;
     --glass-border: 24 15% 30% / 15%;
@@ -77,9 +77,9 @@
   }
 }
 
-/* Glass UI Styles */
+/* Enhanced Glass UI Styles */
 .glass-card {
-  @apply bg-glass backdrop-blur-md border border-glass-border;
+  @apply bg-glass backdrop-blur-md border border-glass-border rounded-lg;
 }
 
 .glass-card-hover {
@@ -94,7 +94,7 @@
   @apply bg-clip-text text-transparent bg-orange-brown-gradient;
 }
 
-/* Animations */
+/* Enhanced Animations */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -111,9 +111,27 @@
   opacity: 0;
 }
 
-/* Glow effect styles */
+/* Enhanced Glow effect styles */
 .glow-effect {
-  @apply animate-glow;
+  @apply shadow-[0_0_15px_rgba(249,115,22,0.6)] transition-shadow duration-300;
+}
+
+.glow-effect:hover {
+  @apply shadow-[0_0_25px_rgba(249,115,22,0.7)];
+}
+
+/* Animated glow */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
+  }
+}
+
+.animate-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
 }
 
 /* Update App.css to use the new orange-brown theme */
@@ -128,14 +146,66 @@ body {
 
 /* Custom button styles */
 .lawbit-button {
-  @apply bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover;
+  @apply bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover text-white transition-all duration-300;
 }
 
 /* Premium UI elements */
 .premium-badge {
-  @apply bg-orange-brown-gradient text-white text-xs font-semibold px-2 py-0.5 rounded-full;
+  @apply bg-orange-brown-gradient text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm;
 }
 
 .premium-card {
-  @apply border-2 border-lawbit-orange-400 bg-gradient-to-r from-lawbit-orange-50/10 to-lawbit-brown-50/10 backdrop-blur-sm;
+  @apply border border-lawbit-orange-400/30 bg-gradient-to-r from-lawbit-orange-50/10 to-lawbit-brown-50/10 backdrop-blur-sm;
+}
+
+/* Enhanced form elements */
+.form-input-glass {
+  @apply bg-glass backdrop-blur-md border border-glass-border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lawbit-orange-500/50 focus:border-lawbit-orange-400/50 transition-all duration-300;
+}
+
+/* Enhanced glassmorphism UI */
+.glassmorphism {
+  @apply backdrop-blur-md bg-glass border border-glass-border rounded-lg shadow-lg;
+}
+
+.glassmorphism-hover {
+  @apply hover:bg-glass-light transition-all duration-300;
+}
+
+/* Enhanced usage stats styling */
+.usage-stat-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.05) 100%);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.usage-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
+}
+
+/* Orange-brown gradient text (enhanced) */
+.text-gradient-glow {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+}
+
+/* Enhanced orange-brown UI elements */
+.bg-orange-brown-gradient {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+}
+
+.bg-orange-brown-gradient-hover {
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
+}
+
+/* Card with orange-brown border glow */
+.orange-glow-card {
+  @apply glassmorphism border border-lawbit-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.2)];
+}
+
+.orange-glow-card:hover {
+  @apply shadow-[0_0_25px_rgba(249,115,22,0.4)] border-lawbit-orange-500/40 transition-all duration-300;
 }
