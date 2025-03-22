@@ -92,10 +92,10 @@ export function DocumentCard(props: DocumentCardProps) {
         to={`/document/${id}`}
         className={cn(
           "group relative block rounded-lg p-5 transition-all duration-300",
-          "border border-bento-gray-200 bg-white shadow-sm hover:shadow-md dark:bg-bento-gray-800 dark:border-bento-gray-700",
-          "transform transition-transform hover:scale-102 hover:-translate-y-1",
+          "border border-bento-orange-200 bg-white shadow-sm hover:shadow-md dark:bg-bento-brown-800 dark:border-bento-brown-700",
+          "transform transition-transform hover:scale-105 hover:-translate-y-1",
           status === "analyzing" && "animate-pulse",
-          "card-shine", // Add shine effect
+          "overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-bento-yellow-500/0 before:via-bento-orange-500/10 before:to-bento-brown-600/0 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-1000 before:ease-in-out",
           className
         )}
       >
@@ -111,7 +111,7 @@ export function DocumentCard(props: DocumentCardProps) {
         )}
 
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-lg bg-bento-yellow-50 dark:bg-bento-yellow-100/10 flex items-center justify-center flex-shrink-0 border border-bento-yellow-100 dark:border-bento-yellow-500/20 transition-colors group-hover:bg-bento-orange-50 dark:group-hover:bg-bento-orange-100/10">
+          <div className="h-12 w-12 rounded-lg bg-bento-yellow-50 dark:bg-bento-yellow-100/10 flex items-center justify-center flex-shrink-0 border border-bento-yellow-100 dark:border-bento-yellow-500/20 transition-colors group-hover:bg-bento-orange-50 dark:group-hover:bg-bento-orange-100/10 group-hover:rotate-3 transition-transform duration-300">
             {status === "analyzing" ? (
               <File className="h-6 w-6 text-bento-yellow-500 group-hover:text-bento-orange-500 transition-colors" />
             ) : (
@@ -135,7 +135,7 @@ export function DocumentCard(props: DocumentCardProps) {
                   <span className="font-medium text-bento-gray-700 dark:text-bento-gray-300">Analyzing document</span>
                   <span className="text-bento-gray-600 dark:text-bento-gray-400">{progress}%</span>
                 </div>
-                <Progress value={progress} className="h-1.5" />
+                <Progress value={progress} className="h-1.5" indicatorClassName="bg-gradient-to-r from-bento-yellow-500 to-bento-brown-600" />
               </div>
             )}
             
@@ -192,7 +192,7 @@ export function DocumentCard(props: DocumentCardProps) {
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-bento-gray-800 text-destructive border-destructive hover:bg-destructive hover:text-white dark:border-destructive"
+          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-bento-brown-800 text-destructive border-destructive hover:bg-destructive hover:text-white dark:border-destructive"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
