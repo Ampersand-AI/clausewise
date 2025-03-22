@@ -1,5 +1,5 @@
 
-import { FileText, Home, Plus, Settings, Upload } from "lucide-react";
+import { FileText, Home, Settings, Upload } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Button } from "../ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -36,11 +35,6 @@ const menuItems = [
     title: "Recent Documents",
     icon: FileText,
     path: "/documents",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    path: "/settings",
   },
 ];
 
@@ -119,14 +113,6 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        <div className="p-4">
-          <Link to="/dashboard">
-            <Button className="w-full justify-start gap-2 bg-primary-gradient hover:bg-primary-gradient-hover">
-              <Plus className="h-4 w-4" />
-              <span>New Analysis</span>
-            </Button>
-          </Link>
-        </div>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>

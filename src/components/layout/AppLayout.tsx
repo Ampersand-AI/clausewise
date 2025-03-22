@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { AppSidebar } from "./AppSidebar";
 import { ModeToggle } from "../mode-toggle";
 import { SidebarTrigger } from "../ui/sidebar";
-import { Bell, Search, User } from "lucide-react";
+import { FileText, Search, Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { useLocation } from "react-router-dom";
 
@@ -27,14 +27,19 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                 <SidebarTrigger />
               </div>
             )}
-            <div className={cn("flex items-center gap-2", isHome ? "mx-auto" : "")}>
-              <div className="h-8 w-8 rounded-full bg-primary-gradient flex items-center justify-center text-white font-semibold">
-                C
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary-gradient flex items-center justify-center text-white">
+                <FileText className="h-5 w-5" />
               </div>
-              <span className="font-medium text-lg">ClauseCrush</span>
+              <div className="flex flex-col">
+                <span className="font-semibold text-lg">ClauseCrush</span>
+                <span className="text-xs text-muted-foreground -mt-1">
+                  Analyze legal documents with AI
+                </span>
+              </div>
             </div>
             {!isHome && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <div className="hidden md:flex relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
@@ -43,9 +48,8 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     className="pl-10 pr-4 py-2 h-9 w-64 lg:w-80 rounded-full text-sm border border-input bg-background"
                   />
                 </div>
-                <Button variant="ghost" size="icon" className="relative">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive"></span>
+                <Button variant="ghost" size="icon">
+                  <Settings className="h-5 w-5" />
                 </Button>
                 <ModeToggle />
                 <Button variant="ghost" size="icon">

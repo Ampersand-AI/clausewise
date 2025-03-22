@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { AlertCircle, FileText, MessageSquare, UploadIcon } from "lucide-react";
 import { useState } from "react";
@@ -217,7 +218,6 @@ export function UploadArea({
                 : "bg-primary/10",
               "dark:bg-gradient-to-br dark:from-violet-600/30 dark:to-primary/30",
             )}>
-              {/* Add shine effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }}></div>
               <UploadIcon className="h-8 w-8 text-primary dark:text-violet-400 relative z-10" />
             </div>
@@ -281,7 +281,7 @@ export function UploadArea({
             
             <Button
               onClick={handleAnalyzeText}
-              className="mt-2 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white"
+              className="mt-2 bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={isUploading || !agreementText.trim()}
             >
               {isUploading ? (

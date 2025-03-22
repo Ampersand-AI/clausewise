@@ -1,9 +1,10 @@
+
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
 import { UploadArea } from "@/components/document/UploadArea";
 import { useState, useEffect } from "react";
-import { Clipboard, ListFilter, Plus, Upload, Trash2 } from "lucide-react";
+import { Clipboard, ListFilter, Upload, Trash2 } from "lucide-react";
 import { 
   Dialog, 
   DialogContent, 
@@ -127,93 +128,137 @@ const Dashboard = () => {
         description: "Your document is now being analyzed.",
       });
       
-      // Simulate analysis progress
-      let analysisProgress = 0;
-      const analysisInterval = setInterval(() => {
-        analysisProgress += 5;
+      // Extract content using OCR API for images and PDFs
+      let documentText = "";
+      const fileType = files[0].type.toLowerCase();
+      
+      try {
+        if (fileType.includes('image') || fileType.includes('pdf') || fileType.includes('word')) {
+          // Use OCR Space API to extract text
+          const formData = new FormData();
+          formData.append('apikey', 'ed07758ff988957');
+          formData.append('file', files[0]);
+          formData.append('language', 'eng');
+          formData.append('isOverlayRequired', 'false');
+          
+          const ocrResponse = await fetch('https://api.ocr.space/parse/image', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          const ocrData = await ocrResponse.json();
+          
+          if (ocrData && ocrData.ParsedResults && ocrData.ParsedResults.length > 0) {
+            documentText = ocrData.ParsedResults[0].ParsedText;
+            console.log("OCR extracted text:", documentText.substring(0, 200) + "...");
+          } else {
+            throw new Error("Failed to extract text from document");
+          }
+        } else if (fileType.includes('text')) {
+          // For text files, read directly
+          documentText = await files[0].text();
+        }
+        
+        if (!documentText || documentText.trim().length < 50) {
+          throw new Error("Not enough text content to analyze");
+        }
+        
+        // Create a virtual file from the extracted text
+        const textBlob = new Blob([documentText], { type: 'text/plain' });
+        const textFile = new File([textBlob], "extracted_content.txt", { type: 'text/plain' });
+        
+        // Simulate analysis progress with animation
+        let analysisProgress = 0;
+        const analysisInterval = setInterval(() => {
+          analysisProgress += 3;
+          
+          setDocuments(prev => 
+            prev.map(doc => 
+              doc.id === newDocId && doc.status === "analyzing"
+                ? { ...doc, progress: analysisProgress }
+                : doc
+            )
+          );
+          
+          if (analysisProgress >= 100) {
+            clearInterval(analysisInterval);
+            
+            // Call the API to analyze the document with the extracted text
+            analyzeDocument(textFile).then((result: DocumentAnalysisResult) => {
+              // Update the document with the analysis results
+              setDocuments(prev => 
+                prev.map(doc => 
+                  doc.id === newDocId
+                    ? {
+                        id: doc.id,
+                        title: result.documentTitle || doc.title,
+                        date: doc.date,
+                        status: "completed" as const,
+                        riskScore: result.riskScore,
+                        clauses: result.clauses,
+                        summary: result.summary,
+                        jurisdiction: result.jurisdiction,
+                        keyFindings: result.keyFindings
+                      }
+                    : doc
+                )
+              );
+              
+              toast({
+                title: "Analysis completed",
+                description: `Document "${result.documentTitle || files[0].name.split('.')[0]}" has been analyzed successfully.`,
+              });
+            }).catch(error => {
+              console.error("Error analyzing document:", error);
+              
+              // Update document to error state
+              setDocuments(prev => 
+                prev.map(doc => 
+                  doc.id === newDocId
+                    ? {
+                        id: doc.id,
+                        title: doc.title,
+                        date: doc.date,
+                        status: "error" as const,
+                      }
+                    : doc
+                )
+              );
+              
+              toast({
+                title: "Analysis error",
+                description: error.message || "There was an error analyzing your document. Please try again.",
+                variant: "destructive",
+              });
+            }).finally(() => {
+              setIsUploading(false);
+            });
+          }
+        }, 300);
+      } catch (error) {
+        console.error("Content extraction error:", error);
         
         setDocuments(prev => 
           prev.map(doc => 
-            doc.id === newDocId && doc.status === "analyzing"
-              ? { ...doc, progress: analysisProgress }
+            doc.id === newDocId
+              ? {
+                  id: doc.id,
+                  title: doc.title,
+                  date: doc.date,
+                  status: "error" as const,
+                }
               : doc
           )
         );
         
-        if (analysisProgress >= 100) {
-          clearInterval(analysisInterval);
-          
-          // Call the API to analyze the document
-          analyzeDocument(files[0]).then((result: DocumentAnalysisResult) => {
-            // Update the document with the analysis results
-            setDocuments(prev => 
-              prev.map(doc => 
-                doc.id === newDocId
-                  ? {
-                      id: doc.id,
-                      title: result.documentTitle || doc.title,
-                      date: doc.date,
-                      status: "completed" as const,
-                      riskScore: result.riskScore,
-                      clauses: result.clauses,
-                      summary: result.summary,
-                      jurisdiction: result.jurisdiction,
-                      keyFindings: result.keyFindings
-                    }
-                  : doc
-              )
-            );
-            
-            // Save the updated documents to localStorage
-            localStorage.setItem('documents', JSON.stringify(
-              documents.map(doc => 
-                doc.id === newDocId
-                  ? {
-                      id: doc.id,
-                      title: result.documentTitle || doc.title,
-                      date: doc.date,
-                      status: "completed" as const,
-                      riskScore: result.riskScore,
-                      clauses: result.clauses,
-                      summary: result.summary,
-                      jurisdiction: result.jurisdiction,
-                      keyFindings: result.keyFindings
-                    }
-                  : doc
-              )
-            ));
-            
-            toast({
-              title: "Analysis completed",
-              description: `Document "${result.documentTitle || files[0].name.split('.')[0]}" has been analyzed successfully.`,
-            });
-          }).catch(error => {
-            console.error("Error analyzing document:", error);
-            
-            // Update document to error state
-            setDocuments(prev => 
-              prev.map(doc => 
-                doc.id === newDocId
-                  ? {
-                      id: doc.id,
-                      title: doc.title,
-                      date: doc.date,
-                      status: "error" as const,
-                    }
-                  : doc
-              )
-            );
-            
-            toast({
-              title: "Analysis error",
-              description: error.message || "There was an error analyzing your document. Please try again.",
-              variant: "destructive",
-            });
-          }).finally(() => {
-            setIsUploading(false);
-          });
-        }
-      }, 300);
+        toast({
+          title: "Extraction error",
+          description: "Failed to extract text from your document. Please try a different format or paste text directly.",
+          variant: "destructive",
+        });
+        
+        setIsUploading(false);
+      }
     } catch (error) {
       console.error("Upload error:", error);
       clearInterval(uploadInterval);
@@ -251,36 +296,25 @@ const Dashboard = () => {
   return (
     <AppLayout>
       <div className="container px-4 py-8 mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-br from-primary to-violet-500 dark:from-primary dark:to-indigo-300 text-transparent bg-clip-text">ClauseCrush</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage and analyze your legal documents
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="gap-1">
-              <ListFilter className="h-4 w-4" />
-              Filter
-            </Button>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div className="w-full sm:w-auto">
             <Button 
-              size="sm" 
-              className="gap-1 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white"
               onClick={() => setIsUploadOpen(true)}
+              className="w-full sm:w-auto gap-2 bg-primary text-white hover:bg-primary/90"
             >
               <Upload className="h-4 w-4" />
-              Upload
-            </Button>
-            <Button 
-              size="sm" 
-              className="gap-1 bg-gradient-to-r from-violet-600 to-primary hover:from-violet-700 hover:to-primary/90 text-white"
-              onClick={() => setIsUploadOpen(true)}
-            >
-              <Plus className="h-4 w-4" />
-              New Analysis
+              Upload Document
             </Button>
           </div>
+          
+          {documents.length > 0 && (
+            <div className="w-full sm:w-auto flex justify-end">
+              <Button variant="outline" size="sm" className="gap-1">
+                <ListFilter className="h-4 w-4" />
+                Filter
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -308,10 +342,10 @@ const Dashboard = () => {
             </p>
             <Button 
               onClick={() => setIsUploadOpen(true)}
-              className="gap-2 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white"
+              className="gap-2 bg-primary text-primary-foreground"
             >
               <Upload className="h-4 w-4" />
-              Analyze Document
+              Upload Document
             </Button>
           </div>
         )}
@@ -333,11 +367,14 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Please wait while your document is being analyzed.
                 </p>
-                <Progress 
-                  value={uploadProgress} 
-                  className="h-2" 
-                  indicatorClassName="bg-gradient-to-r from-primary to-violet-600" 
-                />
+                <div className="relative pt-1">
+                  <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-muted">
+                    <div 
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-primary via-violet-500 to-primary bg-[length:200%_200%] animate-[shimmer_2s_infinite]" 
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
                 <p className="text-sm mt-2">{uploadProgress}%</p>
               </div>
             </div>
