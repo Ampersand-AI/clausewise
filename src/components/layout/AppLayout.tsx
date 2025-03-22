@@ -17,9 +17,9 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-foreground">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-white border-b border-gray-200">
+      <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-background border-b">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="text-2xl font-bold">
@@ -28,9 +28,8 @@ export function AppLayout({ children, className }: AppLayoutProps) {
           </div>
           
           <div className="flex items-center gap-3">
-            <ModeToggle />
             <UsageStats />
-            <Button variant="outline" size="icon" className="rounded-full">
+            <Button variant="outline" size="icon">
               <Settings className="h-5 w-5" />
             </Button>
             <UserButton />
@@ -40,7 +39,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       
       <main className="flex-1 flex items-center justify-center p-4 relative z-10 mt-16">
         <div className={cn("w-full max-w-6xl mx-auto p-0.5 rounded-xl", className)}>
-          <div className="bg-white border border-gray-200 shadow-sm p-6 rounded-lg w-full">
+          <div className="bg-background border p-6 rounded-lg w-full shadow-sm">
             {children}
           </div>
         </div>
