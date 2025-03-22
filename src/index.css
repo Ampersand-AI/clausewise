@@ -341,7 +341,11 @@
 }
 
 .hamburger-menu span {
-  @apply absolute left-0 block h-0.5 w-7 bg-bento-brown-600 dark:bg-bento-orange-400 opacity-100 rotate-0 transition-all duration-300;
+  @apply absolute left-0 block h-0.5 w-7 bg-bento-brown-600 opacity-100 rotate-0 transition-all duration-300;
+}
+
+.dark .hamburger-menu span {
+  @apply bg-bento-orange-500;
 }
 
 .hamburger-menu span:nth-child(1) {
