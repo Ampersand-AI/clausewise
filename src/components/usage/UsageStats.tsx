@@ -42,16 +42,14 @@ const UsageStats: React.FC = () => {
           <DropdownMenuGroup>
             {usageStats.map((item, index) => (
               <div key={index} className="usage-stat-card mb-3 last:mb-0">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium">{item.label}</span>
                   <span className="text-xs text-muted-foreground">{item.used} / {item.total} {item.unit}</span>
                 </div>
-                <div className="usage-progress">
-                  <div 
-                    className="usage-progress-bar"
-                    style={{ width: `${Math.min(100, (item.used / item.total) * 100)}%` }}
-                  />
-                </div>
+                <Progress 
+                  value={(item.used / item.total) * 100} 
+                  className="h-2 bg-lawbit-orange-200/20 dark:bg-lawbit-orange-900/20"
+                />
               </div>
             ))}
           </DropdownMenuGroup>

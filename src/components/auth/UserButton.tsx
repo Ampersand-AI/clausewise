@@ -39,7 +39,7 @@ export function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 rounded-full glow-effect animate-glow">
+        <Button variant="glass" className="relative h-9 w-9 rounded-full glow-effect animate-glow p-0">
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
             <AvatarFallback className="bg-orange-brown-gradient text-white">{userInitials}</AvatarFallback>
