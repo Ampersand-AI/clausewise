@@ -27,7 +27,7 @@ export function UserButton() {
   
   if (!user) {
     return (
-      <Button variant="glass" size="sm" asChild className="text-lawbit-orange-500">
+      <Button variant="glass" size="sm" asChild className="orange-brown-button text-white glow-button">
         <Link to="/auth">Sign In</Link>
       </Button>
     );
@@ -53,19 +53,19 @@ export function UserButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem as={Link} to="/profile">
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem as={Link} to="/settings">
           <Settings className="mr-2 h-4 w-4" />
           <span>Account Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem as={Link} to="/subscription">
           <CreditCard className="mr-2 h-4 w-4" />
           <span>Subscription</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem as={Link} to="/support">
           <HelpCircle className="mr-2 h-4 w-4" />
           <span>Help & Support</span>
         </DropdownMenuItem>

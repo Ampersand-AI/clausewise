@@ -63,6 +63,15 @@ body {
   box-shadow: 0 0 25px rgba(249, 115, 22, 0.7);
 }
 
+.glow-effect {
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
+}
+
 /* Orange-brown gradient button */
 .orange-brown-button {
   background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
@@ -71,4 +80,53 @@ body {
 
 .orange-brown-button:hover {
   background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
+}
+
+/* Orange-brown gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Animated gradient background */
+.bg-orange-brown-gradient {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+}
+
+.bg-orange-brown-gradient-hover {
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 8s linear infinite;
+}
+
+/* Glass card effect */
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(249, 115, 22, 0.1);
+}
+
+/* Premium badge */
+.premium-badge {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
 }
