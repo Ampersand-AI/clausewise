@@ -1,6 +1,7 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, FileText, ListChecks, Shield, Scale, BookOpen, Sparkles } from "lucide-react";
+import { ArrowRight, Brain, FileText, ListChecks, Shield, Scale, BookOpen, Sparkles, Star } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ModeToggle } from "@/components/mode-toggle";
 

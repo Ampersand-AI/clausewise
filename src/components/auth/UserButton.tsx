@@ -53,19 +53,19 @@ export function UserButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem as={Link} to="/profile">
+        <DropdownMenuItem onClick={() => window.location.href = '/profile'}>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem as={Link} to="/settings">
+        <DropdownMenuItem onClick={() => window.location.href = '/settings'}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Account Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem as={Link} to="/subscription">
+        <DropdownMenuItem onClick={() => window.location.href = '/subscription'}>
           <CreditCard className="mr-2 h-4 w-4" />
           <span>Subscription</span>
         </DropdownMenuItem>
-        <DropdownMenuItem as={Link} to="/support">
+        <DropdownMenuItem onClick={() => window.location.href = '/support'}>
           <HelpCircle className="mr-2 h-4 w-4" />
           <span>Help & Support</span>
         </DropdownMenuItem>
