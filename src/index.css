@@ -7,13 +7,13 @@
   :root {
     --background: 0 0% 0%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 7%;
+    --card: 0 0% 0%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 7%;
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 98%;
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 10%;
+    --secondary: 240 5% 8%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 5% 15%;
     --muted-foreground: 240 5% 65%;
@@ -21,7 +21,7 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 12%;
+    --border: 240 5% 8%;
     --input: 240 5% 15%;
     --ring: 25 95% 53%;
     --radius: 0.5rem;
@@ -36,13 +36,13 @@
   .dark {
     --background: 0 0% 0%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 7%;
+    --card: 0 0% 0%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 7%;
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 98%;
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 10%;
+    --secondary: 240 5% 8%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 5% 15%;
     --muted-foreground: 240 5% 65%;
@@ -50,7 +50,7 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 12%;
+    --border: 240 5% 8%;
     --input: 240 5% 15%;
     --ring: 25 95% 53%;
   }
@@ -68,17 +68,17 @@
 
 /* Card with border glow */
 .default-card {
-  @apply border border-gray-800 bg-card shadow-md;
+  @apply border border-gray-800/50 bg-card shadow-md;
 }
 
 /* Form elements */
 .form-input-default {
-  @apply bg-background border border-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300;
+  @apply bg-background border border-gray-800/50 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300;
 }
 
 /* Card with backdrop */
 .backdrop-card {
-  @apply bg-gray-900/80 backdrop-blur-md border border-gray-800 shadow-md;
+  @apply bg-black/80 backdrop-blur-md border border-gray-800/50 shadow-md;
 }
 
 .no-scrollbar {
@@ -99,7 +99,7 @@
 }
 
 .startup-card {
-  @apply bg-gray-900 border border-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300;
+  @apply bg-black/90 border border-gray-800/50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300;
 }
 
 .highlight-item {
@@ -107,5 +107,5 @@
 }
 
 .selected-item {
-  @apply bg-gray-800 text-gray-300;
+  @apply bg-gray-800/80 text-gray-300;
 }

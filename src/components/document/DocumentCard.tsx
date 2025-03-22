@@ -1,5 +1,5 @@
 
-import { File, FileText } from "lucide-react";
+import { File, FileText, AlertTriangle, Clock, Calendar, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
@@ -92,14 +92,14 @@ export function DocumentCard(props: DocumentCardProps) {
         to={`/document/${id}`}
         className={cn(
           "group relative block rounded-lg p-5 transition-all duration-300",
-          "border border-gray-800 bg-gray-900 shadow-md hover:shadow-lg",
-          "transform transition-transform hover:scale-105 hover:-translate-y-1",
+          "border border-gray-800/50 bg-black/80 shadow-md hover:shadow-lg",
+          "transform transition-transform hover:-translate-y-1",
           status === "analyzing" && "animate-pulse",
           className
         )}
       >
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-lg bg-gray-800 flex items-center justify-center flex-shrink-0 border border-gray-700">
+          <div className="h-12 w-12 rounded-lg bg-gray-800/70 flex items-center justify-center flex-shrink-0 border border-gray-700/50">
             {status === "analyzing" ? (
               <File className="h-6 w-6 text-gray-400" />
             ) : (
@@ -193,7 +193,7 @@ export function DocumentCard(props: DocumentCardProps) {
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-gray-300 border-gray-700 hover:bg-red-900 hover:text-white"
+          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800/70 text-gray-300 border-gray-700/50 hover:bg-red-900/80 hover:text-white"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -211,6 +211,7 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
       <Badge variant="dark" className="text-xs font-normal text-blue-300">
+        <Clock className="h-3 w-3 mr-1" />
         Analyzing
       </Badge>
     );
@@ -219,6 +220,7 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "error") {
     return (
       <Badge variant="dark" className="text-xs font-normal text-red-300">
+        <AlertTriangle className="h-3 w-3 mr-1" />
         Error
       </Badge>
     );
@@ -226,6 +228,7 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   return (
     <Badge variant="dark" className="text-xs font-normal text-green-300">
+      <CreditCard className="h-3 w-3 mr-1" />
       Completed
     </Badge>
   );

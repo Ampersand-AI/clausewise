@@ -14,12 +14,12 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
         type="single" 
         value={mode} 
         onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-        className="border border-gray-800 rounded-lg bg-black/40 shadow-lg w-[350px]"
+        className="border border-gray-800/50 rounded-lg bg-black/70 shadow-lg w-[350px]"
       >
         <ToggleGroupItem 
           value="create" 
-          className={`data-[state=on]:bg-gray-800 data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
-            mode === "create" ? "shadow-lg" : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/70"
+          className={`data-[state=on]:bg-gray-800/90 data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
+            mode === "create" ? "shadow-lg" : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/50"
           }`}
         >
           <FileText className="h-5 w-5" />
@@ -27,8 +27,8 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="analyze" 
-          className={`data-[state=on]:bg-gray-800 data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
-            mode === "analyze" ? "shadow-lg" : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/70"
+          className={`data-[state=on]:bg-gray-800/90 data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
+            mode === "analyze" ? "shadow-lg" : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/50"
           }`}
         >
           <Search className="h-5 w-5" />

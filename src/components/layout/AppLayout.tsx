@@ -60,9 +60,9 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-black text-foreground relative overflow-hidden">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-background/80 backdrop-blur-md border-b border-border">
+      <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-black/90 backdrop-blur-md border-b border-gray-800/50">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="text-2xl font-bold">
@@ -75,11 +75,11 @@ export function AppLayout({ children, className }: AppLayoutProps) {
             <UsageStats />
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full">
+                <Button variant="outline" size="icon" className="rounded-full bg-black/90 border-gray-800/50">
                   <Settings className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="bg-black/95 border-gray-800/50">
                 <SheetHeader>
                   <SheetTitle>Settings</SheetTitle>
                   <SheetDescription>
@@ -90,7 +90,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                   <div className="space-y-4">
                     <h3 className="text-sm font-medium">Preferences</h3>
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 border border-border rounded-lg">
+                      <div className="flex items-center justify-between p-3 border border-gray-800/50 rounded-lg bg-gray-900/40">
                         <Label htmlFor="theme" className="flex flex-col gap-1">
                           <span>Dark Mode</span>
                           <span className="text-xs font-normal text-muted-foreground">
@@ -103,7 +103,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                           onCheckedChange={toggleTheme} 
                         />
                       </div>
-                      <div className="flex items-center justify-between p-3 border border-border rounded-lg">
+                      <div className="flex items-center justify-between p-3 border border-gray-800/50 rounded-lg bg-gray-900/40">
                         <Label htmlFor="notifications" className="flex flex-col gap-1">
                           <span>Notifications</span>
                           <span className="text-xs font-normal text-muted-foreground">
@@ -116,7 +116,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                           onCheckedChange={setNotifications} 
                         />
                       </div>
-                      <div className="flex items-center justify-between p-3 border border-border rounded-lg">
+                      <div className="flex items-center justify-between p-3 border border-gray-800/50 rounded-lg bg-gray-900/40">
                         <Label htmlFor="autosave" className="flex flex-col gap-1">
                           <span>Auto Save</span>
                           <span className="text-xs font-normal text-muted-foreground">
@@ -129,7 +129,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                           onCheckedChange={setAutoSave} 
                         />
                       </div>
-                      <div className="flex items-center justify-between p-3 border border-border rounded-lg">
+                      <div className="flex items-center justify-between p-3 border border-gray-800/50 rounded-lg bg-gray-900/40">
                         <Label htmlFor="compact-view" className="flex flex-col gap-1">
                           <span>Compact View</span>
                           <span className="text-xs font-normal text-muted-foreground">
@@ -184,7 +184,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       
       <main className="flex-1 flex items-center justify-center p-4 relative z-10 mt-16">
         <div className={cn("w-full max-w-6xl mx-auto p-0.5 rounded-xl", className)}>
-          <div className="bg-card border border-border shadow-md p-6 rounded-lg w-full">
+          <div className="bg-black/90 border border-gray-800/50 shadow-md p-6 rounded-lg w-full">
             {children}
           </div>
         </div>
