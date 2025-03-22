@@ -10,12 +10,12 @@ type ModeToggleProps = {
 const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
   return (
     <div className="flex justify-center mb-4">
-      <ToggleGroup type="single" value={mode} onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} className="border border-bento-gray-200 dark:border-bento-gray-700 p-1 rounded-md bg-bento-gray-50 dark:bg-bento-gray-800">
-        <ToggleGroupItem value="create" className="data-[state=on]:bg-white dark:data-[state=on]:bg-bento-gray-700 rounded flex items-center gap-1 text-sm px-4">
+      <ToggleGroup type="single" value={mode} onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} className="border border-amber-200 dark:border-amber-700 p-1 rounded-md bg-amber-50 dark:bg-amber-900/20">
+        <ToggleGroupItem value="create" className="data-[state=on]:bg-white dark:data-[state=on]:bg-amber-700 rounded flex items-center gap-1 text-sm px-4 text-amber-900 dark:text-amber-100">
           <FileText className="h-4 w-4" />
           Create
         </ToggleGroupItem>
-        <ToggleGroupItem value="analyze" className="data-[state=on]:bg-white dark:data-[state=on]:bg-bento-gray-700 rounded flex items-center gap-1 text-sm px-4">
+        <ToggleGroupItem value="analyze" className="data-[state=on]:bg-white dark:data-[state=on]:bg-amber-700 rounded flex items-center gap-1 text-sm px-4 text-amber-900 dark:text-amber-100">
           <Search className="h-4 w-4" />
           Analyze
         </ToggleGroupItem>
