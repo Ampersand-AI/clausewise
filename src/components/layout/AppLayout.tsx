@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { UserButton } from "@/components/auth/UserButton";
 import { Link } from "react-router-dom";
+import UsageStats from "@/components/usage/UsageStats";
 import {
   Sheet,
   SheetContent,
@@ -62,6 +63,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       <div className="absolute inset-0 bg-[radial-gradient(#333_1px,transparent_1px)] bg-[length:20px_20px] opacity-10 pointer-events-none"></div>
       
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+        <UsageStats />
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="glass" size="icon" className="text-lawbit-orange-500 hover:text-lawbit-orange-400 rounded-full glow-effect">
@@ -169,8 +171,10 @@ export function AppLayout({ children, className }: AppLayoutProps) {
         <UserButton />
       </div>
       <main className="flex-1 flex items-center justify-center p-4 relative z-10">
-        <div className={cn("w-full max-w-6xl mx-auto", className)}>
-          {children}
+        <div className={cn("w-full max-w-6xl mx-auto glow-effect animate-glow p-0.5 rounded-xl", className)}>
+          <div className="glass-card p-6 rounded-lg w-full">
+            {children}
+          </div>
         </div>
       </main>
     </div>
