@@ -817,4 +817,4 @@ const Dashboard = () => {
           </div>
           
           <AlertDialogHeader className="pt-14">
-            <AlertDialogTitle className="text-center
+            <AlertDialogTitle className="text-center">Upgrade to
