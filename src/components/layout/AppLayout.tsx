@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { Settings, User, Gavel, PieChart } from "lucide-react";
+import { Settings, User, Gavel } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -61,10 +61,6 @@ export function AppLayout({ children, className }: AppLayoutProps) {
           <nav className="hidden md:flex items-center gap-6">
             <NavLink to="/dashboard" active={location.pathname === "/dashboard"}>
               Dashboard
-            </NavLink>
-            <NavLink to="/invest" active={location.pathname === "/invest"}>
-              <PieChart className="w-4 h-4 mr-1" />
-              Invest
             </NavLink>
           </nav>
           

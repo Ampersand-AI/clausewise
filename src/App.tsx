@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Dashboard from "./pages/Dashboard";
 import DocumentView from "./pages/DocumentView";
 import NotFound from "./pages/NotFound";
-import Invest from "./pages/Invest";
 
 // Create a QueryClient for data fetching
 const queryClient = new QueryClient({
@@ -31,7 +30,6 @@ const App = () => (
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/document/:id" element={<DocumentView />} />
-            <Route path="/invest" element={<Invest />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
