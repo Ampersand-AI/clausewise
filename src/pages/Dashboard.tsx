@@ -3,10 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, ListFilter, MicOff } from "lucide-react";
+import { Upload, FileText, Mic, Send, ListFilter, MicOff, RefreshCw, Download, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { 
   AlertDialog,
   AlertDialogAction,
