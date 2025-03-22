@@ -2,7 +2,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut, User } from "lucide-react";
+import { Loader2, LogOut, Settings, User, CreditCard, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +27,7 @@ export function UserButton() {
   
   if (!user) {
     return (
-      <Button variant="glass" size="sm" asChild>
+      <Button variant="glass" size="sm" asChild className="text-lawbit-orange-500">
         <Link to="/auth">Sign In</Link>
       </Button>
     );
@@ -38,10 +38,10 @@ export function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full glow-effect">
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
-            <AvatarFallback className="bg-primary/10 text-primary">{userInitials}</AvatarFallback>
+            <AvatarFallback className="bg-orange-brown-gradient text-white">{userInitials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -57,8 +57,20 @@ export function UserButton() {
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Account Settings</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <CreditCard className="mr-2 h-4 w-4" />
+          <span>Subscription</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <HelpCircle className="mr-2 h-4 w-4" />
+          <span>Help & Support</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
         </DropdownMenuItem>

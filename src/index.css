@@ -6,24 +6,24 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
+    --foreground: 24 10% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 24 10% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 24 94% 53%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 30 60% 50%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 30 10% 96%;
+    --muted-foreground: 24 5% 45%;
+    --accent: 30 40% 90%;
+    --accent-foreground: 24 10% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 10% 90%;
+    --input: 30 10% 90%;
+    --ring: 24 94% 53%;
     --radius: 0.5rem;
     
     /* Glass UI Variables */
@@ -32,51 +32,39 @@
     --glass-dark: 0 0% 0% / 5%;
     --glass-border: 0 0% 100% / 15%;
     
-    /* Colors for Lawbit */
-    --teal-50: 166 76% 97%;
-    --teal-100: 167 85% 89%;
-    --teal-200: 168 83% 78%;
-    --teal-300: 171 77% 64%;
-    --teal-400: 172 66% 50%;
-    --teal-500: 173 80% 40%;
-    --teal-600: 175 84% 32%;
-    --teal-700: 175 77% 26%;
-    --teal-800: 176 69% 22%;
-    --teal-900: 176 61% 19%;
-    --teal-950: 178 69% 12%;
-    
-    --success-foreground: 210 40% 98%;
+    /* Success/Warning colors */
+    --success-foreground: 0 0% 98%;
     --success: 142 72% 29%;
-    --warning-foreground: 210 40% 98%;
+    --warning-foreground: 0 0% 98%;
     --warning: 38 92% 50%;
   }
  
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+    --background: 24 20% 6%;
+    --foreground: 0 0% 98%;
+    --card: 24 20% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 24 20% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 24 94% 53%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 30 60% 50%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 24 10% 12%;
+    --muted-foreground: 24 5% 64%;
+    --accent: 24 10% 12%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 24 10% 12%;
+    --input: 24 10% 12%;
+    --ring: 24 94% 53%;
     
     /* Glass UI Variables */
-    --glass: 220 14% 10% / 60%;
-    --glass-light: 220 14% 15% / 60%;
-    --glass-dark: 220 14% 5% / 75%;
-    --glass-border: 220 14% 30% / 15%;
+    --glass: 24 15% 10% / 60%;
+    --glass-light: 24 15% 15% / 60%;
+    --glass-dark: 24 15% 5% / 75%;
+    --glass-border: 24 15% 30% / 15%;
   }
 }
  
@@ -103,7 +91,7 @@
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-emerald-400;
+  @apply bg-clip-text text-transparent bg-orange-brown-gradient;
 }
 
 /* Animations */
@@ -121,4 +109,33 @@
 .animate-fade-in {
   animation: fade-in 0.5s ease forwards;
   opacity: 0;
+}
+
+/* Glow effect styles */
+.glow-effect {
+  @apply animate-glow;
+}
+
+/* Update App.css to use the new orange-brown theme */
+body {
+  background-color: #121210;
+  background-image: 
+    radial-gradient(circle at 25% 15%, rgba(249, 115, 22, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 75% 85%, rgba(181, 119, 61, 0.15) 0%, transparent 40%);
+  min-height: 100vh;
+  color: #e1e2e5;
+}
+
+/* Custom button styles */
+.lawbit-button {
+  @apply bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover;
+}
+
+/* Premium UI elements */
+.premium-badge {
+  @apply bg-orange-brown-gradient text-white text-xs font-semibold px-2 py-0.5 rounded-full;
+}
+
+.premium-card {
+  @apply border-2 border-lawbit-orange-400 bg-gradient-to-r from-lawbit-orange-50/10 to-lawbit-brown-50/10 backdrop-blur-sm;
 }

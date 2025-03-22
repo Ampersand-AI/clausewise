@@ -7,10 +7,10 @@
 }
 
 body {
-  background-color: #121215;
+  background-color: #121210;
   background-image: 
-    radial-gradient(circle at 25% 15%, rgba(50, 50, 70, 0.2) 0%, transparent 40%),
-    radial-gradient(circle at 75% 85%, rgba(80, 50, 50, 0.2) 0%, transparent 40%);
+    radial-gradient(circle at 25% 15%, rgba(249, 115, 22, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 75% 85%, rgba(181, 119, 61, 0.15) 0%, transparent 40%);
   min-height: 100vh;
   color: #e1e2e5;
 }
@@ -23,11 +23,11 @@ body {
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em #f97316aa);
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.6));
 }
 
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #f97316aa);
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.6));
 }
 
 @keyframes logo-spin {
@@ -51,4 +51,24 @@ body {
 
 .read-the-docs {
   color: #888;
+}
+
+/* Glow effect */
+.glow-button {
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-button:hover {
+  box-shadow: 0 0 25px rgba(249, 115, 22, 0.7);
+}
+
+/* Orange-brown gradient button */
+.orange-brown-button {
+  background: linear-gradient(135deg, #F97316 0%, #B5773D 100%);
+  transition: background 0.3s ease;
+}
+
+.orange-brown-button:hover {
+  background: linear-gradient(135deg, #EA580C 0%, #8D582E 100%);
 }

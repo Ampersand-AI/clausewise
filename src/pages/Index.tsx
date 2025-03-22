@@ -1,7 +1,6 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, FileText, ListChecks, Shield, Star, BookOpen, Scale, LucideCode } from "lucide-react";
+import { ArrowRight, Brain, FileText, ListChecks, Shield, Scale, BookOpen, Sparkles } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -10,26 +9,24 @@ const Index = () => {
     <AppLayout className="overflow-hidden">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-radial from-primary/5 to-transparent dark:from-primary/10 dark:to-background" />
+        <div className="absolute inset-0 bg-gradient-radial from-lawbit-orange-500/5 to-transparent dark:from-lawbit-orange-500/10 dark:to-background" />
         
-        {/* Green gradient blobs */}
-        <div className="absolute h-40 w-40 bg-green-400/20 rounded-full blur-3xl -top-20 -right-20" />
-        <div className="absolute h-60 w-60 bg-teal-300/20 rounded-full blur-3xl -bottom-32 -left-32" />
-        <div className="absolute h-32 w-32 bg-emerald-400/20 rounded-full blur-3xl bottom-40 right-20" />
+        {/* Orange-brown gradient blobs */}
+        <div className="absolute h-40 w-40 bg-lawbit-orange-400/20 rounded-full blur-3xl -top-20 -right-20" />
+        <div className="absolute h-60 w-60 bg-lawbit-brown-300/20 rounded-full blur-3xl -bottom-32 -left-32" />
+        <div className="absolute h-32 w-32 bg-lawbit-orange-500/20 rounded-full blur-3xl bottom-40 right-20" />
         
         <div className="container px-4 mx-auto text-center relative z-10">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col items-center mb-8">
-              <div className="h-24 w-24 mb-4 relative">
-                <img 
-                  src="/lovable-uploads/685f9d8f-3d98-458c-82d3-043a700e63d0.png" 
-                  alt="Lawbit Logo" 
-                  className="h-full w-full object-contain"
-                />
+              <div className="mb-6 relative">
+                <div className="h-24 w-24 bg-gradient-to-br from-lawbit-orange-500 to-lawbit-brown-600 rounded-full flex items-center justify-center shadow-lg glow-effect">
+                  <Sparkles className="h-12 w-12 text-white" />
+                </div>
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 animate-fade-in [animation-delay:200ms]">
-                <span className="text-gradient">Law</span><span className="text-teal-500">bit</span>
+                <span className="text-gradient">Law</span><span className="text-lawbit-orange-500">bit</span>
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in [animation-delay:400ms]">
@@ -39,11 +36,11 @@ const Index = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in [animation-delay:600ms]">
               <Link to="/dashboard">
-                <Button size="lg" className="bg-gradient-to-r from-teal-400 to-emerald-500 hover:from-teal-500 hover:to-emerald-600 min-w-[180px] gap-2 text-white">
+                <Button size="lg" className="bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover min-w-[180px] gap-2 text-white glow-effect">
                   Get Started <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-teal-400/20 hover:border-teal-400/40">
+              <Button size="lg" variant="outline" className="border-lawbit-orange-400/20 hover:border-lawbit-orange-400/40">
                 Learn More
               </Button>
             </div>
@@ -57,7 +54,7 @@ const Index = () => {
       </section>
       
       {/* Features Section */}
-      <section className="py-24 border-y border-border bg-gradient-to-b from-teal-50/50 to-transparent dark:from-teal-950/10 dark:to-transparent">
+      <section className="py-24 border-y border-border bg-gradient-to-b from-lawbit-orange-50/50 to-transparent dark:from-lawbit-brown-900/10 dark:to-transparent">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Legal Intelligence at Your Fingertips</h2>
@@ -68,32 +65,32 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard 
-              icon={<FileText className="h-6 w-6 text-teal-500" />}
+              icon={<FileText className="h-6 w-6 text-lawbit-orange-500" />}
               title="Intelligent Contract Generation"
               description="Create customized legal agreements with our AI, tailored to your specific requirements."
             />
             <FeatureCard 
-              icon={<Shield className="h-6 w-6 text-teal-500" />}
+              icon={<Shield className="h-6 w-6 text-lawbit-orange-500" />}
               title="Risk Assessment"
               description="Identify potential issues with color-coded risk scores for all contract terms."
             />
             <FeatureCard 
-              icon={<ListChecks className="h-6 w-6 text-teal-500" />}
+              icon={<ListChecks className="h-6 w-6 text-lawbit-orange-500" />}
               title="Clause Identification"
               description="Automatically detect important clauses and categorize them for easy review."
             />
             <FeatureCard 
-              icon={<Brain className="h-6 w-6 text-teal-500" />}
+              icon={<Brain className="h-6 w-6 text-lawbit-orange-500" />}
               title="Contract Simplification"
               description="Translate legal jargon into clear, plain language everyone can understand."
             />
             <FeatureCard 
-              icon={<Scale className="h-6 w-6 text-teal-500" />}
+              icon={<Scale className="h-6 w-6 text-lawbit-orange-500" />}
               title="Compliance Checking"
               description="Ensure your documents meet legal requirements across different jurisdictions."
             />
             <FeatureCard 
-              icon={<BookOpen className="h-6 w-6 text-teal-500" />}
+              icon={<BookOpen className="h-6 w-6 text-lawbit-orange-500" />}
               title="Contract Library"
               description="Access and manage all your documents in one secure, organized place."
             />
@@ -132,7 +129,7 @@ const Index = () => {
       </section>
       
       {/* Testimonials Section */}
-      <section className="py-24 bg-gradient-to-b from-transparent to-teal-50/50 dark:to-teal-950/10">
+      <section className="py-24 bg-gradient-to-b from-transparent to-lawbit-orange-50/50 dark:to-lawbit-brown-900/10">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">What Our Users Say</h2>
@@ -161,10 +158,110 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Pricing Section - New */}
+      <section className="py-24 border-t border-border">
+        <div className="container px-4 mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Select the perfect plan for your legal document needs
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
+            <div className="glass-card p-6 rounded-xl hover-scale">
+              <h3 className="text-xl font-semibold mb-2">Free Plan</h3>
+              <p className="text-3xl font-bold mb-4">$0<span className="text-sm font-normal text-muted-foreground">/month</span></p>
+              <p className="text-muted-foreground mb-6">Perfect for occasional use</p>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Generate up to 2 contracts</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Analyze up to 5 documents</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Basic risk assessment</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Contract library</span>
+                </li>
+              </ul>
+              
+              <Button className="w-full bg-lawbit-orange-500 hover:bg-lawbit-orange-600 text-white">
+                Get Started
+              </Button>
+            </div>
+            
+            {/* Premium Plan */}
+            <div className="premium-card p-6 rounded-xl hover-scale relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-orange-brown-gradient text-white text-xs font-semibold px-3 py-1">
+                POPULAR
+              </div>
+              
+              <h3 className="text-xl font-semibold mb-2">Premium Plan</h3>
+              <p className="text-3xl font-bold mb-4">$9.99<span className="text-sm font-normal text-muted-foreground">/month</span></p>
+              <p className="text-muted-foreground mb-6">For professionals and businesses</p>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>10,000 tokens per month</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Generate up to 5 agreements</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Analyze up to 10 contracts</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Advanced risk assessment</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30 flex items-center justify-center">
+                    <span className="text-xs text-lawbit-orange-700 dark:text-lawbit-orange-300">✓</span>
+                  </div>
+                  <span>Priority support</span>
+                </li>
+              </ul>
+              
+              <Button className="w-full bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover text-white glow-effect">
+                Upgrade Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* CTA Section */}
       <section className="py-24">
         <div className="container px-4 mx-auto">
-          <div className="relative overflow-hidden glass-card rounded-2xl p-8 md:p-12 bg-gradient-to-r from-teal-500/10 to-emerald-500/10">
+          <div className="relative overflow-hidden glass-card rounded-2xl p-8 md:p-12 bg-gradient-to-r from-lawbit-orange-500/10 to-lawbit-brown-500/10">
             <div className="absolute inset-0 backdrop-blur-sm" />
             
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -176,7 +273,7 @@ const Index = () => {
               </div>
               
               <Link to="/dashboard">
-                <Button size="lg" className="bg-gradient-to-r from-teal-400 to-emerald-500 hover:from-teal-500 hover:to-emerald-600 min-w-[180px] gap-2 text-white">
+                <Button size="lg" className="bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover min-w-[180px] gap-2 text-white glow-effect">
                   Try It Now <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -190,12 +287,8 @@ const Index = () => {
         <div className="container px-4 mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-md overflow-hidden">
-                <img 
-                  src="/lovable-uploads/685f9d8f-3d98-458c-82d3-043a700e63d0.png" 
-                  alt="Lawbit Logo" 
-                  className="h-full w-full object-contain"
-                />
+              <div className="h-8 w-8 rounded-md overflow-hidden bg-gradient-to-br from-lawbit-orange-500 to-lawbit-brown-600 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
               <span className="font-medium text-lg">Lawbit</span>
             </div>
@@ -230,8 +323,8 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="glass-card glass-card-hover p-6 rounded-xl hover-scale bg-white/80 dark:bg-gray-800/60 border border-teal-200/40 dark:border-teal-700/30">
-      <div className="h-12 w-12 rounded-lg bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-4 border border-teal-100 dark:border-teal-800/50">
+    <div className="glass-card glass-card-hover p-6 rounded-xl hover-scale bg-white/80 dark:bg-gray-800/60 border border-lawbit-orange-200/40 dark:border-lawbit-orange-700/30">
+      <div className="h-12 w-12 rounded-lg bg-lawbit-orange-50 dark:bg-lawbit-orange-900/30 flex items-center justify-center mb-4 border border-lawbit-orange-100 dark:border-lawbit-orange-800/50">
         {icon}
       </div>
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
@@ -249,7 +342,7 @@ interface StepCardProps {
 function StepCard({ number, title, description }: StepCardProps) {
   return (
     <div className="flex flex-col items-center text-center p-6">
-      <div className="h-16 w-16 rounded-full bg-gradient-to-r from-teal-400 to-emerald-500 flex items-center justify-center mb-4 text-white font-bold text-2xl">
+      <div className="h-16 w-16 rounded-full bg-gradient-to-r from-lawbit-orange-400 to-lawbit-orange-500 flex items-center justify-center mb-4 text-white font-bold text-2xl">
         {number}
       </div>
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
@@ -266,7 +359,7 @@ interface TestimonialCardProps {
 
 function TestimonialCard({ quote, author, role }: TestimonialCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-teal-100 dark:border-teal-900/30">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-lawbit-orange-100 dark:border-lawbit-orange-900/30">
       <div className="flex gap-1 mb-4">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />

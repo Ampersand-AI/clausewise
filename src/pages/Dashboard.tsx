@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, ListFilter, MicOff, Gavel } from "lucide-react";
+import { Upload, FileText, Mic, Send, ListFilter, MicOff, Sparkles, CreditCard, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
+import { useAuth } from "@/context/AuthContext";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +16,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
@@ -25,18 +27,20 @@ import {
 import ModeToggle from "@/components/contract/ModeToggle";
 import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
 import DocumentTabs from "@/components/document/DocumentTabs";
+import { Link } from "react-router-dom";
 
-// Define top most used agreement types
-const popularAgreements = [
-  { label: "Non-Disclosure Agreement (NDA)", value: "nda" },
-  { label: "Service Agreement", value: "service" },
-  { label: "Employment Contract", value: "employment" },
-  { label: "Consulting Agreement", value: "consulting" },
-  { label: "Term Sheet", value: "termsheet" },
-  { label: "SAFE Note", value: "safenote" },
-  { label: "Convertible Note", value: "convertiblenote" },
-  { label: "Equity Agreement", value: "equity" },
-];
+// Define max limits for free users
+const FREE_USER_LIMITS = {
+  CONTRACT_GENERATION: 2,
+  DOCUMENT_ANALYSIS: 5
+};
+
+// Define max limits for premium users
+const PREMIUM_USER_LIMITS = {
+  CONTRACT_GENERATION: 5,
+  DOCUMENT_ANALYSIS: 10,
+  TOKENS: 10000
+};
 
 // Define document types
 type AnalyzingDocument = {
@@ -89,6 +93,7 @@ type FilterOptions = {
 };
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [contracts, setContracts] = useState<GeneratedContract[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
@@ -109,6 +114,15 @@ const Dashboard = () => {
       medium: true,
       high: true,
     },
+  });
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState<"contracts" | "analysis">("contracts");
+  // For demo purposes, we'll simulate a user subscription status
+  const [isPremium, setIsPremium] = useState(false);
+  const [usageStats, setUsageStats] = useState({
+    contractsGenerated: 0,
+    documentsAnalyzed: 0,
+    tokensUsed: 0
   });
   const { toast } = useToast();
   
@@ -199,6 +213,26 @@ const Dashboard = () => {
         console.error("Error parsing contracts from localStorage:", error);
       }
     }
+
+    // Load usage stats from localStorage
+    const storedUsageStats = localStorage.getItem('usageStats');
+    if (storedUsageStats) {
+      try {
+        setUsageStats(JSON.parse(storedUsageStats));
+      } catch (error) {
+        console.error("Error parsing usage stats from localStorage:", error);
+      }
+    }
+
+    // Load premium status from localStorage
+    const storedPremiumStatus = localStorage.getItem('isPremium');
+    if (storedPremiumStatus) {
+      try {
+        setIsPremium(JSON.parse(storedPremiumStatus));
+      } catch (error) {
+        console.error("Error parsing premium status from localStorage:", error);
+      }
+    }
   }, []);
 
   // Save documents to localStorage whenever they change
@@ -210,6 +244,16 @@ const Dashboard = () => {
   useEffect(() => {
     localStorage.setItem('contracts', JSON.stringify(contracts));
   }, [contracts]);
+
+  // Save usage stats to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('usageStats', JSON.stringify(usageStats));
+  }, [usageStats]);
+
+  // Save premium status to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('isPremium', JSON.stringify(isPremium));
+  }, [isPremium]);
 
   // Apply filters to documents
   useEffect(() => {
@@ -238,7 +282,33 @@ const Dashboard = () => {
     setFilteredDocuments(filtered);
   }, [documents, filterOptions]);
 
+  const checkUsageLimits = (type: "contracts" | "analysis"): boolean => {
+    if (type === "contracts") {
+      const currentContractCount = usageStats.contractsGenerated;
+      const maxContracts = isPremium ? PREMIUM_USER_LIMITS.CONTRACT_GENERATION : FREE_USER_LIMITS.CONTRACT_GENERATION;
+      
+      if (currentContractCount >= maxContracts) {
+        setUpgradeReason("contracts");
+        setShowUpgradeModal(true);
+        return false;
+      }
+    } else if (type === "analysis") {
+      const currentAnalysisCount = usageStats.documentsAnalyzed;
+      const maxAnalysis = isPremium ? PREMIUM_USER_LIMITS.DOCUMENT_ANALYSIS : FREE_USER_LIMITS.DOCUMENT_ANALYSIS;
+      
+      if (currentAnalysisCount >= maxAnalysis) {
+        setUpgradeReason("analysis");
+        setShowUpgradeModal(true);
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!checkUsageLimits("analysis")) return;
+    
     const files = event.target.files;
     if (!files || files.length === 0) return;
     
@@ -282,6 +352,8 @@ const Dashboard = () => {
   };
 
   const analyzeTextDocument = async (text: string, title: string = "Document") => {
+    if (!checkUsageLimits("analysis")) return;
+    
     if (!text || text.trim().length < 50) {
       toast({
         title: "Content error",
@@ -363,6 +435,13 @@ const Dashboard = () => {
         )
       );
       
+      // Update usage stats
+      setUsageStats(prev => ({
+        ...prev,
+        documentsAnalyzed: prev.documentsAnalyzed + 1,
+        tokensUsed: prev.tokensUsed + Math.floor(Math.random() * 500) + 500 // Simulate token usage
+      }));
+      
       toast({
         title: "Analysis completed",
         description: `Document "${result.documentTitle || title}" has been analyzed successfully.`,
@@ -441,7 +520,28 @@ const Dashboard = () => {
   };
   
   const handleGenerateContract = (contract: GeneratedContract) => {
+    if (!checkUsageLimits("contracts")) return;
+    
     setContracts(prev => [contract, ...prev]);
+    
+    // Update usage stats
+    setUsageStats(prev => ({
+      ...prev,
+      contractsGenerated: prev.contractsGenerated + 1,
+      tokensUsed: prev.tokensUsed + Math.floor(Math.random() * 1000) + 1000 // Simulate token usage
+    }));
+  };
+
+  const handleUpgrade = () => {
+    // In a real application, this would redirect to a payment page
+    // For demo purposes, we'll just set the user as premium
+    setIsPremium(true);
+    setShowUpgradeModal(false);
+    
+    toast({
+      title: "Upgraded to Premium!",
+      description: "You now have access to all premium features.",
+    });
   };
 
   return (
@@ -449,15 +549,82 @@ const Dashboard = () => {
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-bento-orange-400 to-bento-brown-600 shadow-md overflow-hidden">
-            <Gavel className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-lawbit-orange-400 to-lawbit-brown-600 shadow-md overflow-hidden glow-effect">
+            <Sparkles className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-center lovable-text-gradient">
-            LawBit
+          <h1 className="text-3xl font-bold text-center">
+            <span className="text-gradient">Law</span><span className="text-lawbit-orange-500">bit</span>
           </h1>
-          <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
+          <p className="text-muted-foreground text-center max-w-lg">
             Create and analyze legal documents with AI. Draft contracts or upload existing documents.
           </p>
+        </div>
+
+        {/* Usage Stats */}
+        <div className="w-full max-w-2xl glass-card rounded-xl p-4">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-medium">Your Usage</h3>
+            <div className="flex items-center">
+              {isPremium ? (
+                <span className="premium-badge">Premium</span>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-lawbit-orange-500 border-lawbit-orange-500 hover:bg-lawbit-orange-500/10"
+                  onClick={() => setShowUpgradeModal(true)}
+                >
+                  Upgrade
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-3 bg-lawbit-orange-50/10 dark:bg-lawbit-orange-900/10 rounded-lg border border-lawbit-orange-100/30 dark:border-lawbit-orange-700/30">
+              <p className="text-sm text-muted-foreground">Contracts Generated</p>
+              <div className="flex justify-between items-end mt-1">
+                <p className="text-2xl font-bold">{usageStats.contractsGenerated}</p>
+                <p className="text-xs text-muted-foreground">
+                  of {isPremium ? PREMIUM_USER_LIMITS.CONTRACT_GENERATION : FREE_USER_LIMITS.CONTRACT_GENERATION}
+                </p>
+              </div>
+              <Progress 
+                value={(usageStats.contractsGenerated / (isPremium ? PREMIUM_USER_LIMITS.CONTRACT_GENERATION : FREE_USER_LIMITS.CONTRACT_GENERATION)) * 100} 
+                className="h-1 mt-2 bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30"
+              />
+            </div>
+            
+            <div className="p-3 bg-lawbit-orange-50/10 dark:bg-lawbit-orange-900/10 rounded-lg border border-lawbit-orange-100/30 dark:border-lawbit-orange-700/30">
+              <p className="text-sm text-muted-foreground">Documents Analyzed</p>
+              <div className="flex justify-between items-end mt-1">
+                <p className="text-2xl font-bold">{usageStats.documentsAnalyzed}</p>
+                <p className="text-xs text-muted-foreground">
+                  of {isPremium ? PREMIUM_USER_LIMITS.DOCUMENT_ANALYSIS : FREE_USER_LIMITS.DOCUMENT_ANALYSIS}
+                </p>
+              </div>
+              <Progress 
+                value={(usageStats.documentsAnalyzed / (isPremium ? PREMIUM_USER_LIMITS.DOCUMENT_ANALYSIS : FREE_USER_LIMITS.DOCUMENT_ANALYSIS)) * 100} 
+                className="h-1 mt-2 bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30"
+              />
+            </div>
+            
+            {isPremium && (
+              <div className="p-3 bg-lawbit-orange-50/10 dark:bg-lawbit-orange-900/10 rounded-lg border border-lawbit-orange-100/30 dark:border-lawbit-orange-700/30">
+                <p className="text-sm text-muted-foreground">Tokens Used</p>
+                <div className="flex justify-between items-end mt-1">
+                  <p className="text-2xl font-bold">{usageStats.tokensUsed}</p>
+                  <p className="text-xs text-muted-foreground">
+                    of {PREMIUM_USER_LIMITS.TOKENS}
+                  </p>
+                </div>
+                <Progress 
+                  value={(usageStats.tokensUsed / PREMIUM_USER_LIMITS.TOKENS) * 100} 
+                  className="h-1 mt-2 bg-lawbit-orange-100 dark:bg-lawbit-orange-900/30"
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mode toggle between create and analyze */}
@@ -466,22 +633,22 @@ const Dashboard = () => {
         {/* Chat-like interface with animated gradient border */}
         <div className="w-full max-w-2xl relative rounded-xl overflow-hidden group">
           {/* Animated gradient border */}
-          <div className="absolute -z-10 inset-0 rounded-xl bg-lovable-gradient bg-[length:200%_100%] animate-shimmer p-[1.5px]">
-            <div className="absolute inset-0 rounded-lg bg-bento-gray-100 dark:bg-bento-gray-800"></div>
+          <div className="absolute -z-10 inset-0 rounded-xl bg-orange-brown-gradient bg-[length:200%_100%] animate-shimmer p-[1.5px]">
+            <div className="absolute inset-0 rounded-lg bg-background"></div>
           </div>
           
-          <div className="w-full max-w-2xl overflow-hidden border border-bento-gray-200 bg-white/90 backdrop-blur-sm shadow-sm dark:bg-bento-gray-800/90 dark:border-bento-gray-700 rounded-xl z-10">
+          <div className="w-full max-w-2xl overflow-hidden border border-lawbit-orange-200 dark:border-lawbit-orange-700/30 bg-white/90 backdrop-blur-sm shadow-sm dark:bg-gray-800/90 rounded-xl z-10">
             {isAnalyzing ? (
               <div className="p-6 space-y-4">
-                <h3 className="text-lg font-medium text-center text-bento-gray-900 dark:text-bento-gray-100">Analyzing Document...</h3>
+                <h3 className="text-lg font-medium text-center">Analyzing Document...</h3>
                 <div className="relative pt-1">
-                  <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
+                  <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-lawbit-orange-100/50 dark:bg-lawbit-orange-900/30">
                     <div 
-                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-lovable-gradient bg-[length:200%_100%] animate-shimmer" 
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-orange-brown-gradient bg-[length:200%_100%] animate-shimmer" 
                       style={{ width: `${analysisProgress}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-center mt-2 text-bento-gray-600 dark:text-bento-gray-400">
+                  <div className="text-sm text-center mt-2 text-muted-foreground">
                     {analysisProgress}% - Extracting information and analyzing content
                   </div>
                 </div>
@@ -490,19 +657,19 @@ const Dashboard = () => {
               <>
                 {mode === "create" ? (
                   <div className="p-4">
-                    <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-4 text-center">Create Legal Contract</h3>
+                    <h3 className="font-medium mb-4 text-center">Create Legal Contract</h3>
                     <ContractForm 
                       onGenerate={handleGenerateContract} 
-                      popularAgreements={popularAgreements}
+                      popularAgreements={[]}
                     />
                   </div>
                 ) : (
                   <div className="p-4">
-                    <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2 text-center">Analyze Legal Document or Clauses</h3>
+                    <h3 className="font-medium mb-2 text-center">Analyze Legal Document or Clauses</h3>
                     <div className="flex flex-col space-y-4">
                       <Textarea 
                         placeholder="Paste your legal document text here for analysis..."
-                        className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700 rounded-lg"
+                        className="min-h-[200px] text-sm focus:ring-lawbit-orange-500 resize-none bg-gray-50 text-gray-900 border-gray-200 dark:bg-gray-900/50 dark:text-gray-100 dark:border-gray-700 rounded-lg"
                         value={documentText}
                         onChange={(e) => setDocumentText(e.target.value)}
                       />
@@ -510,7 +677,7 @@ const Dashboard = () => {
                       <div className="flex justify-between items-center px-1">
                         <div className="flex items-center">
                           <label htmlFor="file-upload" className="cursor-pointer">
-                            <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500 flex items-center gap-2">
+                            <div className="p-2 rounded-md hover:bg-lawbit-orange-100/50 dark:hover:bg-lawbit-orange-900/30 text-lawbit-orange-500 flex items-center gap-2">
                               <Upload className="h-4 w-4" />
                               <span className="text-sm">Upload</span>
                             </div>
@@ -526,7 +693,7 @@ const Dashboard = () => {
                           <Button 
                             variant={isRecording ? "destructive" : "ghost"} 
                             size="sm" 
-                            className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
+                            className={isRecording ? "text-white" : "text-lawbit-orange-500 hover:bg-lawbit-orange-50 dark:hover:bg-lawbit-orange-900/30"}
                             onClick={toggleRecording}
                           >
                             {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
@@ -537,7 +704,7 @@ const Dashboard = () => {
                         <Button 
                           onClick={() => analyzeTextDocument(documentText)}
                           disabled={!documentText.trim() || documentText.trim().length < 50}
-                          className="bg-lovable-gradient hover:bg-lovable-gradient-hover text-white transition-all duration-300"
+                          className="bg-orange-brown-gradient hover:bg-orange-brown-gradient-hover text-white transition-all duration-300"
                         >
                           <Send className="h-4 w-4 mr-1" /> Analyze
                         </Button>
@@ -554,17 +721,17 @@ const Dashboard = () => {
         {(documents.length > 0 || contracts.length > 0) && (
           <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-bento-gray-900 dark:text-bento-gray-100">Recent Documents</h2>
+              <h2 className="text-xl font-semibold">Recent Documents</h2>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1 text-bento-gray-600 dark:text-bento-gray-400 border-bento-gray-200 bg-white hover:bg-bento-gray-50 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700">
+                  <Button variant="outline" size="sm" className="gap-1 text-muted-foreground border-lawbit-orange-200 bg-white hover:bg-lawbit-orange-50 dark:bg-gray-800 dark:border-lawbit-orange-700/30 dark:hover:bg-lawbit-orange-900/20">
                     <ListFilter className="h-4 w-4" />
                     Filter
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white/90 backdrop-blur-sm border-bento-gray-200 dark:bg-bento-gray-800/90 dark:border-bento-gray-700">
+                <DropdownMenuContent align="end" className="w-56 bg-white/90 backdrop-blur-sm border-lawbit-orange-200 dark:bg-gray-800/90 dark:border-lawbit-orange-700/30">
                   <div className="p-2">
-                    <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Status</p>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Status</p>
                     <DropdownMenuCheckboxItem
                       checked={filterOptions.status.analyzing}
                       onCheckedChange={(checked) => handleFilterChange('status', 'analyzing', checked)}
@@ -585,8 +752,8 @@ const Dashboard = () => {
                     </DropdownMenuCheckboxItem>
                   </div>
                   
-                  <div className="p-2 border-t border-bento-gray-200 dark:border-bento-gray-700">
-                    <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Risk Level</p>
+                  <div className="p-2 border-t border-lawbit-orange-200/50 dark:border-lawbit-orange-700/20">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Risk Level</p>
                     <DropdownMenuCheckboxItem
                       checked={filterOptions.risk.low}
                       onCheckedChange={(checked) => handleFilterChange('risk', 'low', checked)}
@@ -619,16 +786,17 @@ const Dashboard = () => {
         )}
       </div>
 
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent className="bg-white/90 backdrop-blur-sm border-bento-gray-200 text-bento-gray-900 dark:bg-bento-gray-800/90 dark:border-bento-gray-700 dark:text-bento-gray-100">
+        <AlertDialogContent className="bg-white/90 backdrop-blur-sm border-lawbit-orange-200 text-gray-900 dark:bg-gray-800/90 dark:border-lawbit-orange-700/30 dark:text-gray-100">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription className="text-bento-gray-600 dark:text-bento-gray-400">
+            <AlertDialogDescription className="text-muted-foreground">
               This action cannot be undone. This will permanently delete the document.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white text-bento-gray-900 hover:bg-bento-gray-100 border-bento-gray-200 dark:bg-bento-gray-800 dark:text-bento-gray-100 dark:hover:bg-bento-gray-700 dark:border-bento-gray-700">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white text-gray-900 hover:bg-gray-100 border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:border-gray-700">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => documentToDelete && handleDeleteDocument(documentToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -638,8 +806,15 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AppLayout>
-  );
-};
 
-export default Dashboard;
+      {/* Upgrade Modal */}
+      <AlertDialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+        <AlertDialogContent className="bg-white/90 backdrop-blur-md border-lawbit-orange-200 dark:bg-gray-800/90 dark:border-lawbit-orange-700/30 max-w-md">
+          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
+            <div className="h-24 w-24 rounded-full bg-orange-brown-gradient flex items-center justify-center shadow-lg glow-effect">
+              <Lock className="h-10 w-10 text-white" />
+            </div>
+          </div>
+          
+          <AlertDialogHeader className="pt-14">
+            <AlertDialogTitle className="text-center
