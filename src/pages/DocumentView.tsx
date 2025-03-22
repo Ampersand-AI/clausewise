@@ -1,59 +1,193 @@
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FileText } from "lucide-react"; // Changed from Document to FileText which exists in lucide-react
+import { FileText, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface DocumentViewProps {
+interface DocumentViewProps {}
+
+interface Document {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  [key: string]: any; // For additional document properties
 }
 
 const DocumentView: React.FC<DocumentViewProps> = () => {
   const { id } = useParams<{ id: string }>();
-  const [documentName, setDocumentName] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [document, setDocument] = useState<Document | null>(null);
 
   useEffect(() => {
-    // Fetch document name or details based on the ID
+    const fetchDocument = async () => {
+      try {
+        setLoading(true);
+        // In a real implementation, we'd call api.get(`/documents/${id}`)
+        // For this mock, we'll create a sample document with the given ID
+        setTimeout(() => {
+          const mockDocument = {
+            id: id || "unknown",
+            name: "Sample Agreement",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            status: "signed",
+            parties: ["Company A", "Company B"]
+          };
+          
+          console.log("Fetched document:", mockDocument);
+          setDocument(mockDocument);
+          setLoading(false);
+        }, 800); // Simulate network delay
+      } catch (error) {
+        console.error("Error fetching document:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load document. Please try again.",
+          variant: "destructive",
+        });
+        setLoading(false);
+      }
+    };
+
     if (id) {
-      // Simulate fetching document name
-      setTimeout(() => {
-        setDocumentName(`Document ID: ${id}`);
-      }, 500);
+      fetchDocument();
+    } else {
+      setLoading(false);
     }
-  }, [id]);
+  }, [id, toast]);
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   return (
-    <div className="container mx-auto mt-8">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold">Document View</h1>
-        {documentName && <p className="text-gray-600">Viewing: {documentName}</p>}
+    <div className="container mx-auto mt-8 px-4">
+      <Button 
+        variant="ghost" 
+        onClick={handleGoBack} 
+        className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back to Documents
+      </Button>
+
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Document View</h1>
+        <p className="text-muted-foreground mt-1">
+          View and manage document details
+        </p>
       </div>
 
-      <div className="grid gap-4">
-        <div>
-          <label htmlFor="documentName" className="block text-sm font-medium text-gray-700">
-            Document Name
-          </label>
-          <div className="mt-1">
-            <Input
-              type="text"
-              name="documentName"
-              id="documentName"
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              value={documentName || ""}
-              disabled
-            />
+      {loading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-full max-w-sm" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+      ) : document ? (
+        <div className="grid gap-6">
+          <div className="rounded-lg border border-border p-6 shadow-sm">
+            <div className="mb-4">
+              <label htmlFor="documentName" className="block text-sm font-medium text-muted-foreground mb-1">
+                Document Name
+              </label>
+              <Input
+                type="text"
+                name="documentName"
+                id="documentName"
+                className="w-full"
+                value={document.name}
+                readOnly
+              />
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="documentId" className="block text-sm font-medium text-muted-foreground mb-1">
+                Document ID
+              </label>
+              <Input
+                type="text"
+                name="documentId"
+                id="documentId"
+                className="w-full font-mono text-sm bg-muted"
+                value={document.id}
+                readOnly
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="createdAt" className="block text-sm font-medium text-muted-foreground mb-1">
+                  Created At
+                </label>
+                <Input
+                  type="text"
+                  name="createdAt"
+                  id="createdAt"
+                  className="w-full bg-muted"
+                  value={new Date(document.createdAt).toLocaleString()}
+                  readOnly
+                />
+              </div>
+              <div>
+                <label htmlFor="updatedAt" className="block text-sm font-medium text-muted-foreground mb-1">
+                  Last Updated
+                </label>
+                <Input
+                  type="text"
+                  name="updatedAt"
+                  id="updatedAt"
+                  className="w-full bg-muted"
+                  value={new Date(document.updatedAt).toLocaleString()}
+                  readOnly
+                />
+              </div>
+            </div>
+
+            {document.parties && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-muted-foreground mb-1">
+                  Parties Involved
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {document.parties.map((party: string, index: number) => (
+                    <div key={index} className="px-3 py-1 bg-primary/10 rounded-full text-sm">
+                      {party}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <Button variant="default" className="flex items-center">
+                <FileText className="mr-2 h-4 w-4" />
+                View Document Content
+              </Button>
+            </div>
           </div>
         </div>
-
-        <div>
-          <Button variant="outline" className="mt-4">
-            <FileText className="mr-2 h-4 w-4" />
-            View Document
+      ) : (
+        <div className="text-center py-12">
+          <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium">Document Not Found</h3>
+          <p className="text-muted-foreground mt-1">
+            The document you're looking for doesn't exist or has been removed.
+          </p>
+          <Button onClick={handleGoBack} className="mt-4">
+            Go Back
           </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 };

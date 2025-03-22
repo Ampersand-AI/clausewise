@@ -18,6 +18,22 @@ class ApiClient {
         ]
       };
     }
+    
+    // Mock response for specific document
+    if (endpoint.startsWith("/documents/")) {
+      const id = endpoint.split("/").pop();
+      return {
+        data: {
+          id: id,
+          name: "Sample Agreement",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          status: "signed",
+          parties: ["Company A", "Company B"]
+        }
+      };
+    }
+    
     return { data: [] };
   }
 
