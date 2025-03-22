@@ -20,6 +20,11 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
@@ -28,7 +33,7 @@ interface SpeechRecognition extends EventTarget {
   onaudioend: (event: Event) => void;
   onaudiostart: (event: Event) => void;
   onend: (event: Event) => void;
-  onerror: (event: Event) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;
   onnomatch: (event: SpeechRecognitionEvent) => void;
   onresult: (event: SpeechRecognitionEvent) => void;
   onsoundend: (event: Event) => void;
