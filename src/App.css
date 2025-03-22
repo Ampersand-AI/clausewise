@@ -1,8 +1,18 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+body {
+  background-color: #121215;
+  background-image: 
+    radial-gradient(circle at 25% 15%, rgba(50, 50, 70, 0.2) 0%, transparent 40%),
+    radial-gradient(circle at 75% 85%, rgba(80, 50, 50, 0.2) 0%, transparent 40%);
+  min-height: 100vh;
+  color: #e1e2e5;
 }
 
 .logo {
@@ -11,11 +21,13 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #f97316aa);
 }
+
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #f97316aa);
 }
 
 @keyframes logo-spin {

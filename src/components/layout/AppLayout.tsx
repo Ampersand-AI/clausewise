@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { Settings, User, Gavel } from "lucide-react";
+import { Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
 import {
@@ -23,7 +23,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   const [notifications, setNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [compactView, setCompactView] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   // Get system theme on mount
   useEffect(() => {
@@ -44,21 +44,22 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-bento-orange-50/80 to-bento-yellow-50/80 text-bento-gray-800 dark:bg-gradient-to-br dark:from-bento-brown-700 dark:to-bento-brown-800 dark:text-bento-gray-200 relative overflow-hidden header-gradient-fade">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:20px_20px] opacity-30 dark:bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] pointer-events-none"></div>
+    <div className="min-h-screen flex flex-col bg-[#121215] text-foreground relative overflow-hidden">
+      {/* Background gradients and patterns */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(50,50,70,0.2)_0%,transparent_40%),radial-gradient(circle_at_75%_85%,rgba(80,50,50,0.2)_0%,transparent_40%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(#333_1px,transparent_1px)] bg-[length:20px_20px] opacity-10 pointer-events-none"></div>
       
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-bento-orange-600 hover:text-bento-orange-700 hover:bg-bento-orange-100 dark:text-bento-orange-400 dark:hover:text-bento-orange-300 dark:hover:bg-bento-brown-700 rounded-full">
+            <Button variant="glass" size="icon" className="text-primary hover:text-primary/90 rounded-full">
               <Settings className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent className="bg-white/90 backdrop-blur-sm border-bento-orange-200 text-bento-gray-900 dark:bg-bento-brown-800/90 dark:border-bento-brown-700 dark:text-bento-gray-100">
+          <SheetContent className="backdrop-blur-md bg-glass border-glass-border">
             <SheetHeader>
               <SheetTitle>Settings</SheetTitle>
-              <SheetDescription className="text-bento-gray-600 dark:text-bento-gray-400">
+              <SheetDescription className="text-muted-foreground">
                 Configure your application preferences.
               </SheetDescription>
             </SheetHeader>
@@ -69,7 +70,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="theme" className="flex flex-col gap-1">
                       <span>Dark Mode</span>
-                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                      <span className="text-xs font-normal text-muted-foreground">
                         Switch between light and dark theme
                       </span>
                     </Label>
@@ -82,7 +83,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="notifications" className="flex flex-col gap-1">
                       <span>Notifications</span>
-                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                      <span className="text-xs font-normal text-muted-foreground">
                         Receive notifications about your documents
                       </span>
                     </Label>
@@ -95,7 +96,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="autosave" className="flex flex-col gap-1">
                       <span>Auto Save</span>
-                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                      <span className="text-xs font-normal text-muted-foreground">
                         Automatically save changes
                       </span>
                     </Label>
@@ -108,7 +109,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="compact-view" className="flex flex-col gap-1">
                       <span>Compact View</span>
-                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                      <span className="text-xs font-normal text-muted-foreground">
                         Display content in a more compact format
                       </span>
                     </Label>
@@ -123,7 +124,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
             </div>
           </SheetContent>
         </Sheet>
-        <Button variant="ghost" size="icon" className="text-bento-orange-600 hover:text-bento-orange-700 hover:bg-bento-orange-100 dark:text-bento-orange-400 dark:hover:text-bento-orange-300 dark:hover:bg-bento-brown-700 rounded-full">
+        <Button variant="glass" size="icon" className="text-primary hover:text-primary/90 rounded-full">
           <User className="h-5 w-5" />
         </Button>
       </div>

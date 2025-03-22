@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,7 +62,21 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// New colors based on Bento site
+				// New colors based on the dark UI
+				glass: {
+					DEFAULT: 'rgba(24, 24, 27, 0.6)',
+					light: 'rgba(30, 30, 35, 0.6)',
+					dark: 'rgba(18, 18, 21, 0.6)',
+					border: 'rgba(55, 55, 60, 0.3)',
+					highlight: 'rgba(255, 255, 255, 0.05)',
+				},
+				status: {
+					success: '#4ade80',
+					warning: '#f97316',
+					error: '#ef4444',
+					progress: '#f97316',
+				},
+				// Keep existing Bento and lovable colors
 				bento: {
 					gray: {
 						50: '#f9f9f9',
@@ -99,7 +112,6 @@ export default {
 						800: '#292524',
 					}
 				},
-				// Adding lovable gradient colors
 				lovable: {
 					purple: '#8B5CF6',
 					pink: '#D946EF',
@@ -195,6 +207,8 @@ export default {
 				'dark-gradient-hover': 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #3730A3 100%)',
 				'lovable-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 50%, #F97316 100%)',
 				'lovable-gradient-hover': 'linear-gradient(135deg, #7C3AED 0%, #C026D3 50%, #EA580C 100%)',
+				'dark-gradient': 'linear-gradient(to bottom right, rgba(30, 30, 35, 0.5), rgba(18, 18, 21, 0.5))',
+				'glass-gradient': 'linear-gradient(to bottom right, rgba(50, 50, 55, 0.2), rgba(24, 24, 27, 0.2))',
 			},
 		},
 	},
