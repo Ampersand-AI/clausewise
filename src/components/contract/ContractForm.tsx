@@ -107,13 +107,19 @@ const ContractForm: React.FC<ContractFormProps> = ({ onGenerate }) => {
     // Handle nested fields
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
+      setFormData(prev => {
+        // Fix the TypeScript error by explicitly typing and handling the nested object
+        if (parent === 'party1' || parent === 'party2') {
+          return {
+            ...prev,
+            [parent]: {
+              ...prev[parent as keyof typeof prev] as Record<string, string>,
+              [child]: value
+            }
+          };
         }
-      }));
+        return prev;
+      });
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
