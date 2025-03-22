@@ -93,6 +93,7 @@ export default {
 						100: '#f5f5f4',
 						500: '#78716c',
 						600: '#57534e',
+						700: '#44403c', // Added the missing brown-700 color
 						800: '#292524',
 					}
 				}

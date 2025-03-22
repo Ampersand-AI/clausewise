@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -179,7 +178,7 @@
 }
 
 .bg-primary-gradient-hover {
-  @apply bg-gradient-to-r from-bento-yellow-600 via-bento-orange-600 to-bento-brown-700;
+  @apply bg-gradient-to-r from-bento-yellow-600 via-bento-orange-600 to-bento-brown-600;
 }
 
 .card-shine {
