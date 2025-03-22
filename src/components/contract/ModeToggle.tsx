@@ -9,29 +9,25 @@ type ModeToggleProps = {
 
 const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
   return (
-    <div className="flex justify-center mb-8">
+    <div className="flex justify-center mb-4">
       <ToggleGroup 
         type="single" 
         value={mode} 
         onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-        className="border border-gray-800/50 rounded-lg bg-black/70 shadow-lg w-[350px]"
+        className="border border-bento-gray-200 dark:border-bento-brown-700 p-1 rounded-md bg-bento-gray-50 dark:bg-bento-brown-800"
       >
         <ToggleGroupItem 
           value="create" 
-          className={`data-[state=on]:bg-gray-800/90 data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
-            mode === "create" ? "shadow-lg" : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/50"
-          }`}
+          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded flex items-center gap-1 text-sm px-4"
         >
-          <FileText className="h-5 w-5" />
+          <FileText className="h-4 w-4" />
           Create
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="analyze" 
-          className={`data-[state=on]:bg-gray-800/90 data-[state=on]:text-white rounded-md flex items-center justify-center gap-2 text-base px-6 py-3 w-1/2 transition-all duration-300 ${
-            mode === "analyze" ? "shadow-lg" : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/50"
-          }`}
+          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded flex items-center gap-1 text-sm px-4"
         >
-          <Search className="h-5 w-5" />
+          <Search className="h-4 w-4" />
           Analyze
         </ToggleGroupItem>
       </ToggleGroup>

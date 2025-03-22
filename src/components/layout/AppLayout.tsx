@@ -1,12 +1,18 @@
-
 import { cn } from "@/lib/utils";
-import { Settings } from "lucide-react";
+import { ModeToggle } from "../mode-toggle";
+import { Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
-import { useAuth } from "@/context/AuthContext";
-import { UserButton } from "@/components/auth/UserButton";
-import { Link } from "react-router-dom";
-import UsageStats from "@/components/usage/UsageStats";
-import ModeToggle from "@/components/mode-toggle";
+import { useState, useEffect } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -14,34 +20,117 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children, className }: AppLayoutProps) {
-  const { user } = useAuth();
+  const [notifications, setNotifications] = useState(true);
+  const [autoSave, setAutoSave] = useState(true);
+  const [compactView, setCompactView] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  // Get system theme on mount
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setTheme(isDark ? 'dark' : 'light');
+  }, []);
+
+  // Toggle theme
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-background border-b">
-        <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="text-2xl font-bold">
-              Lawbit
-            </Link>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <UsageStats />
-            <Button variant="outline" size="icon">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-bento-orange-50/80 to-bento-yellow-50/80 text-bento-gray-800 dark:bg-gradient-to-br dark:from-bento-brown-700 dark:to-bento-brown-800 dark:text-bento-gray-200 relative overflow-hidden header-gradient-fade">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:20px_20px] opacity-30 dark:bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] pointer-events-none"></div>
+      
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-bento-orange-600 hover:text-bento-orange-700 hover:bg-bento-orange-100 dark:text-bento-orange-400 dark:hover:text-bento-orange-300 dark:hover:bg-bento-brown-700 rounded-full">
               <Settings className="h-5 w-5" />
             </Button>
-            <UserButton />
-          </div>
-        </div>
-      </header>
-      
-      <main className="flex-1 flex items-center justify-center p-4 relative z-10 mt-16">
-        <div className={cn("w-full max-w-6xl mx-auto p-0.5 rounded-xl", className)}>
-          <div className="bg-background border p-6 rounded-lg w-full shadow-sm">
-            {children}
-          </div>
+          </SheetTrigger>
+          <SheetContent className="bg-white border-bento-orange-200 text-bento-gray-900 dark:bg-bento-brown-800 dark:border-bento-brown-700 dark:text-bento-gray-100">
+            <SheetHeader>
+              <SheetTitle>Settings</SheetTitle>
+              <SheetDescription className="text-bento-gray-600 dark:text-bento-gray-400">
+                Configure your application preferences.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="py-6 space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Preferences</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="theme" className="flex flex-col gap-1">
+                      <span>Dark Mode</span>
+                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                        Switch between light and dark theme
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="theme" 
+                      checked={theme === 'dark'} 
+                      onCheckedChange={toggleTheme} 
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="notifications" className="flex flex-col gap-1">
+                      <span>Notifications</span>
+                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                        Receive notifications about your documents
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="notifications" 
+                      checked={notifications} 
+                      onCheckedChange={setNotifications} 
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="autosave" className="flex flex-col gap-1">
+                      <span>Auto Save</span>
+                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                        Automatically save changes
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="autosave" 
+                      checked={autoSave} 
+                      onCheckedChange={setAutoSave} 
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="compact-view" className="flex flex-col gap-1">
+                      <span>Compact View</span>
+                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                        Display content in a more compact format
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="compact-view" 
+                      checked={compactView} 
+                      onCheckedChange={setCompactView} 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+        <ModeToggle />
+        <Button variant="ghost" size="icon" className="text-bento-orange-600 hover:text-bento-orange-700 hover:bg-bento-orange-100 dark:text-bento-orange-400 dark:hover:text-bento-orange-300 dark:hover:bg-bento-brown-700 rounded-full">
+          <User className="h-5 w-5" />
+        </Button>
+      </div>
+      <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+        <div className={cn("w-full max-w-6xl mx-auto", className)}>
+          {children}
         </div>
       </main>
     </div>

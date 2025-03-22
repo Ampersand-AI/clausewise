@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,21 +63,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// New colors based on the dark UI
-				glass: {
-					DEFAULT: 'rgba(24, 24, 27, 0.6)',
-					light: 'rgba(30, 30, 35, 0.6)',
-					dark: 'rgba(18, 18, 21, 0.6)',
-					border: 'rgba(55, 55, 60, 0.3)',
-					highlight: 'rgba(255, 255, 255, 0.05)',
-				},
-				status: {
-					success: '#4ade80',
-					warning: '#f97316',
-					error: '#ef4444',
-					progress: '#f97316',
-				},
-				// Keep existing Bento and lovable colors
+				// New colors based on Bento site
 				bento: {
 					gray: {
 						50: '#f9f9f9',
@@ -112,40 +99,13 @@ export default {
 						800: '#292524',
 					}
 				},
+				// Adding lovable gradient colors
 				lovable: {
 					purple: '#8B5CF6',
 					pink: '#D946EF',
 					orange: '#F97316',
 					blue: '#0EA5E9',
 					yellow: '#EAB308',
-				},
-				
-				// New orange-brown theme colors
-				lawbit: {
-					orange: {
-						50: '#FFF7ED',
-						100: '#FFEDD5',
-						200: '#FED7AA',
-						300: '#FDBA74',
-						400: '#FB923C',
-						500: '#F97316',
-						600: '#EA580C',
-						700: '#C2410C',
-						800: '#9A3412',
-						900: '#7C2D12',
-					},
-					brown: {
-						50: '#FDFAEF',
-						100: '#FDF3D7', 
-						200: '#FCE9BB',
-						300: '#F7D6A0',
-						400: '#E9BC74',
-						500: '#D49B57',
-						600: '#B5773D',
-						700: '#8D582E',
-						800: '#693D1F',
-						900: '#452512',
-					}
 				}
 			},
 			fontFamily: {
@@ -207,11 +167,6 @@ export default {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' },
 				},
-				
-				'glow': {
-					'0%, 100%': { boxShadow: '0 0 15px rgba(249, 115, 22, 0.6)' },
-					'50%': { boxShadow: '0 0 30px rgba(249, 115, 22, 0.8)' },
-				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -226,8 +181,6 @@ export default {
 				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 				'float': 'float 3s ease-in-out infinite',
 				'shimmer': 'shimmer 2s linear infinite',
-				
-				'glow': 'glow 3s ease-in-out infinite',
 			},
 			backdropBlur: {
 				xs: '2px',
@@ -242,14 +195,6 @@ export default {
 				'dark-gradient-hover': 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #3730A3 100%)',
 				'lovable-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 50%, #F97316 100%)',
 				'lovable-gradient-hover': 'linear-gradient(135deg, #7C3AED 0%, #C026D3 50%, #EA580C 100%)',
-				'dark-gradient': 'linear-gradient(to bottom right, rgba(30, 30, 35, 0.5), rgba(18, 18, 21, 0.5))',
-				'glass-gradient': 'linear-gradient(to bottom right, rgba(50, 50, 55, 0.2), rgba(24, 24, 27, 0.2))',
-				
-				// Add new orange-brown gradients
-				'orange-brown-gradient': 'linear-gradient(135deg, #F97316 0%, #B5773D 100%)',
-				'orange-brown-gradient-hover': 'linear-gradient(135deg, #EA580C 0%, #8D582E 100%)',
-				'brown-orange-gradient': 'linear-gradient(135deg, #B5773D 0%, #F97316 100%)',
-				'brown-orange-gradient-hover': 'linear-gradient(135deg, #8D582E 0%, #EA580C 100%)',
 			},
 		},
 	},

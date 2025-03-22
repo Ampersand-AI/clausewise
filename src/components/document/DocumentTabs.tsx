@@ -36,10 +36,10 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
 
   return (
     <Tabs defaultValue="analyses" value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid grid-cols-2 mb-4 rounded-lg border border-bento-gray-200 dark:border-bento-gray-700 bg-bento-gray-50/80 dark:bg-bento-gray-800/80 backdrop-blur-sm">
+      <TabsList className="grid grid-cols-2 mb-4 rounded-lg border border-bento-gray-200 dark:border-bento-gray-700 bg-bento-gray-50 dark:bg-bento-gray-800/80">
         <TabsTrigger 
           value="analyses" 
-          className="rounded-md data-[state=active]:bg-white/90 data-[state=active]:backdrop-blur-sm dark:data-[state=active]:bg-bento-gray-700/90"
+          className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-bento-gray-700"
         >
           <div className="flex items-center gap-1.5">
             <Search className="h-4 w-4" />
@@ -48,7 +48,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
         </TabsTrigger>
         <TabsTrigger 
           value="drafts" 
-          className="rounded-md data-[state=active]:bg-white/90 data-[state=active]:backdrop-blur-sm dark:data-[state=active]:bg-bento-gray-700/90"
+          className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-bento-gray-700"
         >
           <div className="flex items-center gap-1.5">
             <FileText className="h-4 w-4" />

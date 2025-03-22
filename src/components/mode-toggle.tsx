@@ -15,31 +15,23 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="rounded-full bg-black/90 border-gray-800/50">
-          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-gray-400" />
-          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-gray-400" />
+        <Button variant="ghost" size="icon" className="text-bento-gray-600 hover:text-bento-gray-900 hover:bg-bento-gray-200 dark:text-bento-gray-400 dark:hover:text-bento-gray-100 dark:hover:bg-bento-gray-800 rounded-full">
+          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-black/90 border-gray-800/50">
-        <DropdownMenuItem onClick={() => setTheme("light")} className="text-gray-300 focus:text-white focus:bg-gray-800/70">
-          <Sun className="h-4 w-4 mr-2" />
+      <DropdownMenuContent align="end" className="bg-white border-bento-gray-200 dark:bg-bento-gray-800 dark:border-bento-gray-700">
+        <DropdownMenuItem onClick={() => setTheme("light")} className="hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700">
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")} className="text-gray-300 focus:text-white focus:bg-gray-800/70">
-          <Moon className="h-4 w-4 mr-2" />
+        <DropdownMenuItem onClick={() => setTheme("dark")} className="hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700">
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")} className="text-gray-300 focus:text-white focus:bg-gray-800/70">
-          <span className="h-4 w-4 mr-2 flex items-center justify-center">
-            <Sun className="h-3 w-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-3 w-3 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          </span>
+        <DropdownMenuItem onClick={() => setTheme("system")} className="hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700">
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-
-export default ModeToggle;
