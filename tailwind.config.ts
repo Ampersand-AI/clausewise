@@ -195,10 +195,5 @@ export default {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate"),
-		function({ addVariant }: { addVariant: (name: string, definition: string) => void }) {
-			// Add a custom variant for selection text in dark mode
-			addVariant('dark-selection', '.dark &::selection');
-		}
-	],
+	plugins: [require("tailwindcss-animate")],
 } satisfies Config;

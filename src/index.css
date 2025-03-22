@@ -99,11 +99,16 @@
 
 @layer base {
   * {
-    @apply border-border selection:bg-bento-orange-500/10 selection:text-bento-orange-600;
+    @apply border-border;
   }
   
-  .dark * {
-    @apply selection:text-bento-orange-300;
+  *::selection {
+    background-color: rgba(234, 179, 8, 0.1);
+    color: #ca8a04;
+  }
+  
+  .dark *::selection {
+    color: #fcd34d;
   }
 
   body {
