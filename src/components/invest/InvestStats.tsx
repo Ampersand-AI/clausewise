@@ -2,7 +2,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer } from "@/components/ui/chart";
-import { AreaChart, BarChart, PieChart, ResponsiveContainer } from "recharts";
+import { 
+  AreaChart, 
+  BarChart, 
+  PieChart, 
+  Area, 
+  Bar, 
+  Pie, 
+  Cell,
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  ResponsiveContainer 
+} from "recharts";
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 
 interface InvestStatsProps {
@@ -93,10 +105,10 @@ export const InvestStats = ({ isReturns = false }: InvestStatsProps) => {
                     <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <AreaChart.Tooltip />
-                <AreaChart.XAxis dataKey="name" />
-                <AreaChart.YAxis />
-                <AreaChart.Area 
+                <Tooltip />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Area 
                   type="monotone" 
                   dataKey="value" 
                   stroke="#f97316" 
@@ -126,16 +138,16 @@ export const InvestStats = ({ isReturns = false }: InvestStatsProps) => {
                   data={performanceData}
                   margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                 >
-                  <BarChart.XAxis dataKey="name" />
-                  <BarChart.YAxis />
-                  <BarChart.Tooltip />
-                  <BarChart.Bar dataKey="value" fill="#eab308" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#eab308" />
                 </BarChart>
               </ChartContainer>
             ) : (
               <ChartContainer className="h-72" config={chartConfig}>
                 <PieChart>
-                  <PieChart.Pie
+                  <Pie
                     data={categoryData}
                     dataKey="value"
                     nameKey="name"
@@ -145,13 +157,13 @@ export const InvestStats = ({ isReturns = false }: InvestStatsProps) => {
                     label
                   >
                     {categoryData.map((entry, index) => (
-                      <PieChart.Cell 
+                      <Cell 
                         key={`cell-${index}`} 
                         fill={Object.values(chartConfig)[index % Object.values(chartConfig).length].color} 
                       />
                     ))}
-                  </PieChart.Pie>
-                  <PieChart.Tooltip />
+                  </Pie>
+                  <Tooltip />
                 </PieChart>
               </ChartContainer>
             )}
@@ -215,3 +227,4 @@ const StatsCard = ({ title, value, description, trend, icon }: StatsCardProps) =
     </Card>
   );
 };
+
