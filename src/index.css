@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -123,6 +124,10 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600;
   }
+  
+  .lovable-text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-lovable-purple via-lovable-pink to-lovable-orange;
+  }
 
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -167,6 +172,33 @@
   .pdf-key-finding {
     @apply mb-3 border border-gray-300 p-3;
   }
+  
+  /* Header gradient fade */
+  .header-gradient-fade {
+    @apply relative overflow-hidden;
+  }
+  
+  .header-gradient-fade::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-lovable-purple/20 to-transparent pointer-events-none;
+  }
+  
+  .dark .header-gradient-fade::before {
+    @apply from-lovable-purple/10;
+  }
+  
+  /* Document card hover effects */
+  .document-card {
+    @apply transition-all duration-300 hover:shadow-lg relative overflow-hidden;
+  }
+  
+  .document-card:hover .delete-icon {
+    @apply opacity-100;
+  }
+  
+  .delete-icon {
+    @apply absolute bottom-3 left-3 opacity-0 transition-opacity duration-300 z-10;
+  }
 }
 
 /* Font imports */
@@ -179,6 +211,14 @@
 
 .bg-primary-gradient-hover {
   @apply bg-gradient-to-r from-bento-yellow-600 via-bento-orange-600 to-bento-brown-600;
+}
+
+.bg-lovable-gradient {
+  @apply bg-gradient-to-r from-lovable-purple via-lovable-pink to-lovable-orange;
+}
+
+.bg-lovable-gradient-hover {
+  @apply bg-gradient-to-r from-lovable-purple/90 via-lovable-pink/90 to-lovable-orange/90;
 }
 
 .card-shine {

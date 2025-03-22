@@ -93,9 +93,17 @@ export default {
 						100: '#f5f5f4',
 						500: '#78716c',
 						600: '#57534e',
-						700: '#44403c', // Added the missing brown-700 color
+						700: '#44403c',
 						800: '#292524',
 					}
+				},
+				// Adding lovable gradient colors
+				lovable: {
+					purple: '#8B5CF6',
+					pink: '#D946EF',
+					orange: '#F97316',
+					blue: '#0EA5E9',
+					yellow: '#EAB308',
 				}
 			},
 			fontFamily: {
@@ -183,6 +191,8 @@ export default {
 				'primary-gradient-hover': 'linear-gradient(135deg, #4F46E5 0%, #3730A3 50%, #6366F1 100%)',
 				'dark-gradient': 'linear-gradient(135deg, #818CF8 0%, #6366F1 50%, #4F46E5 100%)',
 				'dark-gradient-hover': 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #3730A3 100%)',
+				'lovable-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 50%, #F97316 100%)',
+				'lovable-gradient-hover': 'linear-gradient(135deg, #7C3AED 0%, #C026D3 50%, #EA580C 100%)',
 			},
 		},
 	},

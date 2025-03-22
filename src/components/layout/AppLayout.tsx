@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "../mode-toggle";
 import { Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -24,9 +24,28 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   const [notifications, setNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [compactView, setCompactView] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  // Get system theme on mount
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setTheme(isDark ? 'dark' : 'light');
+  }, []);
+
+  // Toggle theme
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-bento-gray-100 to-bento-gray-50 text-bento-gray-800 dark:bg-gradient-to-br dark:from-bento-gray-900 dark:to-bento-gray-800 dark:text-bento-gray-200 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-bento-gray-100 to-bento-gray-50 text-bento-gray-800 dark:bg-gradient-to-br dark:from-bento-gray-900 dark:to-bento-gray-800 dark:text-bento-gray-200 relative overflow-hidden header-gradient-fade">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:20px_20px] opacity-30 dark:bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] pointer-events-none"></div>
       
@@ -48,6 +67,19 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               <div className="space-y-4">
                 <h3 className="text-sm font-medium">Preferences</h3>
                 <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="theme" className="flex flex-col gap-1">
+                      <span>Dark Mode</span>
+                      <span className="text-xs font-normal text-bento-gray-500 dark:text-bento-gray-400">
+                        Switch between light and dark theme
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="theme" 
+                      checked={theme === 'dark'} 
+                      onCheckedChange={toggleTheme} 
+                    />
+                  </div>
                   <div className="flex items-center justify-between">
                     <Label htmlFor="notifications" className="flex flex-col gap-1">
                       <span>Notifications</span>

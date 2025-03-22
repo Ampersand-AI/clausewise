@@ -1,8 +1,8 @@
+
 import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { DocumentCard } from "@/components/document/DocumentCard";
 import { Upload, FileText, Mic, Send, ListFilter, MicOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
@@ -23,6 +23,9 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import ModeToggle from "@/components/contract/ModeToggle";
+import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
+import DocumentTabs from "@/components/document/DocumentTabs";
 
 // Define document types
 type AnalyzingDocument = {
@@ -76,12 +79,14 @@ type FilterOptions = {
 
 const Dashboard = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [contracts, setContracts] = useState<GeneratedContract[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [documentText, setDocumentText] = useState("");
   const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [mode, setMode] = useState<"create" | "analyze">("create");
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     status: {
       analyzing: true,
@@ -164,7 +169,7 @@ const Dashboard = () => {
     }
   };
 
-  // Load documents from localStorage on initial render
+  // Load documents and contracts from localStorage on initial render
   useEffect(() => {
     const storedDocs = localStorage.getItem('documents');
     if (storedDocs) {
@@ -174,12 +179,26 @@ const Dashboard = () => {
         console.error("Error parsing documents from localStorage:", error);
       }
     }
+    
+    const storedContracts = localStorage.getItem('contracts');
+    if (storedContracts) {
+      try {
+        setContracts(JSON.parse(storedContracts));
+      } catch (error) {
+        console.error("Error parsing contracts from localStorage:", error);
+      }
+    }
   }, []);
 
   // Save documents to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('documents', JSON.stringify(documents));
   }, [documents]);
+  
+  // Save contracts to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('contracts', JSON.stringify(contracts));
+  }, [contracts]);
 
   // Apply filters to documents
   useEffect(() => {
@@ -372,8 +391,17 @@ const Dashboard = () => {
 
   const handleDeleteDocument = (documentId: string) => {
     try {
-      const updatedDocuments = documents.filter(doc => doc.id !== documentId);
-      setDocuments(updatedDocuments);
+      // Check if document exists in documents array
+      const docExists = documents.some(doc => doc.id === documentId);
+      
+      if (docExists) {
+        const updatedDocuments = documents.filter(doc => doc.id !== documentId);
+        setDocuments(updatedDocuments);
+      } else {
+        // Check if it's a contract
+        const updatedContracts = contracts.filter(contract => contract.id !== documentId);
+        setContracts(updatedContracts);
+      }
       
       toast({
         title: "Document deleted",
@@ -400,27 +428,34 @@ const Dashboard = () => {
       }
     }));
   };
+  
+  const handleGenerateContract = (contract: GeneratedContract) => {
+    setContracts(prev => [contract, ...prev]);
+  };
 
   return (
     <AppLayout>
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-gradient-to-br from-bento-yellow-50 to-bento-orange-50 border border-bento-orange-100 shadow-sm dark:bg-gradient-to-br dark:from-bento-gray-800 dark:to-bento-brown-800 dark:border-bento-orange-500/20 overflow-hidden">
-            <div className="w-full h-full bg-gradient-to-br from-bento-yellow-100 via-bento-orange-500 to-bento-brown-600 opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
+          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-lovable-gradient shadow-sm overflow-hidden">
+            <div className="w-full h-full bg-lovable-gradient opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
           </div>
-          <h1 className="text-3xl font-bold text-center text-gradient">
+          <h1 className="text-3xl font-bold text-center lovable-text-gradient">
             ClauseCrush
           </h1>
           <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
-            Analyze legal documents with AI. Paste your text or upload a document.
+            Create and analyze legal documents with AI. Draft contracts or upload existing documents.
           </p>
         </div>
+
+        {/* Mode toggle between create and analyze */}
+        <ModeToggle mode={mode} onModeChange={setMode} />
 
         {/* Chat-like interface with animated gradient border */}
         <div className="w-full max-w-2xl relative rounded-xl overflow-hidden group">
           {/* Animated gradient border */}
-          <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600 bg-[length:200%_100%] animate-shimmer p-[1.5px]">
+          <div className="absolute -z-10 inset-0 rounded-xl bg-lovable-gradient bg-[length:200%_100%] animate-shimmer p-[1.5px]">
             <div className="absolute inset-0 rounded-lg bg-bento-gray-100 dark:bg-bento-gray-800"></div>
           </div>
           
@@ -431,7 +466,7 @@ const Dashboard = () => {
                 <div className="relative pt-1">
                   <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
                     <div 
-                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600 bg-[length:200%_100%] animate-shimmer" 
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-lovable-gradient bg-[length:200%_100%] animate-shimmer" 
                       style={{ width: `${analysisProgress}%` }}
                     ></div>
                   </div>
@@ -442,60 +477,67 @@ const Dashboard = () => {
               </div>
             ) : (
               <>
-                <div className="p-4">
-                  <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2 text-center">Analyze Legal Document or Clauses</h3>
-                  <div className="flex flex-col space-y-4">
-                    <Textarea 
-                      placeholder="Paste your legal document text here for analysis..."
-                      className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700 rounded-lg"
-                      value={documentText}
-                      onChange={(e) => setDocumentText(e.target.value)}
-                    />
-                  
-                    <div className="flex justify-between items-center px-1">
-                      <div className="flex items-center">
-                        <label htmlFor="file-upload" className="cursor-pointer">
-                          <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500 flex items-center gap-2">
-                            <Upload className="h-4 w-4" />
-                            <span className="text-sm">Upload</span>
-                          </div>
-                          <input 
-                            id="file-upload" 
-                            type="file" 
-                            className="hidden" 
-                            accept=".pdf,.doc,.docx,.txt,image/*"
-                            onChange={handleFileUpload}
-                          />
-                        </label>
+                {mode === "create" ? (
+                  <div className="p-4">
+                    <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-4 text-center">Create Legal Contract</h3>
+                    <ContractForm onGenerate={handleGenerateContract} />
+                  </div>
+                ) : (
+                  <div className="p-4">
+                    <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2 text-center">Analyze Legal Document or Clauses</h3>
+                    <div className="flex flex-col space-y-4">
+                      <Textarea 
+                        placeholder="Paste your legal document text here for analysis..."
+                        className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700 rounded-lg"
+                        value={documentText}
+                        onChange={(e) => setDocumentText(e.target.value)}
+                      />
+                    
+                      <div className="flex justify-between items-center px-1">
+                        <div className="flex items-center">
+                          <label htmlFor="file-upload" className="cursor-pointer">
+                            <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500 flex items-center gap-2">
+                              <Upload className="h-4 w-4" />
+                              <span className="text-sm">Upload</span>
+                            </div>
+                            <input 
+                              id="file-upload" 
+                              type="file" 
+                              className="hidden" 
+                              accept=".pdf,.doc,.docx,.txt,image/*"
+                              onChange={handleFileUpload}
+                            />
+                          </label>
+                          
+                          <Button 
+                            variant={isRecording ? "destructive" : "ghost"} 
+                            size="sm" 
+                            className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
+                            onClick={toggleRecording}
+                          >
+                            {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
+                            {isRecording ? "Stop" : "Record"}
+                          </Button>
+                        </div>
                         
                         <Button 
-                          variant={isRecording ? "destructive" : "ghost"} 
-                          size="sm" 
-                          className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
-                          onClick={toggleRecording}
+                          onClick={() => analyzeTextDocument(documentText)}
+                          disabled={!documentText.trim() || documentText.trim().length < 50}
+                          className="bg-lovable-gradient hover:bg-lovable-gradient-hover text-white transition-all duration-300"
                         >
-                          {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
-                          {isRecording ? "Stop" : "Record"}
+                          <Send className="h-4 w-4 mr-1" /> Analyze
                         </Button>
                       </div>
-                      
-                      <Button 
-                        onClick={() => analyzeTextDocument(documentText)}
-                        disabled={!documentText.trim() || documentText.trim().length < 50}
-                        className="bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600 hover:from-bento-yellow-600 hover:via-bento-orange-600 hover:to-bento-brown-700 text-white transition-all duration-300"
-                      >
-                        <Send className="h-4 w-4 mr-1" /> Analyze
-                      </Button>
                     </div>
                   </div>
-                </div>
+                )}
               </>
             )}
           </div>
         </div>
 
-        {/* Recent Documents */}
-        {documents.length > 0 && (
+        {/* Recent Documents with Tabs */}
+        {(documents.length > 0 || contracts.length > 0) && (
           <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-bento-gray-900 dark:text-bento-gray-100">Recent Documents</h2>
@@ -553,15 +595,12 @@ const Dashboard = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {filteredDocuments.map((doc) => (
-                <DocumentCard 
-                  key={doc.id} 
-                  {...doc} 
-                  onDelete={handleDeleteDocument}
-                />
-              ))}
-            </div>
+            
+            <DocumentTabs 
+              documents={filteredDocuments} 
+              contracts={contracts}
+              onDelete={handleDeleteDocument}
+            />
           </div>
         )}
       </div>
