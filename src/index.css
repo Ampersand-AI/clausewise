@@ -124,10 +124,6 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600;
   }
-  
-  .lovable-text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-lovable-purple via-lovable-pink to-lovable-orange;
-  }
 
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -180,11 +176,11 @@
   
   .header-gradient-fade::before {
     content: '';
-    @apply absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-lovable-purple/20 to-transparent pointer-events-none;
+    @apply absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-bento-yellow-500/20 to-transparent pointer-events-none;
   }
   
   .dark .header-gradient-fade::before {
-    @apply from-lovable-purple/10;
+    @apply from-bento-yellow-500/10;
   }
   
   /* Document card hover effects */
@@ -211,14 +207,6 @@
 
 .bg-primary-gradient-hover {
   @apply bg-gradient-to-r from-bento-yellow-600 via-bento-orange-600 to-bento-brown-600;
-}
-
-.bg-lovable-gradient {
-  @apply bg-gradient-to-r from-lovable-purple via-lovable-pink to-lovable-orange;
-}
-
-.bg-lovable-gradient-hover {
-  @apply bg-gradient-to-r from-lovable-purple/90 via-lovable-pink/90 to-lovable-orange/90;
 }
 
 .card-shine {
@@ -274,4 +262,13 @@
   );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
