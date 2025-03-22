@@ -62,6 +62,39 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// New colors based on Bento site
+				bento: {
+					gray: {
+						50: '#f9f9f9',
+						100: '#f3f3f3',
+						200: '#e5e5e5',
+						300: '#d4d4d4',
+						400: '#a3a3a3',
+						500: '#737373',
+						600: '#525252',
+						700: '#404040',
+						800: '#262626',
+						900: '#171717',
+					},
+					yellow: {
+						50: '#FEF7CD',
+						100: '#FEEF9B',
+						500: '#EAB308',
+						600: '#CA8A04',
+					},
+					orange: {
+						50: '#FFF7ED', 
+						100: '#FFEDD5',
+						500: '#F97316',
+						600: '#EA580C',
+					},
+					brown: {
+						100: '#f5f5f4',
+						500: '#78716c',
+						600: '#57534e',
+						800: '#292524',
+					}
 				}
 			},
 			fontFamily: {

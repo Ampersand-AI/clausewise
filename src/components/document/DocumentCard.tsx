@@ -52,26 +52,26 @@ export function DocumentCard({
     <Link 
       to={`/document/${id}`}
       className={cn(
-        "group relative block rounded-xl p-5 transition-all duration-300",
-        "glass-card glass-card-hover",
+        "group relative block rounded-lg p-5 transition-all duration-300",
+        "border border-bento-gray-200 bg-white shadow-sm hover:shadow-md dark:bg-bento-gray-800 dark:border-bento-gray-700",
         status === "analyzing" && "animate-pulse",
         className
       )}
     >
       <div className="flex items-start gap-4">
-        <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center flex-shrink-0">
+        <div className="h-12 w-12 rounded-lg bg-bento-yellow-50 dark:bg-bento-yellow-100/10 flex items-center justify-center flex-shrink-0 border border-bento-yellow-100 dark:border-bento-yellow-500/20">
           {status === "analyzing" ? (
-            <File className="h-6 w-6 text-indigo-400" />
+            <File className="h-6 w-6 text-bento-yellow-500" />
           ) : (
-            <FileText className="h-6 w-6 text-indigo-400" />
+            <FileText className="h-6 w-6 text-bento-orange-500" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-lg truncate group-hover:text-indigo-400 transition-colors">
+          <h3 className="font-semibold text-lg truncate group-hover:text-bento-orange-500 transition-colors">
             {title}
           </h3>
           <div className="flex items-center gap-3 mt-1">
-            <span className="text-sm text-slate-400">
+            <span className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
               {formattedDate}
             </span>
             <StatusBadge status={status} />
@@ -80,8 +80,8 @@ export function DocumentCard({
           {isAnalyzing && progress !== undefined && (
             <div className="mt-4">
               <div className="flex justify-between mb-1 text-xs">
-                <span className="font-medium">Analyzing document</span>
-                <span>{progress}%</span>
+                <span className="font-medium text-bento-gray-700 dark:text-bento-gray-300">Analyzing document</span>
+                <span className="text-bento-gray-600 dark:text-bento-gray-400">{progress}%</span>
               </div>
               <Progress value={progress} className="h-1.5" />
             </div>
@@ -97,23 +97,23 @@ export function DocumentCard({
                     riskScore < 70 ? "bg-warning" : 
                     "bg-destructive"
                   )} />
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-bento-gray-700 dark:text-bento-gray-300">
                     {riskScore < 30 ? "Low" : riskScore < 70 ? "Medium" : "High"} Risk
                   </span>
                 </div>
-                <div className="text-sm text-slate-400">
+                <div className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
                   {clauses} clauses identified
                 </div>
               </div>
               
               {parties && parties.length > 0 && (
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-sm text-bento-gray-500 dark:text-bento-gray-400 mt-1">
                   <span className="font-medium">Parties:</span> {parties.join(", ")}
                 </p>
               )}
               
               {summary && (
-                <p className="text-sm text-slate-400 line-clamp-2 mt-1">
+                <p className="text-sm text-bento-gray-600 dark:text-bento-gray-400 line-clamp-2 mt-1">
                   {summary}
                 </p>
               )}
@@ -128,7 +128,7 @@ export function DocumentCard({
 function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-blue-800 bg-blue-900/30 text-blue-400">
+      <Badge variant="outline" className="text-xs font-normal border-blue-200 bg-blue-50 text-blue-600 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
         Analyzing
       </Badge>
     );
@@ -136,14 +136,14 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   if (status === "error") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-red-800 bg-red-900/30 text-red-400">
+      <Badge variant="outline" className="text-xs font-normal border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400">
         Error
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-normal border-green-800 bg-green-900/30 text-green-400">
+    <Badge variant="outline" className="text-xs font-normal border-green-200 bg-green-50 text-green-600 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400">
       Completed
     </Badge>
   );

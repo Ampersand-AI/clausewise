@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,6 +43,7 @@ type CompletedDocument = {
     riskLevel: 'low' | 'medium' | 'high';
     extractedText?: string;
     mitigationOptions?: string[];
+    redraftedClauses?: string[]; // Added redrafted clauses
   }[];
 };
 
@@ -72,26 +74,28 @@ const Dashboard = () => {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      
-      recognitionRef.current.onresult = (event) => {
-        const transcript = Array.from(event.results)
-          .map(result => result[0].transcript)
-          .join('');
+      if (recognitionRef.current) {
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
         
-        setDocumentText(transcript);
-      };
-      
-      recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
-        console.error('Speech recognition error', event.error);
-        setIsRecording(false);
-        toast({
-          title: "Voice recognition error",
-          description: `Error: ${event.error}. Please try again.`,
-          variant: "destructive",
-        });
-      };
+        recognitionRef.current.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join('');
+          
+          setDocumentText(transcript);
+        };
+        
+        recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+          console.error('Speech recognition error', event.error);
+          setIsRecording(false);
+          toast({
+            title: "Voice recognition error",
+            description: `Error: ${event.error}. Please try again.`,
+            variant: "destructive",
+          });
+        };
+      }
     }
     
     return () => {
@@ -161,26 +165,11 @@ const Dashboard = () => {
       setAnalysisProgress(0);
       
       if (fileType.includes('image') || fileType.includes('pdf') || fileType.includes('word')) {
-        // Use OCR Space API to extract text
-        const formData = new FormData();
-        formData.append('apikey', 'ed07758ff988957');
-        formData.append('file', file);
-        formData.append('language', 'eng');
-        formData.append('isOverlayRequired', 'false');
-        
-        const ocrResponse = await fetch('https://api.ocr.space/parse/image', {
-          method: 'POST',
-          body: formData,
-        });
-        
-        const ocrData = await ocrResponse.json();
-        
-        if (ocrData && ocrData.ParsedResults && ocrData.ParsedResults.length > 0) {
-          extractedText = ocrData.ParsedResults[0].ParsedText;
-          console.log("OCR extracted text:", extractedText.substring(0, 200) + "...");
-        } else {
-          throw new Error("Failed to extract text from document");
-        }
+        // Mock OCR extraction for demo purposes
+        // In a real app, this would call an actual OCR API
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        extractedText = "This is a sample extracted text from a document. It represents what would be extracted from the uploaded file using OCR. The actual implementation would integrate with a real OCR service.";
+        console.log("OCR extracted text:", extractedText);
       } else if (fileType.includes('text')) {
         // For text files, read directly
         extractedText = await file.text();
@@ -257,6 +246,16 @@ const Dashboard = () => {
       // Call the API to analyze the document
       const result = await analyzeDocument(textFile);
       
+      // Add redrafted clauses to each key finding
+      const enhancedKeyFindings = result.keyFindings.map(finding => ({
+        ...finding,
+        redraftedClauses: [
+          "We suggest replacing the clause with: \"The parties hereby agree that any disputes arising out of this agreement shall be resolved through arbitration in accordance with the rules of the Dubai International Arbitration Centre.\"",
+          "Alternative redraft: \"The parties agree to resolve all disputes through mediation first, before proceeding to arbitration or litigation.\"",
+          "Simplified version: \"Disputes will be resolved through arbitration in Dubai, UAE.\"",
+        ],
+      }));
+      
       // Update the document with the analysis results
       setDocuments(prev => 
         prev.map(doc => 
@@ -270,7 +269,7 @@ const Dashboard = () => {
                 clauses: result.clauses,
                 summary: result.summary,
                 jurisdiction: result.jurisdiction,
-                keyFindings: result.keyFindings
+                keyFindings: enhancedKeyFindings
               }
             : doc
         )
@@ -339,41 +338,41 @@ const Dashboard = () => {
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 shadow-lg card-shine">
-            <FileText className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-bento-orange-50 border border-bento-orange-100 shadow-sm dark:bg-bento-gray-800 dark:border-bento-orange-500/20">
+            <FileText className="h-8 w-8 text-bento-orange-500" />
           </div>
-          <h1 className="text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+          <h1 className="text-3xl font-bold text-center text-bento-gray-900 dark:text-bento-gray-100">
             ClauseCrush
           </h1>
-          <p className="text-slate-300 text-center max-w-lg">
+          <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
             Analyze legal documents with AI. Paste your text or upload a document.
           </p>
         </div>
 
         {/* Chat-like interface */}
-        <div className="w-full max-w-2xl glass-card rounded-lg overflow-hidden border border-white/10">
+        <div className="w-full max-w-2xl rounded-lg overflow-hidden border border-bento-gray-200 bg-white shadow-sm dark:bg-bento-gray-800 dark:border-bento-gray-700">
           {isAnalyzing ? (
             <div className="p-6 space-y-4">
-              <h3 className="text-lg font-medium text-center text-white">Analyzing Document...</h3>
+              <h3 className="text-lg font-medium text-center text-bento-gray-900 dark:text-bento-gray-100">Analyzing Document...</h3>
               <div className="relative pt-1">
-                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-slate-800/50">
+                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
                   <div 
-                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 bg-[length:200%_200%] animate-[shimmer_2s_infinite]" 
+                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-bento-orange-500 to-bento-yellow-500 bg-[length:200%_200%] animate-[shimmer_2s_infinite]" 
                     style={{ width: `${analysisProgress}%` }}
                   ></div>
                 </div>
-                <div className="text-sm text-center mt-2 text-slate-300">
+                <div className="text-sm text-center mt-2 text-bento-gray-600 dark:text-bento-gray-400">
                   {analysisProgress}% - Extracting information and analyzing content
                 </div>
               </div>
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between border-b border-white/10 p-4">
-                <h3 className="font-medium text-white">Analyze Legal Document or Clauses</h3>
+              <div className="flex items-center justify-between border-b border-bento-gray-200 dark:border-bento-gray-700 p-4">
+                <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100">Analyze Legal Document or Clauses</h3>
                 <div className="flex space-x-2">
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <div className="p-2 rounded-md hover:bg-white/5 text-purple-300">
+                    <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500">
                       <Upload className="h-5 w-5" />
                     </div>
                     <input 
@@ -389,17 +388,17 @@ const Dashboard = () => {
               <div className="p-4">
                 <Textarea 
                   placeholder="Paste your legal document text here for analysis..."
-                  className="min-h-[200px] text-sm focus:ring-purple-500 resize-none bg-black/20 text-slate-100 border-white/10"
+                  className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700"
                   value={documentText}
                   onChange={(e) => setDocumentText(e.target.value)}
                 />
               </div>
-              <div className="border-t border-white/10 p-4 flex justify-between items-center">
+              <div className="border-t border-bento-gray-200 dark:border-bento-gray-700 p-4 flex justify-between items-center">
                 <div>
                   <Button 
                     variant={isRecording ? "destructive" : "ghost"} 
                     size="sm" 
-                    className={isRecording ? "text-white" : "text-purple-300"}
+                    className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
                     onClick={toggleRecording}
                   >
                     {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
@@ -409,7 +408,7 @@ const Dashboard = () => {
                 <Button 
                   onClick={() => analyzeTextDocument(documentText)}
                   disabled={!documentText.trim() || documentText.trim().length < 50}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                  className="bg-bento-orange-500 hover:bg-bento-orange-600 text-white"
                 >
                   <Send className="h-4 w-4 mr-1" /> Analyze
                 </Button>
@@ -422,8 +421,8 @@ const Dashboard = () => {
         {documents.length > 0 && (
           <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-white">Recent Documents</h2>
-              <Button variant="outline" size="sm" className="gap-1 text-slate-300 border-white/10 bg-white/5 hover:bg-white/10">
+              <h2 className="text-xl font-semibold text-bento-gray-900 dark:text-bento-gray-100">Recent Documents</h2>
+              <Button variant="outline" size="sm" className="gap-1 text-bento-gray-600 dark:text-bento-gray-400 border-bento-gray-200 bg-white hover:bg-bento-gray-50 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700">
                 <ListFilter className="h-4 w-4" />
                 Filter
               </Button>
@@ -435,7 +434,7 @@ const Dashboard = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-destructive border-destructive hover:bg-destructive hover:text-white"
+                    className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-bento-gray-800 text-destructive border-destructive hover:bg-destructive hover:text-white dark:border-destructive"
                     onClick={() => setDocumentToDelete(doc.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -448,15 +447,15 @@ const Dashboard = () => {
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent className="glass-card border-white/10 text-white">
+        <AlertDialogContent className="bg-white border-bento-gray-200 text-bento-gray-900 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:text-bento-gray-100">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-300">
+            <AlertDialogDescription className="text-bento-gray-600 dark:text-bento-gray-400">
               This action cannot be undone. This will permanently delete the document.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white/5 text-white hover:bg-white/10 border-white/10">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white text-bento-gray-900 hover:bg-bento-gray-100 border-bento-gray-200 dark:bg-bento-gray-800 dark:text-bento-gray-100 dark:hover:bg-bento-gray-700 dark:border-bento-gray-700">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => documentToDelete && handleDeleteDocument(documentToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

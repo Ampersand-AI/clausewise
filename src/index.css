@@ -1,33 +1,32 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --background: 20 14% 96%;
+    --foreground: 20 14% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 20 14% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 20 14% 4%;
 
-    --primary: 246 76% 67%;
+    --primary: 24 75% 50%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 30 6% 94%;
+    --secondary-foreground: 20 14% 4%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 30 6% 90%;
+    --muted-foreground: 30 6% 40%;
 
-    --accent: 246 76% 96%;
-    --accent-foreground: 246 76% 50%;
+    --accent: 24 95% 92%;
+    --accent-foreground: 24 85% 40%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
@@ -35,46 +34,46 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 246 76% 67%;
+    --border: 20 5% 90%;
+    --input: 20 5% 90%;
+    --ring: 24 75% 50%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 246 76% 25%;
-    --sidebar-primary: 246 76% 67%;
+    --sidebar-background: 30 6% 97%;
+    --sidebar-foreground: 24 10% 10%;
+    --sidebar-primary: 24 75% 50%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 246 76% 96%;
-    --sidebar-accent-foreground: 246 76% 50%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 246 76% 67%;
+    --sidebar-accent: 24 95% 92%;
+    --sidebar-accent-foreground: 24 85% 40%;
+    --sidebar-border: 30 6% 90%;
+    --sidebar-ring: 24 75% 50%;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --background: 20 14% 4%;
+    --foreground: 20 14% 96%;
 
-    --card: 222 47% 13%;
-    --card-foreground: 210 40% 98%;
+    --card: 20 14% 8%;
+    --card-foreground: 20 14% 96%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 20 14% 4%;
+    --popover-foreground: 20 14% 96%;
 
-    --primary: 246 76% 67%;
+    --primary: 24 75% 50%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 30 6% 12%;
+    --secondary-foreground: 30 6% 94%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 30 6% 12%;
+    --muted-foreground: 30 6% 60%;
 
-    --accent: 246 76% 25%;
-    --accent-foreground: 246 76% 80%;
+    --accent: 24 75% 25%;
+    --accent-foreground: 24 75% 90%;
 
     --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
@@ -82,18 +81,18 @@
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 246 76% 67%;
+    --border: 30 6% 12%;
+    --input: 30 6% 12%;
+    --ring: 24 75% 50%;
 
-    --sidebar-background: 222 47% 13%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 246 76% 67%;
+    --sidebar-background: 20 14% 8%;
+    --sidebar-foreground: 20 14% 96%;
+    --sidebar-primary: 24 75% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 246 76% 25%;
-    --sidebar-accent-foreground: 246 76% 80%;
-    --sidebar-border: 222 47% 20%;
-    --sidebar-ring: 246 76% 67%;
+    --sidebar-accent: 24 75% 25%;
+    --sidebar-accent-foreground: 24 75% 90%;
+    --sidebar-border: 20 14% 14%;
+    --sidebar-ring: 24 75% 50%;
   }
 }
 
@@ -114,7 +113,7 @@
 
 @layer utilities {
   .glass-card {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)];
+    @apply backdrop-blur-xl bg-white/5 border border-bento-gray-300/30 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.1)];
   }
 
   .glass-card-hover {
@@ -122,7 +121,7 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/70;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-bento-orange-500 via-bento-orange-600 to-bento-brown-600;
   }
 
   .scrollbar-hide {
@@ -166,11 +165,11 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 .bg-primary-gradient {
-  @apply bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-600;
+  @apply bg-gradient-to-r from-bento-orange-500 via-bento-yellow-500 to-bento-orange-600;
 }
 
 .bg-primary-gradient-hover {
-  @apply bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-700;
+  @apply bg-gradient-to-r from-bento-orange-600 via-bento-yellow-600 to-bento-brown-600;
 }
 
 .card-shine {
