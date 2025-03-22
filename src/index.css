@@ -99,7 +99,11 @@
 
 @layer base {
   * {
-    @apply border-border selection:bg-bento-orange-500/10 selection:text-bento-orange-600 dark:selection:text-bento-orange-300;
+    @apply border-border selection:bg-bento-orange-500/10 selection:text-bento-orange-600;
+  }
+  
+  .dark * {
+    @apply selection:text-bento-orange-300;
   }
 
   body {
