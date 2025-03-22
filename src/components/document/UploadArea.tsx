@@ -1,5 +1,6 @@
+
 import { cn } from "@/lib/utils";
-import { AlertCircle, FileText, UploadIcon } from "lucide-react";
+import { AlertCircle, FileText, MessageSquare, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -133,23 +134,171 @@ export function UploadArea({
     }
   };
 
+  const handleAnalyzeText = () => {
+    if (isUploading) {
+      toast({
+        title: "Analysis in progress",
+        description: "Please wait until the current analysis is complete",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!agreementText.trim()) {
+      setError("Please enter the agreement text");
+      toast({
+        title: "Empty text",
+        description: "Please enter the agreement text for analysis",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (agreementText.trim().length < 50) {
+      setError("Agreement text is too short for meaningful analysis");
+      toast({
+        title: "Text too short",
+        description: "Please enter more detailed agreement text for accurate analysis",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create a virtual file from the text
+    const blob = new Blob([agreementText], { type: 'text/plain' });
+    const file = new File([blob], "agreement.txt", { type: 'text/plain' });
+    
+    onUpload([file]);
+  };
+
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="text-muted-foreground"
-      onClick={() => document.getElementById('file-upload')?.click()}
-      disabled={isUploading}
-    >
-      <UploadIcon className="h-5 w-5" />
-      <input 
-        id="file-upload" 
-        type="file" 
-        className="hidden" 
-        accept={accept}
-        onChange={handleFileChange}
-        disabled={isUploading}
-      />
-    </Button>
+    <Tabs defaultValue="upload" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsTrigger value="upload" className="flex items-center gap-2">
+          <UploadIcon className="h-4 w-4" /> 
+          Upload Document
+        </TabsTrigger>
+        <TabsTrigger value="paste" className="flex items-center gap-2">
+          <MessageSquare className="h-4 w-4" /> 
+          Paste Agreement
+        </TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="upload" className="mt-0">
+        <div
+          className={cn(
+            "relative p-8 border-2 border-dashed rounded-xl transition-all duration-300 ease-in-out",
+            isDragging 
+              ? "border-primary bg-primary/10 scale-[1.01]" 
+              : "border-border hover:border-primary/50 hover:bg-muted/30",
+            isUploading && "opacity-50 cursor-not-allowed",
+            "dark:bg-slate-900/30 dark:border-violet-700/50 dark:hover:border-violet-500",
+            className
+          )}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <input
+            type="file"
+            className={cn(
+              "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10",
+              isUploading && "pointer-events-none"
+            )}
+            accept={accept}
+            onChange={handleFileChange}
+            multiple
+            disabled={isUploading}
+          />
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <div className={cn(
+              "relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden",
+              isDragging 
+                ? "bg-primary/20" 
+                : "bg-primary/10",
+              "dark:bg-gradient-to-br dark:from-violet-600/30 dark:to-primary/30",
+            )}>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }}></div>
+              <UploadIcon className="h-8 w-8 text-primary dark:text-violet-400 relative z-10" />
+            </div>
+            <h3 className="text-xl font-medium">Upload your document</h3>
+            <p className="text-muted-foreground max-w-md">
+              Drag and drop your legal documents here, or click to browse
+            </p>
+            <div className="mt-2 text-xs text-muted-foreground">
+              Supported formats: PDF, DOCX, TXT, JPG, PNG • Max size: {maxSize}MB
+            </div>
+            
+            {error && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <span>{error}</span>
+              </div>
+            )}
+            
+            {isUploading && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-primary dark:text-violet-400">
+                <FileText className="h-4 w-4 animate-pulse" />
+                <span>Processing document...</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="paste" className="mt-0">
+        <div className={cn(
+          "p-6 border-2 border rounded-xl transition-all",
+          isUploading ? "opacity-50 cursor-not-allowed" : "border-border",
+          "dark:bg-slate-900/30 dark:border-violet-700/50",
+          className
+        )}>
+          <div className="flex flex-col gap-4">
+            <div className="text-center mb-2">
+              <h3 className="text-xl font-medium">Paste agreement text</h3>
+              <p className="text-muted-foreground text-sm mt-1">
+                Copy and paste your contract or agreement for AI-powered analysis
+              </p>
+            </div>
+            
+            <Textarea 
+              placeholder="Paste your agreement text here..."
+              className="min-h-[250px] resize-y text-sm"
+              value={agreementText}
+              onChange={(e) => {
+                setAgreementText(e.target.value);
+                setError(null);
+              }}
+              disabled={isUploading}
+            />
+            
+            {error && (
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <span>{error}</span>
+              </div>
+            )}
+            
+            <Button
+              onClick={handleAnalyzeText}
+              className="mt-2 bg-primary text-primary-foreground hover:bg-primary/90"
+              disabled={isUploading || !agreementText.trim()}
+            >
+              {isUploading ? (
+                <>
+                  <FileText className="mr-2 h-4 w-4 animate-pulse" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Analyze Agreement
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
   );
 }

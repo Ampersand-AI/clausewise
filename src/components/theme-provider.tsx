@@ -1,6 +1,4 @@
 
-"use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -29,27 +27,11 @@ export function ThemeProvider({
   storageKey = "clauze-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  // Fix for "null is not an object" error: Use a safe initial value
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
-
-  // Update theme after component mounts to avoid SSR issues
-  useEffect(() => {
-    const loadTheme = () => {
-      try {
-        const savedTheme = typeof window !== "undefined" ? localStorage.getItem(storageKey) : null;
-        return (savedTheme as Theme) || defaultTheme;
-      } catch (e) {
-        console.error("Error accessing localStorage:", e);
-        return defaultTheme;
-      }
-    };
-    
-    setTheme(loadTheme());
-  }, [defaultTheme, storageKey]);
+  const [theme, setTheme] = useState<Theme>(
+    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+  );
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
@@ -69,15 +51,8 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      try {
-        if (typeof window !== "undefined") {
-          localStorage.setItem(storageKey, theme);
-        }
-        setTheme(theme);
-      } catch (e) {
-        console.error("Error setting theme:", e);
-        setTheme(theme); // Still update state even if localStorage fails
-      }
+      localStorage.setItem(storageKey, theme);
+      setTheme(theme);
     },
   };
 

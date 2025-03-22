@@ -21,8 +21,7 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    {/* Explicitly setting dark theme as default */}
-    <ThemeProvider defaultTheme="dark">
+    <ThemeProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />

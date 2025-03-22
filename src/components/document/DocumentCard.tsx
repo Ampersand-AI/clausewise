@@ -39,19 +39,6 @@ export function DocumentCard({
   const summary = isCompleted ? (props as { summary?: string }).summary : undefined;
   const parties = isCompleted ? (props as { parties?: string[] }).parties : undefined;
 
-  // Format date and time
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-  
-  const formattedTime = new Date(date).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  });
-
   return (
     <Link 
       to={`/document/${id}`}
@@ -76,7 +63,11 @@ export function DocumentCard({
           </h3>
           <div className="flex items-center gap-3 mt-1">
             <span className="text-sm text-muted-foreground">
-              {formattedDate} at {formattedTime}
+              {new Date(date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </span>
             <StatusBadge status={status} />
           </div>
@@ -132,7 +123,7 @@ export function DocumentCard({
 function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-blue-800 bg-blue-950/50 text-blue-400">
+      <Badge variant="outline" className="text-xs font-normal border-blue-200 bg-blue-50/30 text-blue-400 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300">
         Analyzing
       </Badge>
     );
@@ -140,14 +131,14 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   if (status === "error") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-red-800 bg-red-950/50 text-red-400">
+      <Badge variant="outline" className="text-xs font-normal border-red-200 bg-red-50/30 text-red-500 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300">
         Error
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-normal border-green-800 bg-green-950/50 text-green-400">
+    <Badge variant="outline" className="text-xs font-normal border-green-200 bg-green-50/30 text-green-600 dark:border-green-800 dark:bg-green-950/50 dark:text-green-300">
       Completed
     </Badge>
   );
