@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type ContractFormProps = {
   onGenerate: (contract: GeneratedContract) => void;
+  popularAgreements?: { label: string; value: string; }[];
 };
 
 export type ContractFormData = {
