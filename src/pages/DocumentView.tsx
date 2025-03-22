@@ -1,10 +1,8 @@
 
-import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileText, ArrowLeft, Download } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,7 +36,6 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
       const response = await api.get(`/documents/${id}`);
       console.log("info: GET request to /documents/" + id);
       console.log("info: Fetched document:", response.data);
-      // Cast to Document type
       return response.data as Document;
     },
     retry: 1,
@@ -46,6 +43,13 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
 
   const handleGoBack = () => {
     navigate(-1);
+  };
+
+  const handleDownload = () => {
+    toast({
+      title: "Download started",
+      description: "Your document is being prepared for download.",
+    });
   };
 
   return (
@@ -165,7 +169,11 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
                   <FileText className="mr-2 h-4 w-4" />
                   View Document Content
                 </Button>
-                <Button variant="outline" className="flex items-center border-[#444444] text-white hover:bg-[#444444]">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center border-[#444444] text-white hover:bg-[#444444]"
+                  onClick={handleDownload}
+                >
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </Button>
