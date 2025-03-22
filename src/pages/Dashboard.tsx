@@ -4,9 +4,9 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
-import { Upload, Image, FileText, Mic, Send, Plus, FileUp, Trash2, ListFilter } from "lucide-react";
+import { Mic, Send, ListFilter, Gavel } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { analyzeDocument, DocumentAnalysisResult } from "@/utils/documentAnalysis";
+import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
 import { 
   AlertDialog,
@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { UploadArea } from "@/components/document/UploadArea";
 
 // Define document types
 type AnalyzingDocument = {
@@ -37,6 +38,7 @@ type CompletedDocument = {
   clauses: number;
   summary?: string;
   jurisdiction?: string;
+  parties?: string[];
   keyFindings: {
     title: string;
     description: string;
@@ -61,6 +63,7 @@ const Dashboard = () => {
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [documentText, setDocumentText] = useState("");
   const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
 
   // Load documents from localStorage on initial render
@@ -80,8 +83,7 @@ const Dashboard = () => {
     localStorage.setItem('documents', JSON.stringify(documents));
   }, [documents]);
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+  const handleFileUpload = async (files: File[]) => {
     if (!files || files.length === 0) return;
     
     try {
@@ -138,6 +140,69 @@ const Dashboard = () => {
     }
   };
 
+  const toggleSpeechRecognition = () => {
+    if (!isListening) {
+      if (!('webkitSpeechRecognition' in window)) {
+        toast({
+          title: "Speech Recognition Error",
+          description: "Your browser doesn't support speech recognition. Try Chrome or Edge.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const SpeechRecognition = window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      
+      recognition.onstart = () => {
+        setIsListening(true);
+        toast({
+          title: "Voice Recognition Active",
+          description: "Start speaking now. Click the mic button again to stop.",
+        });
+      };
+      
+      recognition.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('');
+        
+        setDocumentText(transcript);
+      };
+      
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+        toast({
+          title: "Voice Recognition Error",
+          description: `Error: ${event.error}. Please try again.`,
+          variant: "destructive",
+        });
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+      
+      recognition.start();
+      
+      // Store recognition instance in window to be able to stop it later
+      (window as any).recognition = recognition;
+    } else {
+      if ((window as any).recognition) {
+        (window as any).recognition.stop();
+      }
+      setIsListening(false);
+      toast({
+        title: "Voice Recognition Stopped",
+        description: "The text has been captured in the input field.",
+      });
+    }
+  };
+
   const analyzeTextDocument = async (text: string, title: string = "Document") => {
     if (!text || text.trim().length < 50) {
       toast({
@@ -168,52 +233,70 @@ const Dashboard = () => {
     const textBlob = new Blob([text], { type: 'text/plain' });
     const textFile = new File([textBlob], "extracted_content.txt", { type: 'text/plain' });
     
-    // Simulate analysis progress
+    // Simulate analysis progress with a cool animation
     let progress = 0;
     const analysisInterval = setInterval(() => {
-      progress += 2;
-      setAnalysisProgress(progress);
+      progress += Math.random() * 3; // Random progress increments for more realistic effect
+      progress = Math.min(progress, 99); // Cap at 99% until completion
+      setAnalysisProgress(Math.floor(progress));
       
       setDocuments(prev => 
         prev.map(doc => 
           doc.id === newDocId && doc.status === "analyzing"
-            ? { ...doc, progress }
+            ? { ...doc, progress: Math.floor(progress) }
             : doc
         )
       );
       
-      if (progress >= 100) {
+      if (progress >= 99) {
         clearInterval(analysisInterval);
       }
-    }, 200);
+    }, 300);
     
     try {
       // Call the API to analyze the document
       const result = await analyzeDocument(textFile);
       
-      // Update the document with the analysis results
+      // Set progress to 100% on completion
+      setAnalysisProgress(100);
       setDocuments(prev => 
         prev.map(doc => 
-          doc.id === newDocId
-            ? {
-                id: doc.id,
-                title: result.documentTitle || title,
-                date: doc.date,
-                status: "completed" as const,
-                riskScore: result.riskScore,
-                clauses: result.clauses,
-                summary: result.summary,
-                jurisdiction: result.jurisdiction,
-                keyFindings: result.keyFindings
-              }
+          doc.id === newDocId && doc.status === "analyzing"
+            ? { ...doc, progress: 100 }
             : doc
         )
       );
       
-      toast({
-        title: "Analysis completed",
-        description: `Document "${result.documentTitle || title}" has been analyzed successfully.`,
-      });
+      // Short delay to show 100% before updating to completed
+      setTimeout(() => {
+        // Update the document with the analysis results
+        setDocuments(prev => 
+          prev.map(doc => 
+            doc.id === newDocId
+              ? {
+                  id: doc.id,
+                  title: result.documentTitle || title,
+                  date: doc.date,
+                  status: "completed" as const,
+                  riskScore: result.riskScore,
+                  clauses: result.clauses,
+                  summary: result.summary,
+                  jurisdiction: result.jurisdiction,
+                  parties: result.parties,
+                  keyFindings: result.keyFindings
+                }
+              : doc
+          )
+        );
+        
+        toast({
+          title: "Analysis completed",
+          description: `Document "${result.documentTitle || title}" has been analyzed successfully.`,
+        });
+        
+        setIsAnalyzing(false);
+        setDocumentText("");
+      }, 500);
     } catch (error) {
       console.error("Error analyzing document:", error);
       
@@ -236,7 +319,7 @@ const Dashboard = () => {
         description: error instanceof Error ? error.message : "There was an error analyzing your document. Please try again.",
         variant: "destructive",
       });
-    } finally {
+      
       clearInterval(analysisInterval);
       setIsAnalyzing(false);
       setDocumentText("");
@@ -266,80 +349,85 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-col items-center space-y-8 py-8">
+      <div className="flex flex-col items-center space-y-8 py-8 w-full">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg">
-            <FileText className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary glow shadow-lg">
+            <Gavel className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+          <h1 className="text-3xl font-bold text-center text-gradient bg-primary-gradient">
             ClauseCrush
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-center max-w-lg">
-            Analyze legal documents with AI. Paste your text or upload a document.
+          <p className="text-muted-foreground text-center max-w-lg">
+            Analyze legal documents or clauses with AI. Paste your text or upload a document.
           </p>
         </div>
 
         {/* Chat-like interface */}
-        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-lg shadow-lg overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div className="w-full max-w-2xl neo-blur rounded-lg shadow-lg overflow-hidden">
           {isAnalyzing ? (
             <div className="p-6 space-y-4">
-              <h3 className="text-lg font-medium text-center">Analyzing Document...</h3>
+              <h3 className="text-lg font-medium text-center text-foreground">Analyzing Document...</h3>
               <div className="relative pt-1">
-                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-slate-200 dark:bg-slate-700">
+                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-black/30">
                   <div 
-                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-[length:200%_200%] animate-[shimmer_2s_infinite]" 
+                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary animate-pulse" 
                     style={{ width: `${analysisProgress}%` }}
                   ></div>
                 </div>
-                <div className="text-sm text-center mt-2 text-slate-600 dark:text-slate-400">
+                <div className="text-sm text-center mt-2 text-muted-foreground">
                   {analysisProgress}% - Extracting information and analyzing content
+                </div>
+              </div>
+              
+              {/* Animated processing indicator */}
+              <div className="flex justify-center mt-6">
+                <div className="relative w-20 h-20">
+                  <div className="absolute inset-0 rounded-full border-4 border-primary/20 animate-pulse"></div>
+                  <div className="absolute inset-0 rounded-full border-t-4 border-primary animate-spin"></div>
+                  <div className="absolute inset-0 rounded-full border-b-4 border-primary animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Gavel className="h-5 w-5 text-primary animate-pulse" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 p-4">
-                <h3 className="font-medium">Analyze Document</h3>
+              <div className="flex items-center justify-between border-b border-white/10 p-4">
+                <h3 className="font-medium text-foreground">Analyze Legal Document or Clauses</h3>
                 <div className="flex space-x-2">
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    <div className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400">
-                      <Upload className="h-5 w-5" />
-                    </div>
-                    <input 
-                      id="file-upload" 
-                      type="file" 
-                      className="hidden" 
-                      accept=".pdf,.doc,.docx,.txt,image/*"
-                      onChange={handleFileUpload}
-                    />
-                  </label>
+                  <UploadArea 
+                    onUpload={handleFileUpload}
+                    isUploading={isAnalyzing}
+                  />
                 </div>
               </div>
               <div className="p-4">
                 <Textarea 
                   placeholder="Paste your legal document text here for analysis..."
-                  className="min-h-[200px] text-sm focus:ring-indigo-500 resize-none"
+                  className="min-h-[200px] text-sm focus:ring-primary bg-black/20 border-white/10 resize-none"
                   value={documentText}
                   onChange={(e) => setDocumentText(e.target.value)}
                 />
               </div>
-              <div className="border-t border-slate-200 dark:border-slate-800 p-4 flex justify-between items-center">
+              <div className="border-t border-white/10 p-4 flex justify-between items-center">
                 <div className="flex space-x-2">
-                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400">
-                    <Image className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400">
+                  <Button 
+                    variant={isListening ? "destructive" : "ghost"} 
+                    size="sm" 
+                    className={isListening ? "animate-pulse" : "text-muted-foreground"}
+                    onClick={toggleSpeechRecognition}
+                  >
                     <Mic className="h-4 w-4" />
                   </Button>
                 </div>
                 <Button 
                   onClick={() => analyzeTextDocument(documentText)}
                   disabled={!documentText.trim() || documentText.trim().length < 50}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  className="bg-primary hover:bg-primary/90"
                 >
                   <Send className="h-4 w-4 mr-1" /> Analyze
                 </Button>
@@ -352,8 +440,8 @@ const Dashboard = () => {
         {documents.length > 0 && (
           <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">Recent Documents</h2>
-              <Button variant="outline" size="sm" className="gap-1 text-slate-600 dark:text-slate-400">
+              <h2 className="text-xl font-semibold text-foreground">Recent Documents</h2>
+              <Button variant="outline" size="sm" className="gap-1 text-muted-foreground">
                 <ListFilter className="h-4 w-4" />
                 Filter
               </Button>
@@ -362,14 +450,6 @@ const Dashboard = () => {
               {documents.map((doc) => (
                 <div key={doc.id} className="group relative">
                   <DocumentCard {...doc} />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 text-destructive border-destructive hover:bg-destructive hover:text-white"
-                    onClick={() => setDocumentToDelete(doc.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               ))}
             </div>
@@ -378,7 +458,7 @@ const Dashboard = () => {
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="neo-blur border-white/10">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
