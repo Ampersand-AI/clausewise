@@ -1,7 +1,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AreaChart, BarChart, PieChart } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
+import { AreaChart, BarChart, PieChart, ResponsiveContainer } from "recharts";
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 
 interface InvestStatsProps {
@@ -42,6 +43,14 @@ export const InvestStats = ({ isReturns = false }: InvestStatsProps) => {
     { name: "ComplySphere", value: 9.8 },
   ];
 
+  const chartConfig = {
+    primary: { color: "#f97316" },
+    secondary: { color: "#eab308" },
+    third: { color: "#78716c" },
+    fourth: { color: "#ea580c" },
+    fifth: { color: "#ca8a04" }
+  };
+
   return (
     <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="mb-10">
@@ -73,17 +82,29 @@ export const InvestStats = ({ isReturns = false }: InvestStatsProps) => {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-2">
-            <AreaChart
-              data={monthlyData}
-              categories={["value"]}
-              index="name"
-              colors={["#f97316"]}
-              valueFormatter={(value) => `$${value.toLocaleString()}`}
-              className="h-72"
-              showLegend={false}
-              showGridLines={false}
-              startEndOnly={true}
-            />
+            <ChartContainer className="h-72" config={chartConfig}>
+              <AreaChart
+                data={monthlyData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <AreaChart.Tooltip />
+                <AreaChart.XAxis dataKey="name" />
+                <AreaChart.YAxis />
+                <AreaChart.Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#f97316" 
+                  fillOpacity={1} 
+                  fill="url(#colorValue)" 
+                />
+              </AreaChart>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -100,24 +121,39 @@ export const InvestStats = ({ isReturns = false }: InvestStatsProps) => {
           </CardHeader>
           <CardContent className="pt-2">
             {isReturns ? (
-              <BarChart
-                data={performanceData}
-                categories={["value"]}
-                index="name"
-                colors={["#eab308"]}
-                valueFormatter={(value) => `${value}%`}
-                className="h-72"
-                showLegend={false}
-              />
+              <ChartContainer className="h-72" config={chartConfig}>
+                <BarChart
+                  data={performanceData}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <BarChart.XAxis dataKey="name" />
+                  <BarChart.YAxis />
+                  <BarChart.Tooltip />
+                  <BarChart.Bar dataKey="value" fill="#eab308" />
+                </BarChart>
+              </ChartContainer>
             ) : (
-              <PieChart
-                data={categoryData}
-                category="value"
-                index="name"
-                valueFormatter={(value) => `${value}%`}
-                className="h-72"
-                colors={["#eab308", "#f97316", "#78716c", "#ea580c", "#ca8a04"]}
-              />
+              <ChartContainer className="h-72" config={chartConfig}>
+                <PieChart>
+                  <PieChart.Pie
+                    data={categoryData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                  >
+                    {categoryData.map((entry, index) => (
+                      <PieChart.Cell 
+                        key={`cell-${index}`} 
+                        fill={Object.values(chartConfig)[index % Object.values(chartConfig).length].color} 
+                      />
+                    ))}
+                  </PieChart.Pie>
+                  <PieChart.Tooltip />
+                </PieChart>
+              </ChartContainer>
             )}
           </CardContent>
         </Card>
