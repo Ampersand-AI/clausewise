@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
 
 interface DocumentViewProps {}
 
@@ -16,6 +17,8 @@ interface Document {
   name: string;
   createdAt: string;
   updatedAt: string;
+  status?: string;
+  parties?: string[];
   [key: string]: any; // For additional document properties
 }
 
@@ -23,46 +26,20 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [document, setDocument] = useState<Document | null>(null);
 
-  useEffect(() => {
-    const fetchDocument = async () => {
-      try {
-        setLoading(true);
-        // In a real implementation, we'd call api.get(`/documents/${id}`)
-        // For this mock, we'll create a sample document with the given ID
-        setTimeout(() => {
-          const mockDocument = {
-            id: id || "unknown",
-            name: "Sample Agreement",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            status: "signed",
-            parties: ["Company A", "Company B"]
-          };
-          
-          console.log("Fetched document:", mockDocument);
-          setDocument(mockDocument);
-          setLoading(false);
-        }, 800); // Simulate network delay
-      } catch (error) {
-        console.error("Error fetching document:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load document. Please try again.",
-          variant: "destructive",
-        });
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchDocument();
-    } else {
-      setLoading(false);
-    }
-  }, [id, toast]);
+  const {
+    data: document,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["document", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Document ID is required");
+      const response = await api.get(`/documents/${id}`);
+      return response.data;
+    },
+    retry: 1,
+  });
 
   const handleGoBack = () => {
     navigate(-1);
@@ -86,12 +63,23 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
         </p>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="space-y-4">
           <Skeleton className="h-8 w-full max-w-sm" />
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-10 w-32" />
+        </div>
+      ) : isError ? (
+        <div className="text-center py-12">
+          <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium">Document Not Found</h3>
+          <p className="text-muted-foreground mt-1">
+            The document you're looking for doesn't exist or has been removed.
+          </p>
+          <Button onClick={handleGoBack} className="mt-4">
+            Go Back
+          </Button>
         </div>
       ) : document ? (
         <div className="grid gap-6">

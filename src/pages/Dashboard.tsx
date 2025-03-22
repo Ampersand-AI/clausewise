@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -57,7 +58,7 @@ const Dashboard = () => {
   const [agreementText, setAgreementText] = useState("");
 
   const {
-    data: documents,
+    data: documentsData,
     isLoading,
     refetch,
   } = useQuery({
@@ -67,6 +68,9 @@ const Dashboard = () => {
       return response.data;
     },
   });
+
+  // Make sure documents is always an array
+  const documents = Array.isArray(documentsData) ? documentsData : documentsData ? [documentsData] : [];
 
   useEffect(() => {
     refetch();
