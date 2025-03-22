@@ -218,10 +218,10 @@ const DocumentView = () => {
       <AppLayout>
         <div className="container px-4 py-16 mx-auto text-center">
           <div className="relative w-20 h-20 mx-auto mb-6">
-            <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-primary border-r-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 border-4 border-indigo-600/20 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-indigo-600 border-r-transparent rounded-full animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <FileText className="h-8 w-8 text-primary animate-pulse" />
+              <FileText className="h-8 w-8 text-indigo-400 animate-pulse" />
             </div>
           </div>
           <p className="text-slate-400">Retrieving document details...</p>
@@ -239,7 +239,7 @@ const DocumentView = () => {
             The document you're looking for doesn't exist or has been removed.
           </p>
           <Link to="/dashboard">
-            <Button variant="outline" className="gap-2 bg-slate-800 border-slate-700 text-white hover:bg-slate-700">
+            <Button variant="outline" className="gap-2 glass-card glass-card-hover text-white">
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
@@ -256,25 +256,25 @@ const DocumentView = () => {
         <div className="container px-4 py-8 mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-slate-800">
+              <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-white/5">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
             </Link>
-            <div className="h-6 border-l border-slate-700"></div>
+            <div className="h-6 border-l border-white/10"></div>
             <h1 className="text-2xl font-bold text-white">{document.title}</h1>
           </div>
           
-          <Card className="p-10 text-center bg-[#1A1F2C] border-slate-700">
+          <Card className="p-10 text-center bg-transparent">
             <div className="max-w-md mx-auto">
               <div className="relative w-24 h-24 mx-auto mb-6">
                 {/* AI-inspired circular rings animation */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-violet-600 rounded-full opacity-20 animate-pulse"></div>
-                <div className="absolute inset-[-4px] border-2 border-primary/30 border-dashed rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>
-                <div className="absolute inset-[-8px] border-2 border-primary/20 border-dashed rounded-full animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-full opacity-20 animate-pulse"></div>
+                <div className="absolute inset-[-4px] border-2 border-indigo-600/30 border-dashed rounded-full animate-spin" style={{ animationDuration: '10s' }}></div>
+                <div className="absolute inset-[-8px] border-2 border-indigo-600/20 border-dashed rounded-full animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }}></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-[#121212] rounded-full p-3">
-                    <FileText className="h-8 w-8 text-primary animate-pulse" />
+                  <div className="bg-black/60 rounded-full p-3">
+                    <FileText className="h-8 w-8 text-indigo-400 animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -282,10 +282,10 @@ const DocumentView = () => {
               <p className="text-slate-400 mb-6">
                 Our AI is processing and extracting insights from your document. This may take a few moments.
               </p>
-              <div className="relative h-2 mb-2 overflow-hidden rounded-full bg-slate-800">
+              <div className="relative h-2 mb-2 overflow-hidden rounded-full bg-black/40">
                 <div className="absolute inset-0 flex">
-                  <div className="w-1/2 bg-gradient-to-r from-primary to-violet-600"></div>
-                  <div className="w-1/2 bg-gradient-to-r from-violet-600 to-primary"></div>
+                  <div className="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600"></div>
+                  <div className="w-1/2 bg-gradient-to-r from-violet-600 to-indigo-600"></div>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                 <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }}></div>
@@ -305,12 +305,12 @@ const DocumentView = () => {
         <div className="container px-4 py-8 mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-slate-800">
+              <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-white/5">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
             </Link>
-            <div className="h-6 border-l border-slate-700"></div>
+            <div className="h-6 border-l border-white/10"></div>
             <h1 className="text-2xl font-bold text-white">{document.title}</h1>
             
             <div className="ml-auto">
@@ -321,7 +321,7 @@ const DocumentView = () => {
                     Delete
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-[#1A1F2C] border-slate-700 text-white">
+                <AlertDialogContent className="glass-card text-white border-white/10">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription className="text-slate-400">
@@ -329,7 +329,7 @@ const DocumentView = () => {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-slate-800 text-white hover:bg-slate-700">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="bg-black/40 text-white hover:bg-white/10 border-white/10">Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                       Delete
                     </AlertDialogAction>
@@ -339,7 +339,7 @@ const DocumentView = () => {
             </div>
           </div>
           
-          <Card className="p-10 text-center bg-[#1A1F2C] border-slate-700">
+          <Card className="p-10 text-center bg-transparent">
             <div className="max-w-md mx-auto">
               <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="h-8 w-8 text-destructive" />
@@ -349,7 +349,7 @@ const DocumentView = () => {
                 There was an error analyzing this document. Please try uploading it again.
               </p>
               <Link to="/dashboard">
-                <Button className="bg-slate-800 text-white hover:bg-slate-700">Return to Dashboard</Button>
+                <Button className="bg-white/5 border border-white/10 text-white hover:bg-white/10">Return to Dashboard</Button>
               </Link>
             </div>
           </Card>
@@ -376,12 +376,12 @@ const DocumentView = () => {
       <div ref={documentRef} className="container px-4 py-8 mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <Link to="/dashboard">
-            <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-slate-800">
+            <Button variant="ghost" size="sm" className="gap-1 text-slate-300 hover:text-white hover:bg-white/5">
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
           </Link>
-          <div className="h-6 border-l border-slate-700"></div>
+          <div className="h-6 border-l border-white/10"></div>
           <h1 className="text-2xl font-bold text-white">{completedDoc.title}</h1>
           
           <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -390,7 +390,7 @@ const DocumentView = () => {
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-[#1A1F2C] border-slate-700 text-white">
+            <AlertDialogContent className="glass-card text-white border-white/10">
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription className="text-slate-400">
@@ -398,7 +398,7 @@ const DocumentView = () => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-slate-800 text-white hover:bg-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-black/40 text-white hover:bg-white/10 border-white/10">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDeleteDocument} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   Delete
                 </AlertDialogAction>
@@ -410,7 +410,7 @@ const DocumentView = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left sidebar - Document info */}
           <div className="space-y-6">
-            <Card className="overflow-hidden bg-[#1A1F2C] border-slate-700 text-white">
+            <Card className="overflow-hidden bg-transparent text-white">
               <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Document Information</h2>
                 
@@ -437,7 +437,7 @@ const DocumentView = () => {
                       </div>
                       <Progress 
                         value={completedDoc.riskScore} 
-                        className="h-2 bg-slate-800"
+                        className="h-2 bg-black/40"
                         indicatorClassName={
                           completedDoc.riskScore < 30 
                             ? "bg-green-500" 
@@ -463,7 +463,7 @@ const DocumentView = () => {
                   {completedDoc.jurisdiction && (
                     <div className="flex items-center gap-2">
                       <div className="text-sm text-slate-400">Jurisdiction:</div>
-                      <Badge variant="outline" className="gap-1 bg-slate-800 border-slate-600 text-slate-200">
+                      <Badge variant="outline" className="gap-1 bg-black/30 border-white/10 text-slate-200">
                         <Globe className="h-3 w-3" />
                         <span>{completedDoc.jurisdiction}</span>
                       </Badge>
@@ -472,7 +472,7 @@ const DocumentView = () => {
                 </div>
               </div>
               
-              <div className="border-t border-slate-700 p-4">
+              <div className="border-t border-white/10 p-4">
                 <Button 
                   className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" 
                   onClick={handleDownloadPDF}
@@ -483,13 +483,13 @@ const DocumentView = () => {
               </div>
             </Card>
             
-            <Card className="bg-[#1A1F2C] border-slate-700 text-white">
+            <Card className="bg-transparent text-white">
               <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Key Information</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
+                    <div className="h-8 w-8 rounded-lg bg-black/30 flex items-center justify-center flex-shrink-0">
                       <FileText className="h-4 w-4 text-indigo-400" />
                     </div>
                     <div>
@@ -509,7 +509,7 @@ const DocumentView = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
+                    <div className="h-8 w-8 rounded-lg bg-black/30 flex items-center justify-center flex-shrink-0">
                       <Info className="h-4 w-4 text-indigo-400" />
                     </div>
                     <div>
@@ -521,7 +521,7 @@ const DocumentView = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
+                    <div className="h-8 w-8 rounded-lg bg-black/30 flex items-center justify-center flex-shrink-0">
                       <AlertTriangle className="h-4 w-4 text-indigo-400" />
                     </div>
                     <div>
@@ -539,7 +539,7 @@ const DocumentView = () => {
           {/* Main content - Clauses */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="analysis" className="text-white">
-              <TabsList className="mb-6 bg-slate-800">
+              <TabsList className="mb-6 bg-black/30 border border-white/10">
                 <TabsTrigger value="analysis" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Analysis</TabsTrigger>
                 <TabsTrigger value="summary" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Summary</TabsTrigger>
               </TabsList>
@@ -548,7 +548,7 @@ const DocumentView = () => {
                 <div className="space-y-4">
                   {keyFindings.length > 0 ? (
                     keyFindings.map((clause, index) => (
-                      <Card key={index} className="overflow-hidden bg-[#1A1F2C] border-slate-700 text-white">
+                      <Card key={index} className="overflow-hidden bg-transparent text-white">
                         <div className="p-6">
                           <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-white">{clause.title}</h3>
@@ -568,7 +568,7 @@ const DocumentView = () => {
                                   <HoverCardTrigger asChild>
                                     <HelpCircle className="h-4 w-4 text-slate-400 cursor-help" />
                                   </HoverCardTrigger>
-                                  <HoverCardContent className="w-80 bg-slate-900 border-slate-700 text-slate-200">
+                                  <HoverCardContent className="w-80 glass-card text-slate-200 border-white/10">
                                     <p className="text-sm">
                                       This is the actual text extracted from your document that our AI identified as relevant to this issue.
                                     </p>
@@ -576,13 +576,13 @@ const DocumentView = () => {
                                 </HoverCard>
                               </h4>
                               <div className="relative">
-                                <div className="bg-slate-800 p-3 rounded-md text-sm italic border-l-4 border-indigo-600/30 text-slate-300">
+                                <div className="bg-black/20 p-3 rounded-md text-sm italic border-l-4 border-indigo-600/30 text-slate-300">
                                   "{clause.extractedText}"
                                 </div>
                                 <Button 
                                   size="sm" 
                                   variant="ghost" 
-                                  className="absolute top-1 right-1 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-700"
+                                  className="absolute top-1 right-1 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-white/5"
                                   onClick={() => copyToClipboard(clause.extractedText || "", index)}
                                 >
                                   {copiedIndex === index ? (
@@ -604,7 +604,7 @@ const DocumentView = () => {
                                   <HoverCardTrigger asChild>
                                     <HelpCircle className="h-4 w-4 text-slate-400 cursor-help" />
                                   </HoverCardTrigger>
-                                  <HoverCardContent className="w-80 bg-slate-900 border-slate-700 text-slate-200">
+                                  <HoverCardContent className="w-80 glass-card text-slate-200 border-white/10">
                                     <p className="text-sm">
                                       These are AI-suggested alternatives for the problematic clause in your document.
                                     </p>
@@ -614,7 +614,7 @@ const DocumentView = () => {
                               <div className="space-y-2">
                                 {clause.mitigationOptions.slice(0, 2).map((option, optionIndex) => (
                                   <div key={optionIndex} className="relative">
-                                    <div className="rounded-md border border-slate-700 p-3 bg-slate-800 text-sm">
+                                    <div className="rounded-md border border-white/10 p-3 bg-black/20 text-sm">
                                       <div className="flex gap-2 items-start">
                                         <div className="mt-0.5">
                                           <div className="h-4 w-4 rounded-full bg-indigo-600/10 flex items-center justify-center flex-shrink-0">
@@ -627,7 +627,7 @@ const DocumentView = () => {
                                     <Button 
                                       size="sm" 
                                       variant="ghost" 
-                                      className="absolute top-1 right-1 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-700"
+                                      className="absolute top-1 right-1 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-white/5"
                                       onClick={() => copyToClipboard(option, index * 100 + optionIndex)}
                                     >
                                       {copiedIndex === (index * 100 + optionIndex) ? (
@@ -641,25 +641,11 @@ const DocumentView = () => {
                               </div>
                             </div>
                           )}
-                          
-                          <Separator className="my-4 bg-slate-700" />
-                          
-                          <div className="bg-slate-800 p-3 rounded-md flex gap-3">
-                            <Sparkles className="h-5 w-5 text-indigo-400 flex-shrink-0" />
-                            <div className="text-sm text-slate-300">
-                              <span className="font-medium">Recommendation: </span>
-                              {clause.riskLevel === "high" 
-                                ? "Review this clause carefully and consider renegotiation."
-                                : clause.riskLevel === "medium"
-                                  ? "Consider clarifying or amending these terms."
-                                  : "Standard terms, no changes needed."}
-                            </div>
-                          </div>
                         </div>
                       </Card>
                     ))
                   ) : (
-                    <Card className="p-6 text-center bg-[#1A1F2C] border-slate-700">
+                    <Card className="p-6 text-center bg-transparent">
                       <p className="text-slate-400">
                         No key findings available for this document.
                       </p>
@@ -669,11 +655,11 @@ const DocumentView = () => {
               </TabsContent>
               
               <TabsContent value="summary">
-                <Card className="p-6 bg-[#1A1F2C] border-slate-700">
+                <Card className="p-6 bg-transparent">
                   <h3 className="text-lg font-semibold mb-4 text-white">Document Summary</h3>
                   
                   {completedDoc.summary ? (
-                    <div className="mb-6 p-4 bg-slate-800 rounded-lg border border-slate-700">
+                    <div className="mb-6 p-4 bg-black/30 rounded-lg border border-white/10">
                       <div className="flex gap-3">
                         <Info className="h-5 w-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                         <p className="text-slate-300">
@@ -688,7 +674,7 @@ const DocumentView = () => {
                   )}
                   
                   {completedDoc.jurisdiction && (
-                    <div className="mb-4 p-3 bg-slate-800 rounded-lg flex items-center gap-3">
+                    <div className="mb-4 p-3 bg-black/30 rounded-lg flex items-center gap-3">
                       <Globe className="h-5 w-5 text-indigo-400" />
                       <div>
                         <div className="text-sm font-medium text-white">Governing Law</div>
@@ -703,7 +689,7 @@ const DocumentView = () => {
                       <ul className="space-y-2 mb-4">
                         {keyFindings.map((finding, index) => (
                           <li key={index} className="flex items-start gap-2">
-                            <div className="h-5 w-5 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <div className="h-5 w-5 rounded-full bg-black/30 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <div className="h-1.5 w-1.5 rounded-full bg-indigo-400"></div>
                             </div>
                             <span className="text-slate-300">{finding.title}</span>
@@ -740,7 +726,7 @@ const DocumentView = () => {
 function RiskBadge({ level }: { level: string }) {
   if (level === "low") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-green-600 bg-green-950/20 text-green-400">
+      <Badge variant="outline" className="text-xs font-normal border-green-800 bg-green-900/20 text-green-400">
         Low Risk
       </Badge>
     );
@@ -748,14 +734,14 @@ function RiskBadge({ level }: { level: string }) {
   
   if (level === "medium") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-yellow-600 bg-yellow-950/20 text-yellow-400">
+      <Badge variant="outline" className="text-xs font-normal border-yellow-800 bg-yellow-900/20 text-yellow-400">
         Medium Risk
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-normal border-red-600 bg-red-950/20 text-red-400">
+    <Badge variant="outline" className="text-xs font-normal border-red-800 bg-red-900/20 text-red-400">
       High Risk
     </Badge>
   );

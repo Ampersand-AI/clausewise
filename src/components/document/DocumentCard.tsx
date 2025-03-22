@@ -59,19 +59,19 @@ export function DocumentCard({
       )}
     >
       <div className="flex items-start gap-4">
-        <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center flex-shrink-0">
           {status === "analyzing" ? (
-            <File className="h-6 w-6 text-primary" />
+            <File className="h-6 w-6 text-indigo-400" />
           ) : (
-            <FileText className="h-6 w-6 text-primary" />
+            <FileText className="h-6 w-6 text-indigo-400" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-lg truncate group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-lg truncate group-hover:text-indigo-400 transition-colors">
             {title}
           </h3>
           <div className="flex items-center gap-3 mt-1">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-slate-400">
               {formattedDate}
             </span>
             <StatusBadge status={status} />
@@ -101,19 +101,19 @@ export function DocumentCard({
                     {riskScore < 30 ? "Low" : riskScore < 70 ? "Medium" : "High"} Risk
                   </span>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-slate-400">
                   {clauses} clauses identified
                 </div>
               </div>
               
               {parties && parties.length > 0 && (
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-slate-400 mt-1">
                   <span className="font-medium">Parties:</span> {parties.join(", ")}
                 </p>
               )}
               
               {summary && (
-                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                <p className="text-sm text-slate-400 line-clamp-2 mt-1">
                   {summary}
                 </p>
               )}
@@ -128,7 +128,7 @@ export function DocumentCard({
 function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-blue-200 bg-blue-50/30 text-blue-400 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300">
+      <Badge variant="outline" className="text-xs font-normal border-blue-800 bg-blue-900/30 text-blue-400">
         Analyzing
       </Badge>
     );
@@ -136,14 +136,14 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   if (status === "error") {
     return (
-      <Badge variant="outline" className="text-xs font-normal border-red-200 bg-red-50/30 text-red-500 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300">
+      <Badge variant="outline" className="text-xs font-normal border-red-800 bg-red-900/30 text-red-400">
         Error
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-normal border-green-200 bg-green-50/30 text-green-600 dark:border-green-800 dark:bg-green-950/50 dark:text-green-300">
+    <Badge variant="outline" className="text-xs font-normal border-green-800 bg-green-900/30 text-green-400">
       Completed
     </Badge>
   );
