@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +27,18 @@ import {
 import ModeToggle from "@/components/contract/ModeToggle";
 import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
 import DocumentTabs from "@/components/document/DocumentTabs";
+
+// Define top most used agreement types
+const popularAgreements = [
+  { label: "Non-Disclosure Agreement (NDA)", value: "nda" },
+  { label: "Service Agreement", value: "service" },
+  { label: "Employment Contract", value: "employment" },
+  { label: "Consulting Agreement", value: "consulting" },
+  { label: "Term Sheet", value: "termsheet" },
+  { label: "SAFE Note", value: "safenote" },
+  { label: "Convertible Note", value: "convertiblenote" },
+  { label: "Equity Agreement", value: "equity" },
+];
 
 // Define document types
 type AnalyzingDocument = {
@@ -444,7 +455,7 @@ const Dashboard = () => {
             <div className="w-full h-full bg-lovable-gradient opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
           </div>
           <h1 className="text-3xl font-bold text-center lovable-text-gradient">
-            ClauseCrush
+            LabBit
           </h1>
           <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
             Create and analyze legal documents with AI. Draft contracts or upload existing documents.
@@ -482,7 +493,10 @@ const Dashboard = () => {
                 {mode === "create" ? (
                   <div className="p-4">
                     <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-4 text-center">Create Legal Contract</h3>
-                    <ContractForm onGenerate={handleGenerateContract} />
+                    <ContractForm 
+                      onGenerate={handleGenerateContract} 
+                      popularAgreements={popularAgreements}
+                    />
                   </div>
                 ) : (
                   <div className="p-4">

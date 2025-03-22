@@ -16,10 +16,10 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClick, classNam
       onClick={onClick}
       aria-label={isOpen ? "Close menu" : "Open menu"}
     >
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
+      <span className="bg-bento-brown-600 dark:bg-bento-orange-500"></span>
+      <span className="bg-bento-brown-600 dark:bg-bento-orange-500"></span>
+      <span className="bg-bento-brown-600 dark:bg-bento-orange-500"></span>
+      <span className="bg-bento-brown-600 dark:bg-bento-orange-500"></span>
     </button>
   );
 };
