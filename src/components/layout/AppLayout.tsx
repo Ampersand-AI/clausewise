@@ -57,34 +57,34 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#121210] text-foreground relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#121212] text-zinc-200 relative overflow-hidden">
       {/* Background gradients and patterns */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(249,115,22,0.15)_0%,transparent_40%),radial-gradient(circle_at_75%_85%,rgba(181,119,61,0.15)_0%,transparent_40%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(255,108,54,0.07)_0%,transparent_40%),radial-gradient(circle_at_75%_85%,rgba(255,108,54,0.05)_0%,transparent_40%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(#333_1px,transparent_1px)] bg-[length:20px_20px] opacity-10 pointer-events-none"></div>
       
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <UsageStats />
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="glass" size="icon" className="text-lawbit-orange-500 hover:text-lawbit-orange-400 rounded-full glow-effect">
+            <Button variant="ghost" size="icon" className="text-orange-500 hover:text-orange-400">
               <Settings className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent className="backdrop-blur-md bg-glass border-glass-border">
+          <SheetContent className="backdrop-blur-md bg-zinc-900/95 border-zinc-700">
             <SheetHeader>
-              <SheetTitle className="text-lawbit-orange-500">Settings</SheetTitle>
-              <SheetDescription className="text-muted-foreground">
+              <SheetTitle className="text-orange-500">Settings</SheetTitle>
+              <SheetDescription className="text-zinc-400">
                 Configure your application preferences.
               </SheetDescription>
             </SheetHeader>
             <div className="py-6 space-y-6">
               <div className="space-y-4">
-                <h3 className="text-sm font-medium">Preferences</h3>
+                <h3 className="text-sm font-medium text-zinc-300">Preferences</h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="theme" className="flex flex-col gap-1">
+                    <Label htmlFor="theme" className="flex flex-col gap-1 text-zinc-300">
                       <span>Dark Mode</span>
-                      <span className="text-xs font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-zinc-400">
                         Switch between light and dark theme
                       </span>
                     </Label>
@@ -95,9 +95,9 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="notifications" className="flex flex-col gap-1">
+                    <Label htmlFor="notifications" className="flex flex-col gap-1 text-zinc-300">
                       <span>Notifications</span>
-                      <span className="text-xs font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-zinc-400">
                         Receive notifications about your documents
                       </span>
                     </Label>
@@ -108,9 +108,9 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="autosave" className="flex flex-col gap-1">
+                    <Label htmlFor="autosave" className="flex flex-col gap-1 text-zinc-300">
                       <span>Auto Save</span>
-                      <span className="text-xs font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-zinc-400">
                         Automatically save changes
                       </span>
                     </Label>
@@ -121,9 +121,9 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="compact-view" className="flex flex-col gap-1">
+                    <Label htmlFor="compact-view" className="flex flex-col gap-1 text-zinc-300">
                       <span>Compact View</span>
-                      <span className="text-xs font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-zinc-400">
                         Display content in a more compact format
                       </span>
                     </Label>
@@ -137,25 +137,25 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               </div>
               
               <div className="space-y-4">
-                <h3 className="text-sm font-medium">Account</h3>
+                <h3 className="text-sm font-medium text-zinc-300">Account</h3>
                 <div className="space-y-2">
-                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left">
-                    <CreditCard className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800">
+                    <CreditCard className="h-4 w-4 text-orange-500" />
                     <span>Subscription & Billing</span>
                   </Button>
-                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left">
-                    <Shield className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800">
+                    <Shield className="h-4 w-4 text-orange-500" />
                     <span>Privacy & Security</span>
                   </Button>
-                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left">
-                    <HelpCircle className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800">
+                    <HelpCircle className="h-4 w-4 text-orange-500" />
                     <span>Help & Support</span>
                   </Button>
                   {user && (
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="w-full justify-start gap-2 text-left text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                      className="w-full justify-start gap-2 text-left text-red-400 hover:text-red-300 hover:bg-zinc-800"
                       onClick={() => signOut()}
                     >
                       <LogOut className="h-4 w-4" />
@@ -172,7 +172,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       </div>
       <main className="flex-1 flex items-center justify-center p-4 relative z-10">
         <div className={cn("w-full max-w-6xl mx-auto glow-effect animate-glow p-0.5 rounded-xl", className)}>
-          <div className="glass-card p-6 rounded-lg w-full">
+          <div className="bg-zinc-900/50 backdrop-blur-md border border-zinc-700 p-6 rounded-lg w-full">
             {children}
           </div>
         </div>

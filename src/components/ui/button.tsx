@@ -10,18 +10,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "bg-orange-500 text-white hover:bg-orange-600",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-red-500 text-white hover:bg-red-600",
         outline:
-          "border border-input bg-glass-dark hover:bg-glass-light hover:text-accent-foreground",
+          "border border-zinc-700 bg-zinc-900/50 hover:bg-zinc-800 hover:text-zinc-200 text-zinc-300",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-glass-light hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        glass: "backdrop-blur-md bg-glass border border-glass-border hover:bg-glass-light text-foreground",
-        success: "bg-success text-success-foreground hover:bg-success/90",
-        warning: "bg-warning text-warning-foreground hover:bg-warning/90",
+          "bg-zinc-800 text-zinc-200 hover:bg-zinc-700",
+        ghost: "hover:bg-zinc-800 hover:text-zinc-200 text-zinc-300",
+        link: "text-orange-500 underline-offset-4 hover:underline",
+        glass: "backdrop-blur-md bg-zinc-900/50 border border-zinc-700 hover:bg-zinc-800/50 text-zinc-200",
+        success: "bg-green-600 text-white hover:bg-green-700",
+        warning: "bg-orange-500 text-white hover:bg-orange-600",
       },
       size: {
         default: "h-10 px-4 py-2",

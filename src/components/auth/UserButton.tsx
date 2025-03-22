@@ -19,7 +19,7 @@ export function UserButton() {
   
   if (loading) {
     return (
-      <Button variant="ghost" size="sm" className="gap-2">
+      <Button variant="ghost" size="sm" className="gap-2 text-gray-400">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span>Loading...</span>
       </Button>
@@ -28,7 +28,7 @@ export function UserButton() {
   
   if (!user) {
     return (
-      <Button variant="glass" size="sm" asChild className="orange-brown-button text-white glow-button">
+      <Button variant="ghost" size="sm" asChild className="orange-button text-white glow-button">
         <Link to="/auth">Sign In</Link>
       </Button>
     );
@@ -39,39 +39,39 @@ export function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 rounded-full glow-effect animate-glow">
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
             <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
-            <AvatarFallback className="bg-orange-brown-gradient text-white">{userInitials}</AvatarFallback>
+            <AvatarFallback className="bg-orange-gradient text-white">{userInitials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 backdrop-blur-md bg-glass border-glass-border" align="end" forceMount>
+      <DropdownMenuContent className="w-56 bg-zinc-900/95 border border-zinc-700 backdrop-blur-md" align="end" forceMount>
         <DropdownMenuLabel>
           <div className="flex flex-col">
-            <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
-            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            <p className="text-sm font-medium text-gray-200">{user.user_metadata?.full_name || user.email}</p>
+            <p className="text-xs text-gray-400 truncate">{user.email}</p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate('/profile')}>
-          <User className="mr-2 h-4 w-4" />
+        <DropdownMenuSeparator className="bg-zinc-700" />
+        <DropdownMenuItem onClick={() => navigate('/profile')} className="text-gray-300 hover:text-white hover:bg-zinc-800">
+          <User className="mr-2 h-4 w-4 text-orange-500" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/settings')}>
-          <Settings className="mr-2 h-4 w-4" />
+        <DropdownMenuItem onClick={() => navigate('/settings')} className="text-gray-300 hover:text-white hover:bg-zinc-800">
+          <Settings className="mr-2 h-4 w-4 text-orange-500" />
           <span>Account Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/subscription')}>
-          <CreditCard className="mr-2 h-4 w-4" />
+        <DropdownMenuItem onClick={() => navigate('/subscription')} className="text-gray-300 hover:text-white hover:bg-zinc-800">
+          <CreditCard className="mr-2 h-4 w-4 text-orange-500" />
           <span>Subscription</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/support')}>
-          <HelpCircle className="mr-2 h-4 w-4" />
+        <DropdownMenuItem onClick={() => navigate('/support')} className="text-gray-300 hover:text-white hover:bg-zinc-800">
+          <HelpCircle className="mr-2 h-4 w-4 text-orange-500" />
           <span>Help & Support</span>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive">
+        <DropdownMenuSeparator className="bg-zinc-700" />
+        <DropdownMenuItem onClick={() => signOut()} className="text-red-400 hover:text-red-300 hover:bg-zinc-800 focus:text-red-300">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
         </DropdownMenuItem>
