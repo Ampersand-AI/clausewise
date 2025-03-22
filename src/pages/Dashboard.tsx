@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
@@ -338,10 +337,10 @@ const Dashboard = () => {
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-bento-orange-50 border border-bento-orange-100 shadow-sm dark:bg-bento-gray-800 dark:border-bento-orange-500/20">
+          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-gradient-to-br from-bento-orange-50 to-bento-yellow-50 border border-bento-orange-100 shadow-sm dark:bg-gradient-to-br dark:from-bento-gray-800 dark:to-bento-brown-800 dark:border-bento-orange-500/20">
             <FileText className="h-8 w-8 text-bento-orange-500" />
           </div>
-          <h1 className="text-3xl font-bold text-center text-bento-gray-900 dark:text-bento-gray-100">
+          <h1 className="text-3xl font-bold text-center text-gradient">
             ClauseCrush
           </h1>
           <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
@@ -349,72 +348,81 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Chat-like interface */}
-        <div className="w-full max-w-2xl rounded-lg overflow-hidden border border-bento-gray-200 bg-white shadow-sm dark:bg-bento-gray-800 dark:border-bento-gray-700">
-          {isAnalyzing ? (
-            <div className="p-6 space-y-4">
-              <h3 className="text-lg font-medium text-center text-bento-gray-900 dark:text-bento-gray-100">Analyzing Document...</h3>
-              <div className="relative pt-1">
-                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
-                  <div 
-                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-bento-orange-500 to-bento-yellow-500 bg-[length:200%_200%] animate-[shimmer_2s_infinite]" 
-                    style={{ width: `${analysisProgress}%` }}
-                  ></div>
-                </div>
-                <div className="text-sm text-center mt-2 text-bento-gray-600 dark:text-bento-gray-400">
-                  {analysisProgress}% - Extracting information and analyzing content
+        {/* Chat-like interface with animated gradient border */}
+        <div className="w-full max-w-2xl relative rounded-xl overflow-hidden group">
+          {/* Animated gradient border */}
+          <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-bento-orange-500 via-bento-yellow-500 to-bento-orange-600 bg-[length:200%_100%] animate-shimmer p-[1.5px]">
+            <div className="absolute inset-0 rounded-lg bg-bento-gray-100 dark:bg-bento-gray-800"></div>
+          </div>
+          
+          <div className="w-full max-w-2xl overflow-hidden border border-bento-gray-200 bg-white shadow-sm dark:bg-bento-gray-800 dark:border-bento-gray-700 rounded-xl z-10">
+            {isAnalyzing ? (
+              <div className="p-6 space-y-4">
+                <h3 className="text-lg font-medium text-center text-bento-gray-900 dark:text-bento-gray-100">Analyzing Document...</h3>
+                <div className="relative pt-1">
+                  <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
+                    <div 
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-bento-orange-500 via-bento-yellow-500 to-bento-orange-500 bg-[length:200%_100%] animate-shimmer" 
+                      style={{ width: `${analysisProgress}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-sm text-center mt-2 text-bento-gray-600 dark:text-bento-gray-400">
+                    {analysisProgress}% - Extracting information and analyzing content
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between border-b border-bento-gray-200 dark:border-bento-gray-700 p-4">
-                <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100">Analyze Legal Document or Clauses</h3>
-                <div className="flex space-x-2">
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500">
-                      <Upload className="h-5 w-5" />
-                    </div>
-                    <input 
-                      id="file-upload" 
-                      type="file" 
-                      className="hidden" 
-                      accept=".pdf,.doc,.docx,.txt,image/*"
-                      onChange={handleFileUpload}
+            ) : (
+              <>
+                <div className="p-4">
+                  <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2">Analyze Legal Document or Clauses</h3>
+                  <div className="flex flex-col space-y-4">
+                    <Textarea 
+                      placeholder="Paste your legal document text here for analysis..."
+                      className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700 rounded-lg"
+                      value={documentText}
+                      onChange={(e) => setDocumentText(e.target.value)}
                     />
-                  </label>
+                  
+                    <div className="flex justify-between items-center px-1">
+                      <div className="flex items-center">
+                        <label htmlFor="file-upload" className="cursor-pointer">
+                          <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500 flex items-center gap-2">
+                            <Upload className="h-4 w-4" />
+                            <span className="text-sm">Upload</span>
+                          </div>
+                          <input 
+                            id="file-upload" 
+                            type="file" 
+                            className="hidden" 
+                            accept=".pdf,.doc,.docx,.txt,image/*"
+                            onChange={handleFileUpload}
+                          />
+                        </label>
+                        
+                        <Button 
+                          variant={isRecording ? "destructive" : "ghost"} 
+                          size="sm" 
+                          className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
+                          onClick={toggleRecording}
+                        >
+                          {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
+                          {isRecording ? "Stop" : "Record"}
+                        </Button>
+                      </div>
+                      
+                      <Button 
+                        onClick={() => analyzeTextDocument(documentText)}
+                        disabled={!documentText.trim() || documentText.trim().length < 50}
+                        className="bg-gradient-to-r from-bento-orange-500 to-bento-brown-600 hover:from-bento-orange-600 hover:to-bento-brown-700 text-white transition-all duration-300"
+                      >
+                        <Send className="h-4 w-4 mr-1" /> Analyze
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="p-4">
-                <Textarea 
-                  placeholder="Paste your legal document text here for analysis..."
-                  className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700"
-                  value={documentText}
-                  onChange={(e) => setDocumentText(e.target.value)}
-                />
-              </div>
-              <div className="border-t border-bento-gray-200 dark:border-bento-gray-700 p-4 flex justify-between items-center">
-                <div>
-                  <Button 
-                    variant={isRecording ? "destructive" : "ghost"} 
-                    size="sm" 
-                    className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
-                    onClick={toggleRecording}
-                  >
-                    {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
-                    {isRecording ? "Stop" : "Record"}
-                  </Button>
-                </div>
-                <Button 
-                  onClick={() => analyzeTextDocument(documentText)}
-                  disabled={!documentText.trim() || documentText.trim().length < 50}
-                  className="bg-bento-orange-500 hover:bg-bento-orange-600 text-white"
-                >
-                  <Send className="h-4 w-4 mr-1" /> Analyze
-                </Button>
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Recent Documents */}

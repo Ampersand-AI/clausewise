@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -134,7 +135,7 @@
   }
 
   .animate-shimmer {
-    @apply bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%];
+    @apply bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite];
   }
 
   /* PDF styling for download */

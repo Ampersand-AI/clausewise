@@ -11,7 +11,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, className }: AppLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-bento-gray-100 text-bento-gray-800 dark:bg-bento-gray-900 dark:text-bento-gray-200 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-bento-gray-100 to-bento-gray-50 text-bento-gray-800 dark:bg-gradient-to-br dark:from-bento-gray-900 dark:to-bento-gray-800 dark:text-bento-gray-200 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[length:20px_20px] opacity-30 dark:bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] pointer-events-none"></div>
       

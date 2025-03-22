@@ -33,13 +33,13 @@ export async function analyzeDocument(file: File): Promise<DocumentAnalysisResul
     
     console.log('Text successfully extracted, length:', textContent.length);
     
-    // Try OpenAI API first
+    // Try Anthropik API first
     try {
-      return await analyzeWithOpenAI(file, textContent);
-    } catch (openAIError) {
-      console.error('OpenAI analysis failed, falling back to Anthropik:', openAIError);
-      // Fall back to Anthropik API
       return await analyzeWithAnthropik(textContent, file.name);
+    } catch (anthropikError) {
+      console.error('Anthropik analysis failed, falling back to OpenAI:', anthropikError);
+      // Fall back to OpenAI API
+      return await analyzeWithOpenAI(file, textContent);
     }
   } catch (error) {
     console.error('Error analyzing document:', error);
@@ -166,6 +166,7 @@ async function analyzeWithOpenAI(file: File, textContent: string): Promise<Docum
     7. Key findings with their risk levels (low, medium, high)
     8. For each key finding, extract the specific text from the document that represents this clause or issue
     9. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause with specific legal advice based on the jurisdiction
+    10. For each key finding, provide 3 alternative redrafted clauses that would be better
     
     Format the response as a JSON object with these fields:
     {
@@ -181,7 +182,8 @@ async function analyzeWithOpenAI(file: File, textContent: string): Promise<Docum
           "description": "string",
           "risk_level": "low|medium|high",
           "extracted_text": "string",
-          "mitigation_options": ["string", "string", "string"]
+          "mitigation_options": ["string", "string", "string"],
+          "redrafted_clauses": ["string", "string", "string"]
         }
       ]
     }
@@ -270,7 +272,7 @@ async function analyzeWithAnthropik(textContent: string, filename: string): Prom
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: "claude-3-opus-20240229",
+        model: "claude-3-sonnet-20240229",
         max_tokens: 4000,
         system: "You are a legal document analyzer specializing in contract analysis. Your task is to identify parties, extract key clauses, assess risks, and provide mitigation options. Only analyze if the document appears to be a legal document; otherwise, indicate it's not a legal document. Provide jurisdiction-specific legal advice where applicable.",
         messages: [
@@ -289,6 +291,7 @@ async function analyzeWithAnthropik(textContent: string, filename: string): Prom
                 7. Key findings with their risk levels (low, medium, high)
                 8. For each key finding, extract the specific text from the document that represents this clause or issue
                 9. For medium and high risk issues, provide 2-3 suggested ways to mitigate or rephrase the clause with jurisdiction-specific legal advice
+                10. For each key finding, provide 3 alternative redrafted clauses that would be better
                 
                 Document content: ${textContent.substring(0, 15000)}
                 
@@ -307,7 +310,8 @@ async function analyzeWithAnthropik(textContent: string, filename: string): Prom
                       "description": "string", 
                       "risk_level": "low|medium|high",
                       "extracted_text": "string",
-                      "mitigation_options": ["string", "string", "string"]
+                      "mitigation_options": ["string", "string", "string"],
+                      "redrafted_clauses": ["string", "string", "string"]
                     }
                   ]
                 }
@@ -401,6 +405,11 @@ function generateFallbackKeyFindings() {
         "Extend the notice period to at least 30 days.",
         "Add requirements for cause-based termination.",
         "Include transition assistance provisions."
+      ],
+      redraftedClauses: [
+        "Either party may terminate this Agreement with thirty (30) days prior written notice to the other party, with or without cause.",
+        "Either party may terminate this Agreement (a) with thirty (30) days prior written notice for any reason, or (b) immediately upon written notice if the other party materially breaches this Agreement.",
+        "Either party may terminate this Agreement with sixty (60) days prior written notice, and the terminating party shall provide reasonable transition assistance for a period of up to ninety (90) days."
       ]
     },
     {
@@ -410,6 +419,11 @@ function generateFallbackKeyFindings() {
       extractedText: "In no event shall either party's liability exceed the total value of this agreement.",
       mitigationOptions: [
         "This is a standard clause, no specific mitigation needed."
+      ],
+      redraftedClauses: [
+        "In no event shall either party's liability exceed the total value of this agreement.",
+        "In no event shall either party's liability exceed the greater of (a) the total value of this agreement or (b) the amount paid by Customer in the twelve (12) months immediately preceding the event giving rise to the claim.",
+        "In no event shall either party's liability exceed the total value of this agreement, except for claims arising from gross negligence, willful misconduct, or breaches of confidentiality or intellectual property rights."
       ]
     },
     {
@@ -421,6 +435,11 @@ function generateFallbackKeyFindings() {
         "Negotiate for 30-day payment terms.",
         "Add late payment penalties or interest provisions.",
         "Request milestone or upfront partial payments."
+      ],
+      redraftedClauses: [
+        "Payment shall be due within thirty (30) days of receipt of a proper invoice. Late payments shall accrue interest at a rate of 1.5% per month or the maximum rate permitted by applicable law, whichever is less.",
+        "Customer shall pay 50% of the total fee upfront, with the remaining 50% due within thirty (30) days of receipt of deliverables.",
+        "Payment shall be due within thirty (30) days of receipt of a proper invoice. If Customer fails to make any payment when due, Provider may suspend performance until all outstanding payments have been made."
       ]
     }
   ];
