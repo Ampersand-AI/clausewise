@@ -1,13 +1,12 @@
 
 import { cn } from "@/lib/utils";
-import { Settings, Bell, Shield, CreditCard, HelpCircle, LogOut } from "lucide-react";
+import { Settings, User, Bell, LogOut, Shield, CreditCard, HelpCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { UserButton } from "@/components/auth/UserButton";
 import { Link } from "react-router-dom";
 import UsageStats from "@/components/usage/UsageStats";
-import ModeToggle from "@/components/mode-toggle";
 import {
   Sheet,
   SheetContent,
@@ -24,9 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Switch
-} from "@/components/ui/switch";
+import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 interface AppLayoutProps {
@@ -61,134 +58,121 @@ export function AppLayout({ children, className }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#121210] text-foreground relative overflow-hidden">
-      {/* Enhanced background gradients and patterns */}
+      {/* Background gradients and patterns */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(249,115,22,0.15)_0%,transparent_40%),radial-gradient(circle_at_75%_85%,rgba(181,119,61,0.15)_0%,transparent_40%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(#333_1px,transparent_1px)] bg-[length:20px_20px] opacity-10 pointer-events-none"></div>
       
-      {/* Header with glassmorphism */}
-      <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 backdrop-blur-md bg-glass/30 border-b border-glass-border">
-        <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="text-2xl font-bold text-gradient glow-effect">
-              Lawbit
-            </Link>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <ModeToggle />
-            <UsageStats />
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="glass" size="icon" className="text-lawbit-orange-500 hover:text-lawbit-orange-400 rounded-full glow-effect">
-                  <Settings className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="backdrop-blur-md bg-glass border-glass-border shadow-lg">
-                <SheetHeader>
-                  <SheetTitle className="text-lawbit-orange-500">Settings</SheetTitle>
-                  <SheetDescription className="text-muted-foreground">
-                    Configure your application preferences.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="py-6 space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-medium text-lawbit-orange-400">Preferences</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between glass-card p-3 rounded-lg">
-                        <Label htmlFor="theme" className="flex flex-col gap-1">
-                          <span>Dark Mode</span>
-                          <span className="text-xs font-normal text-muted-foreground">
-                            Switch between light and dark theme
-                          </span>
-                        </Label>
-                        <Switch 
-                          id="theme" 
-                          checked={theme === 'dark'} 
-                          onCheckedChange={toggleTheme} 
-                        />
-                      </div>
-                      <div className="flex items-center justify-between glass-card p-3 rounded-lg">
-                        <Label htmlFor="notifications" className="flex flex-col gap-1">
-                          <span>Notifications</span>
-                          <span className="text-xs font-normal text-muted-foreground">
-                            Receive notifications about your documents
-                          </span>
-                        </Label>
-                        <Switch 
-                          id="notifications" 
-                          checked={notifications} 
-                          onCheckedChange={setNotifications} 
-                        />
-                      </div>
-                      <div className="flex items-center justify-between glass-card p-3 rounded-lg">
-                        <Label htmlFor="autosave" className="flex flex-col gap-1">
-                          <span>Auto Save</span>
-                          <span className="text-xs font-normal text-muted-foreground">
-                            Automatically save changes
-                          </span>
-                        </Label>
-                        <Switch 
-                          id="autosave" 
-                          checked={autoSave} 
-                          onCheckedChange={setAutoSave} 
-                        />
-                      </div>
-                      <div className="flex items-center justify-between glass-card p-3 rounded-lg">
-                        <Label htmlFor="compact-view" className="flex flex-col gap-1">
-                          <span>Compact View</span>
-                          <span className="text-xs font-normal text-muted-foreground">
-                            Display content in a more compact format
-                          </span>
-                        </Label>
-                        <Switch 
-                          id="compact-view" 
-                          checked={compactView} 
-                          onCheckedChange={setCompactView} 
-                        />
-                      </div>
-                    </div>
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+        <UsageStats />
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="glass" size="icon" className="text-lawbit-orange-500 hover:text-lawbit-orange-400 rounded-full glow-effect">
+              <Settings className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="backdrop-blur-md bg-glass border-glass-border">
+            <SheetHeader>
+              <SheetTitle className="text-lawbit-orange-500">Settings</SheetTitle>
+              <SheetDescription className="text-muted-foreground">
+                Configure your application preferences.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="py-6 space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Preferences</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="theme" className="flex flex-col gap-1">
+                      <span>Dark Mode</span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        Switch between light and dark theme
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="theme" 
+                      checked={theme === 'dark'} 
+                      onCheckedChange={toggleTheme} 
+                    />
                   </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-medium text-lawbit-orange-400">Account</h3>
-                    <div className="space-y-2">
-                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left hover:bg-glass-light hover:text-lawbit-orange-400">
-                        <CreditCard className="h-4 w-4" />
-                        <span>Subscription & Billing</span>
-                      </Button>
-                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left hover:bg-glass-light hover:text-lawbit-orange-400">
-                        <Shield className="h-4 w-4" />
-                        <span>Privacy & Security</span>
-                      </Button>
-                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left hover:bg-glass-light hover:text-lawbit-orange-400">
-                        <HelpCircle className="h-4 w-4" />
-                        <span>Help & Support</span>
-                      </Button>
-                      {user && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="w-full justify-start gap-2 text-left text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                          onClick={() => signOut()}
-                        >
-                          <LogOut className="h-4 w-4" />
-                          <span>Sign Out</span>
-                        </Button>
-                      )}
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="notifications" className="flex flex-col gap-1">
+                      <span>Notifications</span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        Receive notifications about your documents
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="notifications" 
+                      checked={notifications} 
+                      onCheckedChange={setNotifications} 
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="autosave" className="flex flex-col gap-1">
+                      <span>Auto Save</span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        Automatically save changes
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="autosave" 
+                      checked={autoSave} 
+                      onCheckedChange={setAutoSave} 
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="compact-view" className="flex flex-col gap-1">
+                      <span>Compact View</span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        Display content in a more compact format
+                      </span>
+                    </Label>
+                    <Switch 
+                      id="compact-view" 
+                      checked={compactView} 
+                      onCheckedChange={setCompactView} 
+                    />
                   </div>
                 </div>
-              </SheetContent>
-            </Sheet>
-            
-            <UserButton />
-          </div>
-        </div>
-      </header>
-      
-      <main className="flex-1 flex items-center justify-center p-4 relative z-10 mt-16">
-        <div className={cn("w-full max-w-6xl mx-auto animate-glow p-0.5 rounded-xl", className)}>
-          <div className="backdrop-blur-md bg-glass border border-glass-border shadow-lg p-6 rounded-lg w-full">
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Account</h3>
+                <div className="space-y-2">
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left">
+                    <CreditCard className="h-4 w-4" />
+                    <span>Subscription & Billing</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left">
+                    <Shield className="h-4 w-4" />
+                    <span>Privacy & Security</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-left">
+                    <HelpCircle className="h-4 w-4" />
+                    <span>Help & Support</span>
+                  </Button>
+                  {user && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full justify-start gap-2 text-left text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                      onClick={() => signOut()}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+        
+        <UserButton />
+      </div>
+      <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+        <div className={cn("w-full max-w-6xl mx-auto glow-effect animate-glow p-0.5 rounded-xl", className)}>
+          <div className="glass-card p-6 rounded-lg w-full">
             {children}
           </div>
         </div>
