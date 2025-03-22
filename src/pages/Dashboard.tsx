@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { DocumentCard } from "@/components/document/DocumentCard";
-import { Upload, FileText, Mic, Send, ListFilter, Trash2, MicOff } from "lucide-react";
+import { Upload, FileText, Mic, Send, ListFilter, MicOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -17,6 +17,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Define document types
 type AnalyzingDocument = {
@@ -55,13 +61,39 @@ type ErrorDocument = {
 
 type Document = AnalyzingDocument | CompletedDocument | ErrorDocument;
 
+type FilterOptions = {
+  status: {
+    analyzing: boolean;
+    completed: boolean;
+    error: boolean;
+  };
+  risk: {
+    low: boolean;
+    medium: boolean;
+    high: boolean;
+  };
+};
+
 const Dashboard = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [documentText, setDocumentText] = useState("");
   const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    status: {
+      analyzing: true,
+      completed: true,
+      error: true,
+    },
+    risk: {
+      low: true,
+      medium: true,
+      high: true,
+    },
+  });
   const { toast } = useToast();
   
   // Voice recognition setup
@@ -148,6 +180,33 @@ const Dashboard = () => {
   useEffect(() => {
     localStorage.setItem('documents', JSON.stringify(documents));
   }, [documents]);
+
+  // Apply filters to documents
+  useEffect(() => {
+    let filtered = [...documents];
+    
+    // Filter by status
+    filtered = filtered.filter(doc => 
+      (doc.status === "analyzing" && filterOptions.status.analyzing) ||
+      (doc.status === "completed" && filterOptions.status.completed) ||
+      (doc.status === "error" && filterOptions.status.error)
+    );
+    
+    // Filter by risk (for completed documents only)
+    if (!filterOptions.risk.low || !filterOptions.risk.medium || !filterOptions.risk.high) {
+      filtered = filtered.filter(doc => {
+        if (doc.status !== "completed") return true;
+        
+        const riskScore = doc.riskScore;
+        
+        return (riskScore < 30 && filterOptions.risk.low) ||
+               (riskScore >= 30 && riskScore < 70 && filterOptions.risk.medium) ||
+               (riskScore >= 70 && filterOptions.risk.high);
+      });
+    }
+    
+    setFilteredDocuments(filtered);
+  }, [documents, filterOptions]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -332,13 +391,23 @@ const Dashboard = () => {
     }
   };
 
+  const handleFilterChange = (type: 'status' | 'risk', key: string, checked: boolean) => {
+    setFilterOptions(prev => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [key]: checked
+      }
+    }));
+  };
+
   return (
     <AppLayout>
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-gradient-to-br from-bento-orange-50 to-bento-yellow-50 border border-bento-orange-100 shadow-sm dark:bg-gradient-to-br dark:from-bento-gray-800 dark:to-bento-brown-800 dark:border-bento-orange-500/20">
-            <FileText className="h-8 w-8 text-bento-orange-500" />
+          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-gradient-to-br from-bento-yellow-50 to-bento-orange-50 border border-bento-orange-100 shadow-sm dark:bg-gradient-to-br dark:from-bento-gray-800 dark:to-bento-brown-800 dark:border-bento-orange-500/20 overflow-hidden">
+            <div className="w-full h-full bg-gradient-to-br from-bento-yellow-100 via-bento-orange-500 to-bento-brown-600 opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
           </div>
           <h1 className="text-3xl font-bold text-center text-gradient">
             ClauseCrush
@@ -351,7 +420,7 @@ const Dashboard = () => {
         {/* Chat-like interface with animated gradient border */}
         <div className="w-full max-w-2xl relative rounded-xl overflow-hidden group">
           {/* Animated gradient border */}
-          <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-bento-orange-500 via-bento-yellow-500 to-bento-orange-600 bg-[length:200%_100%] animate-shimmer p-[1.5px]">
+          <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600 bg-[length:200%_100%] animate-shimmer p-[1.5px]">
             <div className="absolute inset-0 rounded-lg bg-bento-gray-100 dark:bg-bento-gray-800"></div>
           </div>
           
@@ -362,7 +431,7 @@ const Dashboard = () => {
                 <div className="relative pt-1">
                   <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
                     <div 
-                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-bento-orange-500 via-bento-yellow-500 to-bento-orange-500 bg-[length:200%_100%] animate-shimmer" 
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600 bg-[length:200%_100%] animate-shimmer" 
                       style={{ width: `${analysisProgress}%` }}
                     ></div>
                   </div>
@@ -374,7 +443,7 @@ const Dashboard = () => {
             ) : (
               <>
                 <div className="p-4">
-                  <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2">Analyze Legal Document or Clauses</h3>
+                  <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2 text-center">Analyze Legal Document or Clauses</h3>
                   <div className="flex flex-col space-y-4">
                     <Textarea 
                       placeholder="Paste your legal document text here for analysis..."
@@ -413,7 +482,7 @@ const Dashboard = () => {
                       <Button 
                         onClick={() => analyzeTextDocument(documentText)}
                         disabled={!documentText.trim() || documentText.trim().length < 50}
-                        className="bg-gradient-to-r from-bento-orange-500 to-bento-brown-600 hover:from-bento-orange-600 hover:to-bento-brown-700 text-white transition-all duration-300"
+                        className="bg-gradient-to-r from-bento-yellow-500 via-bento-orange-500 to-bento-brown-600 hover:from-bento-yellow-600 hover:via-bento-orange-600 hover:to-bento-brown-700 text-white transition-all duration-300"
                       >
                         <Send className="h-4 w-4 mr-1" /> Analyze
                       </Button>
@@ -430,24 +499,67 @@ const Dashboard = () => {
           <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-bento-gray-900 dark:text-bento-gray-100">Recent Documents</h2>
-              <Button variant="outline" size="sm" className="gap-1 text-bento-gray-600 dark:text-bento-gray-400 border-bento-gray-200 bg-white hover:bg-bento-gray-50 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700">
-                <ListFilter className="h-4 w-4" />
-                Filter
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1 text-bento-gray-600 dark:text-bento-gray-400 border-bento-gray-200 bg-white hover:bg-bento-gray-50 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700">
+                    <ListFilter className="h-4 w-4" />
+                    Filter
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-white border-bento-gray-200 dark:bg-bento-gray-800 dark:border-bento-gray-700">
+                  <div className="p-2">
+                    <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Status</p>
+                    <DropdownMenuCheckboxItem
+                      checked={filterOptions.status.analyzing}
+                      onCheckedChange={(checked) => handleFilterChange('status', 'analyzing', checked)}
+                    >
+                      Analyzing
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filterOptions.status.completed}
+                      onCheckedChange={(checked) => handleFilterChange('status', 'completed', checked)}
+                    >
+                      Completed
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filterOptions.status.error}
+                      onCheckedChange={(checked) => handleFilterChange('status', 'error', checked)}
+                    >
+                      Error
+                    </DropdownMenuCheckboxItem>
+                  </div>
+                  
+                  <div className="p-2 border-t border-bento-gray-200 dark:border-bento-gray-700">
+                    <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Risk Level</p>
+                    <DropdownMenuCheckboxItem
+                      checked={filterOptions.risk.low}
+                      onCheckedChange={(checked) => handleFilterChange('risk', 'low', checked)}
+                    >
+                      Low Risk
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filterOptions.risk.medium}
+                      onCheckedChange={(checked) => handleFilterChange('risk', 'medium', checked)}
+                    >
+                      Medium Risk
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={filterOptions.risk.high}
+                      onCheckedChange={(checked) => handleFilterChange('risk', 'high', checked)}
+                    >
+                      High Risk
+                    </DropdownMenuCheckboxItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {documents.map((doc) => (
-                <div key={doc.id} className="group relative">
-                  <DocumentCard {...doc} />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-bento-gray-800 text-destructive border-destructive hover:bg-destructive hover:text-white dark:border-destructive"
-                    onClick={() => setDocumentToDelete(doc.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+              {filteredDocuments.map((doc) => (
+                <DocumentCard 
+                  key={doc.id} 
+                  {...doc} 
+                  onDelete={handleDeleteDocument}
+                />
               ))}
             </div>
           </div>
