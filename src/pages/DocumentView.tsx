@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Document } from "lucide-react";
+import { FileText } from "lucide-react"; // Changed from Document to FileText which exists in lucide-react
 import { cn } from "@/lib/utils";
 
 interface DocumentViewProps {
@@ -48,7 +49,7 @@ const DocumentView: React.FC<DocumentViewProps> = () => {
 
         <div>
           <Button variant="outline" className="mt-4">
-            <Document className="mr-2 h-4 w-4" />
+            <FileText className="mr-2 h-4 w-4" />
             View Document
           </Button>
         </div>
