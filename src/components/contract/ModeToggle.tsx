@@ -14,18 +14,18 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
         type="single" 
         value={mode} 
         onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-        className="border border-bento-gray-200 dark:border-bento-brown-700 p-1 rounded-md bg-bento-gray-50 dark:bg-bento-brown-800"
+        className="border border-bento-gray-200 dark:border-bento-brown-700 p-1 rounded-lg bg-bento-gray-50/80 dark:bg-bento-brown-800/80 backdrop-blur-sm"
       >
         <ToggleGroupItem 
           value="create" 
-          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded flex items-center gap-1 text-sm px-4"
+          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded-md flex items-center gap-1.5 text-sm px-5 py-1.5"
         >
           <FileText className="h-4 w-4" />
           Create
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="analyze" 
-          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded flex items-center gap-1 text-sm px-4"
+          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded-md flex items-center gap-1.5 text-sm px-5 py-1.5"
         >
           <Search className="h-4 w-4" />
           Analyze

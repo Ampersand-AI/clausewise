@@ -92,24 +92,14 @@ export function DocumentCard(props: DocumentCardProps) {
         to={`/document/${id}`}
         className={cn(
           "group relative block rounded-lg p-5 transition-all duration-300",
-          "border border-bento-orange-200 bg-white shadow-sm hover:shadow-md dark:bg-bento-brown-800 dark:border-bento-brown-700",
+          "border border-bento-orange-200 bg-white/80 shadow-sm hover:shadow-md dark:bg-bento-brown-800/90 dark:border-bento-brown-700",
           "transform transition-transform hover:scale-105 hover:-translate-y-1",
+          "backdrop-blur-sm",
           status === "analyzing" && "animate-pulse",
           "overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-bento-yellow-500/0 before:via-bento-orange-500/10 before:to-bento-brown-600/0 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-1000 before:ease-in-out",
           className
         )}
       >
-        {isCompleted && riskScore !== undefined && (
-          <div className="absolute -top-3 right-4 z-10">
-            <Badge 
-              variant={riskInfo.color as "success" | "warning" | "destructive"} 
-              className="px-3 py-1 text-xs font-medium"
-            >
-              {riskInfo.text}
-            </Badge>
-          </div>
-        )}
-
         <div className="flex items-start gap-4">
           <div className="h-12 w-12 rounded-lg bg-bento-yellow-50 dark:bg-bento-yellow-100/10 flex items-center justify-center flex-shrink-0 border border-bento-yellow-100 dark:border-bento-yellow-500/20 transition-colors group-hover:bg-bento-orange-50 dark:group-hover:bg-bento-orange-100/10 group-hover:rotate-3 transition-transform duration-300">
             {status === "analyzing" ? (
@@ -119,9 +109,22 @@ export function DocumentCard(props: DocumentCardProps) {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate group-hover:text-bento-orange-500 transition-colors">
-              {title}
-            </h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="font-semibold text-lg truncate group-hover:text-bento-orange-500 transition-colors">
+                {title}
+              </h3>
+              
+              {/* Moved risk badge here */}
+              {isCompleted && riskScore !== undefined && (
+                <Badge 
+                  variant={riskInfo.color as "success" | "warning" | "destructive"} 
+                  className="ml-2 px-2 py-0.5 text-xs font-medium"
+                >
+                  {riskInfo.text}
+                </Badge>
+              )}
+            </div>
+            
             <div className="flex items-center gap-3 mt-1">
               <span className="text-sm text-bento-gray-500 dark:text-bento-gray-400">
                 {formattedDate}

@@ -1,6 +1,6 @@
+
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "../mode-toggle";
-import { Settings, User } from "lucide-react";
+import { Settings, User, Gavel } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
 import {
@@ -55,7 +55,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               <Settings className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent className="bg-white border-bento-orange-200 text-bento-gray-900 dark:bg-bento-brown-800 dark:border-bento-brown-700 dark:text-bento-gray-100">
+          <SheetContent className="bg-white/90 backdrop-blur-sm border-bento-orange-200 text-bento-gray-900 dark:bg-bento-brown-800/90 dark:border-bento-brown-700 dark:text-bento-gray-100">
             <SheetHeader>
               <SheetTitle>Settings</SheetTitle>
               <SheetDescription className="text-bento-gray-600 dark:text-bento-gray-400">
@@ -123,7 +123,6 @@ export function AppLayout({ children, className }: AppLayoutProps) {
             </div>
           </SheetContent>
         </Sheet>
-        <ModeToggle />
         <Button variant="ghost" size="icon" className="text-bento-orange-600 hover:text-bento-orange-700 hover:bg-bento-orange-100 dark:text-bento-orange-400 dark:hover:text-bento-orange-300 dark:hover:bg-bento-brown-700 rounded-full">
           <User className="h-5 w-5" />
         </Button>

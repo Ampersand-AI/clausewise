@@ -2,12 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, ListFilter, MicOff, RefreshCw, Download, Copy, Check } from "lucide-react";
+import { Upload, FileText, Mic, Send, ListFilter, MicOff, Gavel } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -451,11 +449,11 @@ const Dashboard = () => {
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-lovable-gradient shadow-sm overflow-hidden">
-            <div className="w-full h-full bg-lovable-gradient opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
+          <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-bento-orange-400 to-bento-brown-600 shadow-md overflow-hidden">
+            <Gavel className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-center lovable-text-gradient">
-            LabBit
+            LawBit
           </h1>
           <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
             Create and analyze legal documents with AI. Draft contracts or upload existing documents.
@@ -472,7 +470,7 @@ const Dashboard = () => {
             <div className="absolute inset-0 rounded-lg bg-bento-gray-100 dark:bg-bento-gray-800"></div>
           </div>
           
-          <div className="w-full max-w-2xl overflow-hidden border border-bento-gray-200 bg-white shadow-sm dark:bg-bento-gray-800 dark:border-bento-gray-700 rounded-xl z-10">
+          <div className="w-full max-w-2xl overflow-hidden border border-bento-gray-200 bg-white/90 backdrop-blur-sm shadow-sm dark:bg-bento-gray-800/90 dark:border-bento-gray-700 rounded-xl z-10">
             {isAnalyzing ? (
               <div className="p-6 space-y-4">
                 <h3 className="text-lg font-medium text-center text-bento-gray-900 dark:text-bento-gray-100">Analyzing Document...</h3>
@@ -564,7 +562,7 @@ const Dashboard = () => {
                     Filter
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white border-bento-gray-200 dark:bg-bento-gray-800 dark:border-bento-gray-700">
+                <DropdownMenuContent align="end" className="w-56 bg-white/90 backdrop-blur-sm border-bento-gray-200 dark:bg-bento-gray-800/90 dark:border-bento-gray-700">
                   <div className="p-2">
                     <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Status</p>
                     <DropdownMenuCheckboxItem
@@ -622,7 +620,7 @@ const Dashboard = () => {
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent className="bg-white border-bento-gray-200 text-bento-gray-900 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:text-bento-gray-100">
+        <AlertDialogContent className="bg-white/90 backdrop-blur-sm border-bento-gray-200 text-bento-gray-900 dark:bg-bento-gray-800/90 dark:border-bento-gray-700 dark:text-bento-gray-100">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription className="text-bento-gray-600 dark:text-bento-gray-400">
