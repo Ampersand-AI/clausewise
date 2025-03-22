@@ -102,7 +102,6 @@ const Dashboard = () => {
     },
   });
   const { toast } = useToast();
-  const messageAreaRef = useRef<HTMLDivElement>(null);
   
   // Voice recognition setup
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -143,25 +142,6 @@ const Dashboard = () => {
       }
     };
   }, [toast]);
-  
-  // Maintain scroll position when mode changes
-  useEffect(() => {
-    if (messageAreaRef.current) {
-      const { scrollTop } = messageAreaRef.current;
-      
-      // After the layout is updated, restore the scroll position
-      setTimeout(() => {
-        if (messageAreaRef.current) {
-          messageAreaRef.current.scrollTop = scrollTop;
-        }
-      }, 0);
-    }
-  }, [mode]);
-  
-  // Handle textarea updates and prevent scroll jumping
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDocumentText(e.target.value);
-  };
   
   const toggleRecording = () => {
     if (!recognitionRef.current) {
@@ -457,14 +437,17 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-col items-center space-y-8 py-8" ref={messageAreaRef}>
+      <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
-            LawBit
+          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-lovable-gradient shadow-sm overflow-hidden">
+            <div className="w-full h-full bg-lovable-gradient opacity-80 dark:opacity-60 transform rotate-12 scale-150"></div>
+          </div>
+          <h1 className="text-3xl font-bold text-center lovable-text-gradient">
+            ClauseCrush
           </h1>
-          <p className="text-amber-700 dark:text-amber-400 text-center max-w-lg">
-            AI-powered legal document creation and analysis for startups and tech companies
+          <p className="text-bento-gray-600 dark:text-bento-gray-400 text-center max-w-lg">
+            Create and analyze legal documents with AI. Draft contracts or upload existing documents.
           </p>
         </div>
 
@@ -472,24 +455,24 @@ const Dashboard = () => {
         <ModeToggle mode={mode} onModeChange={setMode} />
 
         {/* Chat-like interface with animated gradient border */}
-        <div className="w-full max-w-3xl relative rounded-xl overflow-hidden">
+        <div className="w-full max-w-2xl relative rounded-xl overflow-hidden group">
           {/* Animated gradient border */}
-          <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 animate-pulse-slow p-[1.5px]">
-            <div className="absolute inset-0 rounded-lg bg-amber-100 dark:bg-amber-900/20"></div>
+          <div className="absolute -z-10 inset-0 rounded-xl bg-lovable-gradient bg-[length:200%_100%] animate-shimmer p-[1.5px]">
+            <div className="absolute inset-0 rounded-lg bg-bento-gray-100 dark:bg-bento-gray-800"></div>
           </div>
           
-          <div className="w-full overflow-hidden border border-amber-200 bg-white shadow-sm dark:bg-amber-900/10 dark:border-amber-700 rounded-xl z-10">
+          <div className="w-full max-w-2xl overflow-hidden border border-bento-gray-200 bg-white shadow-sm dark:bg-bento-gray-800 dark:border-bento-gray-700 rounded-xl z-10">
             {isAnalyzing ? (
               <div className="p-6 space-y-4">
-                <h3 className="text-lg font-medium text-center text-amber-900 dark:text-amber-100">Analyzing Document...</h3>
+                <h3 className="text-lg font-medium text-center text-bento-gray-900 dark:text-bento-gray-100">Analyzing Document...</h3>
                 <div className="relative pt-1">
-                  <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-amber-200 dark:bg-amber-700">
+                  <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-bento-gray-200 dark:bg-bento-gray-700">
                     <div 
-                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-amber-400 to-orange-500 animate-pulse" 
+                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-lovable-gradient bg-[length:200%_100%] animate-shimmer" 
                       style={{ width: `${analysisProgress}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-center mt-2 text-amber-600 dark:text-amber-400">
+                  <div className="text-sm text-center mt-2 text-bento-gray-600 dark:text-bento-gray-400">
                     {analysisProgress}% - Extracting information and analyzing content
                   </div>
                 </div>
@@ -497,25 +480,25 @@ const Dashboard = () => {
             ) : (
               <>
                 {mode === "create" ? (
-                  <div className="p-6">
-                    <h3 className="font-medium text-amber-900 dark:text-amber-100 mb-4 text-center">Create Legal Contract</h3>
+                  <div className="p-4">
+                    <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-4 text-center">Create Legal Contract</h3>
                     <ContractForm onGenerate={handleGenerateContract} />
                   </div>
                 ) : (
-                  <div className="p-6">
-                    <h3 className="font-medium text-amber-900 dark:text-amber-100 mb-2 text-center">Analyze Legal Document or Clauses</h3>
+                  <div className="p-4">
+                    <h3 className="font-medium text-bento-gray-900 dark:text-bento-gray-100 mb-2 text-center">Analyze Legal Document or Clauses</h3>
                     <div className="flex flex-col space-y-4">
                       <Textarea 
                         placeholder="Paste your legal document text here for analysis..."
-                        className="min-h-[200px] text-sm focus:ring-amber-500 resize-none bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-900/30 dark:text-amber-100 dark:border-amber-700 rounded-lg"
+                        className="min-h-[200px] text-sm focus:ring-bento-orange-500 resize-none bg-bento-gray-50 text-bento-gray-900 border-bento-gray-200 dark:bg-bento-gray-900/50 dark:text-bento-gray-100 dark:border-bento-gray-700 rounded-lg"
                         value={documentText}
-                        onChange={handleTextareaChange}
+                        onChange={(e) => setDocumentText(e.target.value)}
                       />
                     
                       <div className="flex justify-between items-center px-1">
                         <div className="flex items-center">
                           <label htmlFor="file-upload" className="cursor-pointer">
-                            <div className="p-2 rounded-md hover:bg-amber-100 dark:hover:bg-amber-800 text-amber-600 flex items-center gap-2">
+                            <div className="p-2 rounded-md hover:bg-bento-gray-100 dark:hover:bg-bento-gray-700 text-bento-orange-500 flex items-center gap-2">
                               <Upload className="h-4 w-4" />
                               <span className="text-sm">Upload</span>
                             </div>
@@ -531,7 +514,7 @@ const Dashboard = () => {
                           <Button 
                             variant={isRecording ? "destructive" : "ghost"} 
                             size="sm" 
-                            className={isRecording ? "text-white" : "text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-800"}
+                            className={isRecording ? "text-white" : "text-bento-orange-500 hover:bg-bento-orange-50 dark:hover:bg-bento-gray-700"}
                             onClick={toggleRecording}
                           >
                             {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
@@ -542,7 +525,7 @@ const Dashboard = () => {
                         <Button 
                           onClick={() => analyzeTextDocument(documentText)}
                           disabled={!documentText.trim() || documentText.trim().length < 50}
-                          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white"
+                          className="bg-lovable-gradient hover:bg-lovable-gradient-hover text-white transition-all duration-300"
                         >
                           <Send className="h-4 w-4 mr-1" /> Analyze
                         </Button>
@@ -557,19 +540,19 @@ const Dashboard = () => {
 
         {/* Recent Documents with Tabs */}
         {(documents.length > 0 || contracts.length > 0) && (
-          <div className="w-full max-w-3xl mt-8">
+          <div className="w-full max-w-2xl mt-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-amber-900 dark:text-amber-100">Recent Documents</h2>
+              <h2 className="text-xl font-semibold text-bento-gray-900 dark:text-bento-gray-100">Recent Documents</h2>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1 text-amber-700 dark:text-amber-300 border-amber-200 bg-white hover:bg-amber-50 dark:bg-amber-900/10 dark:border-amber-700 dark:hover:bg-amber-800/50">
+                  <Button variant="outline" size="sm" className="gap-1 text-bento-gray-600 dark:text-bento-gray-400 border-bento-gray-200 bg-white hover:bg-bento-gray-50 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:hover:bg-bento-gray-700">
                     <ListFilter className="h-4 w-4" />
                     Filter
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white border-amber-200 dark:bg-amber-900/90 dark:border-amber-700">
+                <DropdownMenuContent align="end" className="w-56 bg-white border-bento-gray-200 dark:bg-bento-gray-800 dark:border-bento-gray-700">
                   <div className="p-2">
-                    <p className="text-xs font-medium text-amber-500 dark:text-amber-400 mb-1">Status</p>
+                    <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Status</p>
                     <DropdownMenuCheckboxItem
                       checked={filterOptions.status.analyzing}
                       onCheckedChange={(checked) => handleFilterChange('status', 'analyzing', checked)}
@@ -590,8 +573,8 @@ const Dashboard = () => {
                     </DropdownMenuCheckboxItem>
                   </div>
                   
-                  <div className="p-2 border-t border-amber-200 dark:border-amber-700">
-                    <p className="text-xs font-medium text-amber-500 dark:text-amber-400 mb-1">Risk Level</p>
+                  <div className="p-2 border-t border-bento-gray-200 dark:border-bento-gray-700">
+                    <p className="text-xs font-medium text-bento-gray-500 dark:text-bento-gray-400 mb-1">Risk Level</p>
                     <DropdownMenuCheckboxItem
                       checked={filterOptions.risk.low}
                       onCheckedChange={(checked) => handleFilterChange('risk', 'low', checked)}
@@ -625,18 +608,18 @@ const Dashboard = () => {
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent className="bg-white border-amber-200 text-amber-900 dark:bg-amber-900/90 dark:border-amber-700 dark:text-amber-100">
+        <AlertDialogContent className="bg-white border-bento-gray-200 text-bento-gray-900 dark:bg-bento-gray-800 dark:border-bento-gray-700 dark:text-bento-gray-100">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription className="text-amber-600 dark:text-amber-400">
+            <AlertDialogDescription className="text-bento-gray-600 dark:text-bento-gray-400">
               This action cannot be undone. This will permanently delete the document.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white text-amber-900 hover:bg-amber-100 border-amber-200 dark:bg-amber-800 dark:text-amber-100 dark:hover:bg-amber-700 dark:border-amber-700">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white text-bento-gray-900 hover:bg-bento-gray-100 border-bento-gray-200 dark:bg-bento-gray-800 dark:text-bento-gray-100 dark:hover:bg-bento-gray-700 dark:border-bento-gray-700">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => documentToDelete && handleDeleteDocument(documentToDelete)}
-              className="bg-red-500 text-white hover:bg-red-600"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
