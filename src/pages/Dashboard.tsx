@@ -107,6 +107,15 @@ const Dashboard = () => {
     },
   });
   const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  // Quota data (would come from a real API in production)
+  const quota: QuotaData = {
+    contractsUsed: 1,
+    contractsLimit: 2,
+    analysesUsed: 3,
+    analysesLimit: 5,
+  };
   
   // Voice recognition setup
   const recognitionRef = useRef<SpeechRecognition | null>(null);
