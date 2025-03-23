@@ -86,14 +86,6 @@ export function DocumentCard(props: DocumentCardProps) {
 
   const riskInfo = getRiskLevel(riskScore);
 
-  // Generate gradient class based on risk level
-  const getGradientClass = (score?: number) => {
-    if (score === undefined) return "";
-    if (score < 30) return "bg-gradient-to-r from-green-50 to-green-100";
-    if (score < 70) return "bg-gradient-to-r from-yellow-50 to-yellow-100";
-    return "bg-gradient-to-r from-red-50 to-red-100";
-  };
-
   return (
     <div className="group relative">
       <Link 
@@ -107,36 +99,35 @@ export function DocumentCard(props: DocumentCardProps) {
         )}
       >
         <div className="flex items-start gap-3">
-          <div className="h-12 w-12 rounded-lg bg-secondary/50 flex items-center justify-center flex-shrink-0 border border-border">
+          <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center flex-shrink-0 border border-border">
             {status === "analyzing" ? (
-              <File className="h-5 w-5 text-primary" />
+              <File className="h-4 w-4 text-primary" />
             ) : (
-              <FileText className="h-5 w-5 text-primary" />
+              <FileText className="h-4 w-4 text-primary" />
             )}
           </div>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between w-full">
-              <div>
-                <h3 className="font-semibold text-base truncate pr-4 mb-0.5">
-                  {title}
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  {formattedDate}
-                </p>
-              </div>
+              <h3 className="font-semibold text-sm truncate pr-2 mb-0.5 flex-1">
+                {title}
+              </h3>
               
               {isCompleted && riskScore !== undefined && (
                 <Badge 
                   variant={riskInfo.color as "success" | "warning" | "destructive"} 
-                  className="px-2 py-0.5 text-xs font-medium ml-auto"
+                  className="px-1.5 py-0.5 text-xs font-medium shrink-0"
                 >
                   {riskInfo.text}
                 </Badge>
               )}
             </div>
             
-            <div className="flex items-center gap-2 mt-2">
+            <p className="text-xs text-muted-foreground mb-2">
+              {formattedDate}
+            </p>
+            
+            <div className="flex items-center gap-2 mt-1">
               <StatusBadge status={status} />
               
               {isCompleted && clauses !== undefined && (
@@ -148,17 +139,17 @@ export function DocumentCard(props: DocumentCardProps) {
             </div>
             
             {isAnalyzing && progress !== undefined && (
-              <div className="mt-3 w-full">
+              <div className="mt-2 w-full">
                 <div className="flex justify-between mb-1 text-xs">
                   <span className="font-medium">Processing</span>
                   <span className="text-primary font-medium">{progress}%</span>
                 </div>
-                <Progress value={progress} className="h-1.5" />
+                <Progress value={progress} className="h-1.5" showGradient={true} />
               </div>
             )}
             
             {isCompleted && riskScore !== undefined && (
-              <div className="mt-3 w-full">
+              <div className="mt-2 w-full">
                 <div className="flex justify-between mb-1 text-xs">
                   <span className="font-medium">Risk score</span>
                   <span 
@@ -175,26 +166,14 @@ export function DocumentCard(props: DocumentCardProps) {
                 <Progress 
                   value={riskScore} 
                   className="h-1.5" 
-                  indicatorClassName={
-                    riskScore < 30 
-                      ? "bg-green-500" 
-                      : riskScore < 70 
-                        ? "bg-yellow-500" 
-                        : "bg-red-500"
-                  }
+                  showGradient={true}
                 />
               </div>
             )}
             
-            {summary && (
-              <p className="text-xs text-muted-foreground mt-3 line-clamp-2">
-                {summary}
-              </p>
-            )}
-            
             {keyFindings && keyFindings.length > 0 && (
-              <div className="mt-3">
-                <div className="flex gap-1.5 flex-wrap">
+              <div className="mt-2">
+                <div className="flex gap-1 flex-wrap">
                   {keyFindings.slice(0, 2).map((finding, idx) => (
                     <Badge 
                       key={idx} 

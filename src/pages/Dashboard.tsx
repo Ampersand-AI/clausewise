@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, MicOff } from "lucide-react";
+import { Upload, FileText, Mic, Send, MicOff, Home, Settings, User, Quote } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -19,6 +19,8 @@ import {
 import ModeToggle from "@/components/contract/ModeToggle";
 import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
 import DocumentTabs from "@/components/document/DocumentTabs";
+import { QuotaDisplay, QuotaData } from "@/components/quota/QuotaDisplay";
+import { useNavigate } from "react-router-dom";
 
 // Define top most used agreement types
 const popularAgreements = [
@@ -441,7 +443,7 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-col items-center space-y-6 py-8 max-w-5xl mx-auto px-4">
+      <div className="flex flex-col items-center space-y-6 pt-4 pb-8 max-w-5xl mx-auto px-4">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
           <div className="flex items-center justify-center h-14 w-14 rounded-lg bg-primary/10 shadow-sm overflow-hidden">
@@ -454,20 +456,41 @@ const Dashboard = () => {
             AI based Legal Drafts and Analyze Contracts
           </p>
           
-          {/* Menu icons below subtitle */}
+          {/* Menu icons below subtitle - moved from header */}
           <div className="flex items-center gap-4 mt-2">
+            <Button variant="outline" size="sm" className="rounded-full" onClick={() => navigate("/dashboard")}>
+              <Home className="h-4 w-4 mr-2" />
+              Home
+            </Button>
             <Button variant="outline" size="sm" className="rounded-full">
-              <FileText className="h-4 w-4 mr-2" />
+              <Quote className="h-4 w-4 mr-2" />
               Contracts
             </Button>
             <Button variant="outline" size="sm" className="rounded-full">
-              <Upload className="h-4 w-4 mr-2" />
-              Analyse
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
             </Button>
             <Button variant="outline" size="sm" className="rounded-full">
-              <Send className="h-4 w-4 mr-2" />
-              Share
+              <User className="h-4 w-4 mr-2" />
+              Profile
             </Button>
+            
+            {/* Add Quota Button with tooltip functionality */}
+            <div className="relative">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-full"
+                onClick={() => {
+                  // Show upgrade modal in a real implementation
+                  alert("Upgrade to Premium for more tokens!");
+                }}
+              >
+                <div className="h-4 w-20 relative">
+                  <QuotaDisplay data={quota} compact={true} />
+                </div>
+              </Button>
+            </div>
           </div>
         </div>
 
