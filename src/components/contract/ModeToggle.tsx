@@ -18,14 +18,14 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
       >
         <ToggleGroupItem 
           value="create" 
-          className="flex items-center gap-1 text-sm px-4"
+          className="flex items-center gap-1 text-sm px-4 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
         >
           <FileText className="h-4 w-4" />
           <span>Create</span>
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="analyze" 
-          className="flex items-center gap-1 text-sm px-4"
+          className="flex items-center gap-1 text-sm px-4 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
         >
           <Search className="h-4 w-4" />
           <span>Analyze</span>
