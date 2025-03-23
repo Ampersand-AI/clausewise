@@ -5,50 +5,35 @@
 
 @layer base {
   :root {
-    --background: 180 4% 7%;
-    --foreground: 180 5% 90%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
 
-    --card: 180 5% 10%;
-    --card-foreground: 180 5% 90%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 180 5% 10%;
-    --popover-foreground: 180 5% 90%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 180 100% 40%;
-    --primary-foreground: 180 5% 10%;
+    --primary: 214 100% 60%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 180 10% 20%;
-    --secondary-foreground: 180 5% 90%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 180 5% 20%;
-    --muted-foreground: 180 5% 60%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 180 100% 40%;
-    --accent-foreground: 180 5% 10%;
+    --accent: 160 92% 40%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 100% 40%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 214 100% 60%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 98%;
-
-    --border: 180 10% 20%;
-    --input: 180 10% 20%;
-    --ring: 180 100% 40%;
-
-    --radius: 0.25rem;
-
-    --sidebar-background: 180 5% 7%;
-    --sidebar-foreground: 180 5% 90%;
-    --sidebar-primary: 180 100% 40%;
-    --sidebar-primary-foreground: 180 5% 10%;
-    --sidebar-accent: 180 100% 40%;
-    --sidebar-accent-foreground: 180 5% 10%;
-    --sidebar-border: 180 10% 20%;
-    --sidebar-ring: 180 100% 40%;
+    --radius: 0.5rem;
   }
 }
 
@@ -57,13 +42,10 @@
     @apply border-border;
   }
   
-  *::selection {
-    background-color: rgba(0, 204, 204, 0.3);
-    color: #00FFFF;
-  }
-
   body {
-    @apply bg-terminal-background text-terminal-foreground antialiased font-mono;
+    @apply bg-bento-background text-bento-text antialiased;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
   }
 
   html {
@@ -72,217 +54,35 @@
 }
 
 @layer utilities {
-  /* Terminal styling utilities */
-  .terminal-container {
-    @apply bg-terminal-background text-terminal-foreground font-mono border border-terminal-cyan/30 rounded p-4;
+  .bento-card {
+    @apply bg-bento-card border border-bento-border rounded-xl shadow-lg backdrop-blur-sm;
   }
-
-  .terminal-header {
-    @apply font-terminal text-terminal-cyan text-xl;
+  
+  .bento-input {
+    @apply bg-bento-card/70 border border-bento-border text-bento-text placeholder:text-bento-textSecondary rounded-lg focus:ring-1 focus:ring-primary focus:border-primary;
   }
-
-  .terminal-input {
-    @apply bg-terminal-darkGray border border-terminal-cyan/30 text-terminal-foreground font-mono focus:border-terminal-cyan focus:ring-1 focus:ring-terminal-cyan outline-none;
+  
+  .bento-button-primary {
+    @apply bg-primary text-white hover:bg-primary/90 font-medium rounded-lg transition-colors;
   }
-
-  .terminal-button {
-    @apply bg-terminal-darkGray border border-terminal-cyan/50 text-terminal-cyan hover:bg-terminal-cyan/20 font-mono transition-colors;
+  
+  .bento-button-secondary {
+    @apply bg-bento-card border border-bento-border text-bento-text hover:bg-bento-gray-800 font-medium rounded-lg transition-colors;
   }
-
-  .terminal-card {
-    @apply bg-terminal-darkGray border border-terminal-cyan/30 text-terminal-foreground font-mono;
+  
+  .bento-button-outline {
+    @apply border border-bento-border bg-transparent text-bento-text hover:bg-bento-card font-medium rounded-lg transition-colors;
   }
-
-  .crt-effect {
-    @apply bg-crt-effect bg-[length:100%_2px] overflow-hidden after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:h-[1px] after:bg-terminal-cyan/10 after:animate-scan-line;
+  
+  .bento-focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-bento-background;
   }
-
-  .terminal-progress {
-    @apply bg-terminal-darkGray h-2;
-  }
-
-  .terminal-progress-indicator {
-    @apply bg-terminal-cyan h-full;
-  }
-
-  .typing-effect {
-    @apply overflow-hidden whitespace-nowrap animate-type-text;
-  }
-
-  .terminal-badge {
-    @apply bg-terminal-darkGray border border-terminal-cyan/30 text-terminal-cyan text-xs px-2 py-0.5 rounded;
-  }
-
-  .terminal-tab {
-    @apply bg-terminal-darkGray text-terminal-foreground hover:text-terminal-cyan transition-colors;
-  }
-
-  .terminal-tab-active {
-    @apply bg-terminal-darkGray border-b-2 border-terminal-cyan text-terminal-cyan;
+  
+  .bento-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
   }
 }
 
 /* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
-/* Custom CRT Monitor Effects */
-.crt::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
-  z-index: 50;
-}
-
-.crt::after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: rgba(18, 16, 16, 0.1);
-  opacity: 0;
-  z-index: 50;
-  pointer-events: none;
-  animation: flicker 0.15s infinite;
-}
-
-@keyframes flicker {
-  0% {
-    opacity: 0.27861;
-  }
-  5% {
-    opacity: 0.34769;
-  }
-  10% {
-    opacity: 0.23604;
-  }
-  15% {
-    opacity: 0.90626;
-  }
-  20% {
-    opacity: 0.18128;
-  }
-  25% {
-    opacity: 0.83891;
-  }
-  30% {
-    opacity: 0.65583;
-  }
-  35% {
-    opacity: 0.67807;
-  }
-  40% {
-    opacity: 0.26559;
-  }
-  45% {
-    opacity: 0.84693;
-  }
-  50% {
-    opacity: 0.96019;
-  }
-  55% {
-    opacity: 0.08594;
-  }
-  60% {
-    opacity: 0.20313;
-  }
-  65% {
-    opacity: 0.71988;
-  }
-  70% {
-    opacity: 0.53455;
-  }
-  75% {
-    opacity: 0.37288;
-  }
-  80% {
-    opacity: 0.71428;
-  }
-  85% {
-    opacity: 0.70419;
-  }
-  90% {
-    opacity: 0.7003;
-  }
-  95% {
-    opacity: 0.36108;
-  }
-  100% {
-    opacity: 0.24387;
-  }
-}
-
-.crt-scanlines::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.05) 0.5%,
-    transparent 1%
-  );
-  pointer-events: none;
-  z-index: 10;
-}
-
-.scanline {
-  width: 100%;
-  height: 2px;
-  background-color: rgba(0, 204, 204, 0.1);
-  position: absolute;
-  bottom: 100%;
-  animation: scan 6s linear infinite;
-}
-
-@keyframes scan {
-  0% {
-    bottom: 100%;
-  }
-  100% {
-    bottom: -2px;
-  }
-}
-
-.terminal-cursor::after {
-  content: '|';
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-.terminal-glow {
-  text-shadow: 0 0 5px rgba(0, 204, 204, 0.8);
-}
-
-.terminal-typing {
-  overflow: hidden;
-  white-space: nowrap;
-  animation: typing 3.5s steps(40, end);
-}
-
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
-}

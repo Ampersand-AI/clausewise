@@ -53,36 +53,34 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				},
-				// Terminal-like colors
-				terminal: {
+				// Bento-style colors
+				bento: {
 					background: '#121212',
-					foreground: '#A0A0A0',
-					cyan: '#00CCCC',
-					darkCyan: '#008B8B',
-					lightCyan: '#00FFFF',
-					green: '#00CC00',
-					darkGreen: '#008800',
-					gray: '#444444',
-					lightGray: '#666666',
-					darkGray: '#222222',
-					black: '#0A0A0A',
+					card: '#1E1E1E',
+					border: '#333333',
+					text: '#FFFFFF',
+					textSecondary: '#AAAAAA',
+					primary: '#3B82F6',
+					accent: '#10B981',
+					gray: {
+						100: '#F3F4F6',
+						200: '#E5E7EB',
+						300: '#D1D5DB',
+						400: '#9CA3AF',
+						500: '#6B7280',
+						600: '#4B5563',
+						700: '#374151',
+						800: '#1F2937',
+						900: '#111827',
+					},
+					orange: {
+						500: '#F97316',
+					}
 				},
 			},
 			fontFamily: {
 				sans: ['Inter var', 'sans-serif'],
 				mono: ['JetBrains Mono', 'monospace'],
-				terminal: ['VT323', 'monospace'],
-				code: ['Source Code Pro', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -114,51 +112,9 @@ export default {
 					from: { transform: 'scale(1)', opacity: '1' },
 					to: { transform: 'scale(0.95)', opacity: '0' },
 				},
-				'slide-in-right': {
-					'0%': { transform: 'translateX(100%)' },
-					'100%': { transform: 'translateX(0)' },
-				},
-				'slide-out-right': {
-					'0%': { transform: 'translateX(0)' },
-					'100%': { transform: 'translateX(100%)' },
-				},
-				'slide-in-bottom': {
-					'0%': { transform: 'translateY(100%)' },
-					'100%': { transform: 'translateY(0)' },
-				},
-				'pulse': {
-					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.5' },
-				},
-				'float': {
-					'0%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' },
-					'100%': { transform: 'translateY(0px)' },
-				},
 				'shimmer': {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' },
-				},
-				'crt-flicker': {
-					'0%': { opacity: '0.9' },
-					'10%': { opacity: '1' },
-					'15%': { opacity: '0.9' },
-					'20%': { opacity: '1' },
-					'70%': { opacity: '0.9' },
-					'80%': { opacity: '1' },
-					'100%': { opacity: '0.9' },
-				},
-				'scan-line': {
-					'0%': { transform: 'translateY(0)' },
-					'100%': { transform: 'translateY(100vh)' },
-				},
-				'blink-cursor': {
-					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0' },
-				},
-				'type-text': {
-					'0%': { width: '0' },
-					'100%': { width: '100%' },
 				},
 			},
 			animation: {
@@ -168,20 +124,12 @@ export default {
 				'fade-out': 'fade-out 0.3s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out',
 				'scale-out': 'scale-out 0.2s ease-out',
-				'slide-in-right': 'slide-in-right 0.3s ease-out',
-				'slide-out-right': 'slide-out-right 0.3s ease-out',
-				'slide-in-bottom': 'slide-in-bottom 0.3s ease-out',
-				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-				'float': 'float 3s ease-in-out infinite',
 				'shimmer': 'shimmer 2s linear infinite',
-				'crt-flicker': 'crt-flicker 2s infinite',
-				'scan-line': 'scan-line 8s linear infinite',
-				'blink-cursor': 'blink-cursor 1s step-end infinite',
-				'type-text': 'type-text 3s steps(40, end)',
 			},
 			backgroundImage: {
-				'crt-effect': 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
-			},
+				'bento-gradient': 'linear-gradient(to bottom right, rgba(59, 130, 246, 0.5), rgba(16, 185, 129, 0.5))',
+				'bento-gradient-hover': 'linear-gradient(to bottom right, rgba(59, 130, 246, 0.7), rgba(16, 185, 129, 0.7))',
+			}
 		},
 	},
 	plugins: [require("tailwindcss-animate")],

@@ -14,18 +14,18 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
         type="single" 
         value={mode} 
         onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-        className="border border-terminal-cyan/30 p-1 rounded-sm bg-terminal-background font-mono"
+        className="border border-bento-border p-1 rounded-lg bg-bento-card shadow-sm"
       >
         <ToggleGroupItem 
           value="create" 
-          className="data-[state=on]:bg-terminal-cyan/20 data-[state=on]:text-terminal-cyan rounded-sm flex items-center gap-1 text-sm px-4"
+          className="data-[state=on]:bg-primary/20 data-[state=on]:text-primary rounded-md flex items-center gap-1 text-sm px-4"
         >
           <FileText className="h-4 w-4" />
           <span>Create</span>
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="analyze" 
-          className="data-[state=on]:bg-terminal-cyan/20 data-[state=on]:text-terminal-cyan rounded-sm flex items-center gap-1 text-sm px-4"
+          className="data-[state=on]:bg-primary/20 data-[state=on]:text-primary rounded-md flex items-center gap-1 text-sm px-4"
         >
           <Search className="h-4 w-4" />
           <span>Analyze</span>

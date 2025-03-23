@@ -91,9 +91,9 @@ export function DocumentCard(props: DocumentCardProps) {
       <Link 
         to={`/document/${id}`}
         className={cn(
-          "group relative block rounded-sm transition-all duration-300",
-          "border border-terminal-cyan/30 bg-terminal-darkGray text-terminal-foreground",
-          "hover:border-terminal-cyan/50 p-5 font-mono",
+          "group relative block rounded-xl transition-all duration-300",
+          "border border-bento-border bg-bento-card text-bento-text",
+          "hover:border-primary/50 p-5",
           status === "analyzing" && "animate-pulse",
           className
         )}
@@ -102,7 +102,7 @@ export function DocumentCard(props: DocumentCardProps) {
           <div className="absolute -top-3 right-4 z-10">
             <Badge 
               variant={riskInfo.color as "success" | "warning" | "destructive"} 
-              className="px-3 py-1 text-xs font-mono"
+              className="px-3 py-1 text-xs"
             >
               {riskInfo.text}
             </Badge>
@@ -110,19 +110,19 @@ export function DocumentCard(props: DocumentCardProps) {
         )}
 
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-sm bg-terminal-background flex items-center justify-center flex-shrink-0 border border-terminal-cyan/20">
+          <div className="h-12 w-12 rounded-lg bg-bento-background flex items-center justify-center flex-shrink-0 border border-bento-border">
             {status === "analyzing" ? (
-              <File className="h-6 w-6 text-terminal-cyan" />
+              <File className="h-6 w-6 text-primary" />
             ) : (
-              <FileText className="h-6 w-6 text-terminal-cyan" />
+              <FileText className="h-6 w-6 text-primary" />
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-terminal text-lg truncate text-terminal-cyan">
+            <h3 className="font-medium text-lg truncate text-bento-text">
               {title}
             </h3>
             <div className="flex items-center gap-3 mt-1">
-              <span className="text-sm text-terminal-foreground opacity-70">
+              <span className="text-sm text-bento-textSecondary">
                 {formattedDate}
               </span>
               <StatusBadge status={status} />
@@ -131,12 +131,12 @@ export function DocumentCard(props: DocumentCardProps) {
             {isAnalyzing && progress !== undefined && (
               <div className="mt-4">
                 <div className="flex justify-between mb-1 text-xs">
-                  <span className="font-medium text-terminal-foreground">Processing Load:</span>
-                  <span className="text-terminal-cyan">{progress}%</span>
+                  <span className="font-medium text-bento-text">Processing:</span>
+                  <span className="text-primary">{progress}%</span>
                 </div>
-                <div className="bg-terminal-background h-1.5 rounded-sm">
+                <div className="bg-bento-background h-1.5 rounded-full">
                   <div 
-                    className="bg-terminal-cyan h-full rounded-sm"
+                    className="bg-primary h-full rounded-full"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
@@ -147,39 +147,39 @@ export function DocumentCard(props: DocumentCardProps) {
               <div className="flex flex-col gap-2 mt-4">
                 <div className="flex items-center gap-4">
                   {clauses !== undefined && (
-                    <div className="text-sm text-terminal-foreground opacity-70">
-                      <span className="text-terminal-cyan">{clauses}</span> clauses identified
+                    <div className="text-sm text-bento-textSecondary">
+                      <span className="text-primary">{clauses}</span> clauses identified
                     </div>
                   )}
                 </div>
                 
                 {parties && parties.length > 0 && (
-                  <p className="text-sm text-terminal-foreground opacity-70 mt-1">
+                  <p className="text-sm text-bento-textSecondary mt-1">
                     <span className="font-medium">Parties:</span> {parties.join(", ")}
                   </p>
                 )}
                 
                 {summary && (
-                  <p className="text-sm text-terminal-foreground opacity-70 line-clamp-2 mt-1 border-l-2 border-terminal-cyan/30 pl-2">
+                  <p className="text-sm text-bento-textSecondary line-clamp-2 mt-1 border-l-2 border-primary/30 pl-2">
                     {summary}
                   </p>
                 )}
                 
                 {keyFindings && keyFindings.length > 0 && (
                   <div className="mt-2">
-                    <p className="text-xs font-medium text-terminal-cyan">Key findings:</p>
+                    <p className="text-xs font-medium text-primary">Key findings:</p>
                     <div className="flex gap-1 mt-1 flex-wrap">
                       {keyFindings.slice(0, 2).map((finding, idx) => (
                         <Badge 
                           key={idx} 
                           variant={finding.riskLevel === 'low' ? 'success' : finding.riskLevel === 'medium' ? 'warning' : 'destructive'}
-                          className="text-xs font-mono"
+                          className="text-xs"
                         >
                           {finding.title}
                         </Badge>
                       ))}
                       {keyFindings.length > 2 && (
-                        <Badge variant="outline" className="text-xs font-mono text-terminal-cyan">
+                        <Badge variant="outline" className="text-xs text-bento-textSecondary">
                           +{keyFindings.length - 2} more
                         </Badge>
                       )}
@@ -213,7 +213,7 @@ export function DocumentCard(props: DocumentCardProps) {
 function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
-      <Badge variant="outline" className="text-xs font-mono border-blue-500/50 text-blue-400">
+      <Badge variant="secondary" className="text-xs">
         Analyzing
       </Badge>
     );
@@ -221,14 +221,14 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   if (status === "error") {
     return (
-      <Badge variant="outline" className="text-xs font-mono border-red-500/50 text-red-400">
+      <Badge variant="destructive" className="text-xs">
         Error
       </Badge>
     );
   }
   
   return (
-    <Badge variant="outline" className="text-xs font-mono border-green-500/50 text-green-400">
+    <Badge variant="success" className="text-xs">
       Completed
     </Badge>
   );
