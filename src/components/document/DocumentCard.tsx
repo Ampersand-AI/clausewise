@@ -92,7 +92,7 @@ export function DocumentCard(props: DocumentCardProps) {
         to={`/document/${id}`}
         className={cn(
           "group relative block rounded-xl transition-all duration-300",
-          "border border-bento-border bg-bento-card text-bento-text",
+          "border border-bento-border bg-bento-card text-bento-text shadow-sm",
           "hover:border-primary/50 p-5 h-full",
           status === "analyzing" && "animate-pulse",
           className
@@ -102,7 +102,7 @@ export function DocumentCard(props: DocumentCardProps) {
           <div className="absolute -top-3 right-4 z-10">
             <Badge 
               variant={riskInfo.color as "success" | "warning" | "destructive"} 
-              className="px-3 py-1 text-xs"
+              className="px-3 py-1 text-xs font-medium"
             >
               {riskInfo.text}
             </Badge>
@@ -110,7 +110,7 @@ export function DocumentCard(props: DocumentCardProps) {
         )}
 
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-lg bg-bento-background flex items-center justify-center flex-shrink-0 border border-bento-border">
+          <div className="h-12 w-12 rounded-lg bg-background/70 flex items-center justify-center flex-shrink-0 border border-bento-border">
             {status === "analyzing" ? (
               <File className="h-6 w-6 text-primary" />
             ) : (
@@ -118,11 +118,11 @@ export function DocumentCard(props: DocumentCardProps) {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-lg truncate text-bento-text">
+            <h3 className="font-semibold text-lg truncate">
               {title}
             </h3>
-            <div className="flex items-center gap-3 mt-1">
-              <span className="text-sm text-bento-textSecondary">
+            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+              <span className="text-xs text-muted-foreground">
                 {formattedDate}
               </span>
               <StatusBadge status={status} />
@@ -130,9 +130,9 @@ export function DocumentCard(props: DocumentCardProps) {
             
             {isAnalyzing && progress !== undefined && (
               <div className="mt-4">
-                <div className="flex justify-between mb-1 text-xs">
-                  <span className="font-medium text-bento-text">Processing:</span>
-                  <span className="text-primary">{progress}%</span>
+                <div className="flex justify-between mb-1.5 text-xs">
+                  <span className="font-medium">Processing:</span>
+                  <span className="text-primary font-medium">{progress}%</span>
                 </div>
                 <Progress value={progress} className="h-1.5" />
               </div>
@@ -140,30 +140,28 @@ export function DocumentCard(props: DocumentCardProps) {
             
             {isCompleted && riskScore !== undefined && (
               <div className="flex flex-col gap-2 mt-4">
-                <div className="flex items-center gap-4">
-                  {clauses !== undefined && (
-                    <div className="text-sm text-bento-textSecondary">
-                      <span className="text-primary">{clauses}</span> clauses identified
-                    </div>
-                  )}
-                </div>
+                {clauses !== undefined && (
+                  <div className="text-sm">
+                    <span className="text-primary font-medium">{clauses}</span> clauses identified
+                  </div>
+                )}
                 
                 {parties && parties.length > 0 && (
-                  <p className="text-sm text-bento-textSecondary mt-1">
+                  <p className="text-sm mt-1.5">
                     <span className="font-medium">Parties:</span> {parties.join(", ")}
                   </p>
                 )}
                 
                 {summary && (
-                  <p className="text-sm text-bento-textSecondary line-clamp-2 mt-1 border-l-2 border-primary/30 pl-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2 mt-2 border-l-2 border-primary/30 pl-2">
                     {summary}
                   </p>
                 )}
                 
                 {keyFindings && keyFindings.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-xs font-medium text-primary">Key findings:</p>
-                    <div className="flex gap-1 mt-1 flex-wrap">
+                  <div className="mt-3">
+                    <p className="text-xs font-medium text-primary mb-1.5">Key findings:</p>
+                    <div className="flex gap-1.5 flex-wrap">
                       {keyFindings.slice(0, 2).map((finding, idx) => (
                         <Badge 
                           key={idx} 
@@ -174,7 +172,7 @@ export function DocumentCard(props: DocumentCardProps) {
                         </Badge>
                       ))}
                       {keyFindings.length > 2 && (
-                        <Badge variant="outline" className="text-xs text-bento-textSecondary">
+                        <Badge variant="outline" className="text-xs text-muted-foreground">
                           +{keyFindings.length - 2} more
                         </Badge>
                       )}
