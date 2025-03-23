@@ -449,6 +449,7 @@ const Dashboard = () => {
     }));
   };
   
+  // Contract generation handler
   const handleGenerateContract = (contract: GeneratedContract) => {
     setContracts(prev => [contract, ...prev]);
   };
@@ -458,7 +459,7 @@ const Dashboard = () => {
       {/* Add the glow styles */}
       <style>{glowStyles}</style>
       
-      <div className="flex flex-col items-center space-y-8 py-8">
+      <div className="flex flex-col items-center space-y-8 py-12 max-w-5xl mx-auto px-4">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
           <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-primary/10 shadow-sm overflow-hidden">
@@ -468,7 +469,7 @@ const Dashboard = () => {
             LabBit
           </h1>
           <p className="text-muted-foreground text-center max-w-lg">
-            Create and analyze legal documents with AI. Draft contracts or upload existing documents.
+            Draft contracts or upload existing documents
           </p>
         </div>
 

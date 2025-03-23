@@ -8,13 +8,17 @@ interface HamburgerMenuButtonProps {
   isOpen: boolean;
   onClick: () => void;
   className?: string;
+  show?: boolean;
 }
 
 const HamburgerMenuButton: React.FC<HamburgerMenuButtonProps> = ({ 
   isOpen, 
   onClick, 
-  className 
+  className,
+  show = true
 }) => {
+  if (!show) return null;
+  
   return (
     <Button
       variant="ghost"

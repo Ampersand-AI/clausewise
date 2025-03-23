@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 export function useExpandedPreview() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(true);
+  const [showControls, setShowControls] = useState(true);
   
   const toggleExpanded = useCallback(() => {
     const newExpandedState = !isExpanded;
@@ -16,6 +17,11 @@ export function useExpandedPreview() {
       setIsFormVisible(true);
     }
   }, [isExpanded]);
+
+  // Hide controls when contract is generated
+  const hideControls = useCallback(() => {
+    setShowControls(false);
+  }, []);
 
   // Auto-expand on larger screens
   useEffect(() => {
@@ -39,6 +45,8 @@ export function useExpandedPreview() {
     toggleExpanded,
     setIsExpanded,
     isFormVisible,
-    setIsFormVisible
+    setIsFormVisible,
+    showControls,
+    hideControls
   };
 }

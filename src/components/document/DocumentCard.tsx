@@ -93,7 +93,7 @@ export function DocumentCard(props: DocumentCardProps) {
         className={cn(
           "group relative block rounded-xl transition-all duration-300",
           "border border-bento-border bg-bento-card text-bento-text",
-          "hover:border-primary/50 p-5",
+          "hover:border-primary/50 p-5 h-full",
           status === "analyzing" && "animate-pulse",
           className
         )}
@@ -134,12 +134,7 @@ export function DocumentCard(props: DocumentCardProps) {
                   <span className="font-medium text-bento-text">Processing:</span>
                   <span className="text-primary">{progress}%</span>
                 </div>
-                <div className="bg-bento-background h-1.5 rounded-full">
-                  <div 
-                    className="bg-primary h-full rounded-full"
-                    style={{ width: `${progress}%` }}
-                  ></div>
-                </div>
+                <Progress value={progress} className="h-1.5" />
               </div>
             )}
             
@@ -196,7 +191,7 @@ export function DocumentCard(props: DocumentCardProps) {
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-3 left-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive"
+          className="absolute bottom-3 right-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DocumentCard } from "@/components/document/DocumentCard";
@@ -120,7 +121,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
                 title={contract.title}
                 date={contract.date}
                 status="completed"
-                riskScore={contract.riskScore || 0}  // Ensure riskScore is always provided for completed status
+                riskScore={contract.riskScore || 0}
                 clauses={contract.riskAnalysis.length}
                 keyFindings={contract.riskAnalysis}
                 onDelete={onDelete}

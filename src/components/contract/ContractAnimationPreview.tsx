@@ -10,12 +10,14 @@ const ContractAnimationPreview: React.FC<ContractAnimationPreviewProps> = ({ isG
   const [dots, setDots] = useState('.');
   const [paragraphs, setParagraphs] = useState<number[]>([]);
   const [visibleParagraphs, setVisibleParagraphs] = useState<number[]>([]);
+  const [fillProgress, setFillProgress] = useState(0);
 
   useEffect(() => {
     if (isGenerating) {
       // Start with 10 placeholder paragraphs
       setParagraphs(Array.from({ length: 10 }, (_, i) => i));
       setVisibleParagraphs([]);
+      setFillProgress(0);
       
       // Show dots animation
       const dotsInterval = setInterval(() => {
@@ -32,9 +34,20 @@ const ContractAnimationPreview: React.FC<ContractAnimationPreviewProps> = ({ isG
         });
       }, 600);
       
+      // Fill progress animation
+      const fillInterval = setInterval(() => {
+        setFillProgress(prev => {
+          if (prev < 100) {
+            return prev + 1;
+          }
+          return prev;
+        });
+      }, 120);
+      
       return () => {
         clearInterval(dotsInterval);
         clearInterval(paragraphInterval);
+        clearInterval(fillInterval);
       };
     }
   }, [isGenerating, paragraphs.length]);
@@ -44,12 +57,21 @@ const ContractAnimationPreview: React.FC<ContractAnimationPreviewProps> = ({ isG
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center p-6 bg-white dark:bg-bento-brown-800 rounded-lg border border-bento-orange-200 dark:border-bento-brown-700 overflow-hidden shadow-lg">
+    <div className="w-full flex flex-col items-center justify-center p-6 bg-white dark:bg-bento-brown-800 rounded-lg border border-bento-orange-200 dark:border-bento-brown-700 overflow-hidden shadow-lg h-[500px] mx-auto relative">
+      {/* Gradient background with animation */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-purple-50 to-white opacity-70 rounded-lg"></div>
+      <div 
+        className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-200 via-purple-100 to-transparent rounded-lg transition-all duration-100"
+        style={{ height: `${fillProgress}%`, opacity: 0.4 }}
+      ></div>
+      
+      {/* Glow effects */}
+      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-300 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute -top-10 -left-10 w-40 h-40 bg-pink-300 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
       
       <div className="mb-6 flex items-center justify-center z-10">
         <Sparkles className="w-8 h-8 text-purple-500 mr-3 animate-pulse" />
-        <h3 className="text-xl font-semibold text-purple-700 glow-purple">
+        <h3 className="text-2xl font-semibold text-purple-700 glow-purple">
           Generating Contract{dots}
         </h3>
       </div>
@@ -57,7 +79,7 @@ const ContractAnimationPreview: React.FC<ContractAnimationPreviewProps> = ({ isG
       <div className="w-full max-w-2xl space-y-4 relative z-10">
         <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-white to-transparent dark:from-bento-brown-800 dark:to-transparent"></div>
         
-        <div className="h-[400px] overflow-y-auto pr-2 overflow-x-hidden">
+        <div className="h-[340px] overflow-y-auto pr-2 overflow-x-hidden">
           {visibleParagraphs.map((p) => (
             <div 
               key={p} 
@@ -87,8 +109,16 @@ const ContractAnimationPreview: React.FC<ContractAnimationPreviewProps> = ({ isG
         Crafting detailed legal language, formatting clauses, and organizing document...
       </div>
       
-      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-300 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute -top-10 -left-10 w-40 h-40 bg-pink-300 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
+      {/* Progress bar */}
+      <div className="w-full max-w-md mt-8 z-10">
+        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transition-all duration-100"
+            style={{ width: `${fillProgress}%` }}
+          ></div>
+        </div>
+        <div className="text-xs text-purple-600 text-right mt-1">{fillProgress}%</div>
+      </div>
     </div>
   );
 };
