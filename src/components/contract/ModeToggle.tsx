@@ -14,7 +14,7 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
         type="single" 
         value={mode} 
         onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-        className="border rounded-md"
+        className="border rounded-md bg-background"
       >
         <ToggleGroupItem 
           value="create" 

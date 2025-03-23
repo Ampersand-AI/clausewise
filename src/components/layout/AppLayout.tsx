@@ -33,7 +33,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       )}
     >
       {/* Header */}
-      <header className="border-b p-4 flex items-center justify-between">
+      <header className="border-b p-4 flex items-center justify-between bg-background">
         <div 
           className="flex items-center gap-2 cursor-pointer" 
           onClick={() => navigate("/dashboard")}
@@ -127,7 +127,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
         </div>
       </header>
       
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main className="flex-1 flex items-center justify-center p-4 bg-background">
         <div className={cn("w-full max-w-6xl mx-auto", className)}>
           {children}
         </div>
