@@ -23,7 +23,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light">
       <TooltipProvider>
-        <div className="bg-gradient-to-br from-[#F2FCE2] via-[#FEF7CD] to-[#FEC6A1] min-h-screen">
+        <div className="min-h-screen bg-[#FEF7CD]">
           <Toaster />
           <Sonner />
           <BrowserRouter>

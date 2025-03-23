@@ -1,5 +1,5 @@
 
-import { File, FileText } from "lucide-react";
+import { File, FileText, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
@@ -92,7 +92,7 @@ export function DocumentCard(props: DocumentCardProps) {
         to={`/document/${id}`}
         className={cn(
           "group relative block rounded-xl transition-all duration-300",
-          "border border-bento-border bg-bento-card text-bento-text shadow-sm",
+          "border border-[#D0C8A0] bg-[#FEF7CD]/20 text-bento-text",
           "hover:border-primary/50 p-5 h-full",
           status === "analyzing" && "animate-pulse",
           className
@@ -109,22 +109,26 @@ export function DocumentCard(props: DocumentCardProps) {
           </div>
         )}
 
-        <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-lg bg-background/70 flex items-center justify-center flex-shrink-0 border border-bento-border">
-            {status === "analyzing" ? (
-              <File className="h-6 w-6 text-primary" />
-            ) : (
-              <FileText className="h-6 w-6 text-primary" />
-            )}
+        <div className="flex items-start">
+          <div className="mr-4">
+            <div className="h-16 w-16 rounded-lg bg-white flex items-center justify-center flex-shrink-0 border border-[#D0C8A0]">
+              {status === "analyzing" ? (
+                <File className="h-6 w-6 text-primary" />
+              ) : (
+                <FileText className="h-6 w-6 text-primary" />
+              )}
+            </div>
           </div>
+          
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate">
+            <h3 className="font-semibold text-xl truncate">
               {title}
             </h3>
-            <div className="flex flex-wrap items-center gap-2 mt-1.5">
-              <span className="text-xs text-muted-foreground">
-                {formattedDate}
-              </span>
+            <p className="text-sm text-muted-foreground mb-2">
+              {formattedDate}
+            </p>
+            
+            <div className="mb-2">
               <StatusBadge status={status} />
             </div>
             
@@ -138,22 +142,37 @@ export function DocumentCard(props: DocumentCardProps) {
               </div>
             )}
             
-            {isCompleted && riskScore !== undefined && (
-              <div className="flex flex-col gap-2 mt-4">
+            {isCompleted && (
+              <div className="flex flex-col gap-2 mt-2">
                 {clauses !== undefined && (
-                  <div className="text-sm">
-                    <span className="text-primary font-medium">{clauses}</span> clauses identified
+                  <div className="flex items-center mt-2">
+                    <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
+                    <span className="text-sm font-medium">{clauses} clauses identified</span>
                   </div>
                 )}
                 
-                {parties && parties.length > 0 && (
-                  <p className="text-sm mt-1.5">
-                    <span className="font-medium">Parties:</span> {parties.join(", ")}
-                  </p>
+                {riskScore !== undefined && (
+                  <div className="mt-2">
+                    <div className="flex justify-between mb-1 text-xs">
+                      <span className="font-medium">Risk score:</span>
+                      <span className="text-primary font-medium">{riskScore}%</span>
+                    </div>
+                    <Progress 
+                      value={riskScore} 
+                      className="h-1.5" 
+                      indicatorClassName={
+                        riskScore < 30 
+                          ? "bg-green-500" 
+                          : riskScore < 70 
+                            ? "bg-yellow-500" 
+                            : "bg-red-500"
+                      }
+                    />
+                  </div>
                 )}
                 
                 {summary && (
-                  <p className="text-sm text-muted-foreground line-clamp-2 mt-2 border-l-2 border-primary/30 pl-2">
+                  <p className="text-sm text-muted-foreground mt-3 border-l-2 border-[#D0C8A0] pl-2 line-clamp-2">
                     {summary}
                   </p>
                 )}
@@ -221,7 +240,7 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   }
   
   return (
-    <Badge variant="success" className="text-xs">
+    <Badge variant="success" className="text-xs bg-green-500/20 text-green-600 font-medium">
       Completed
     </Badge>
   );

@@ -36,31 +36,22 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
 
   return (
     <Tabs defaultValue="analyses" value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid grid-cols-2 mb-4 rounded-lg border border-bento-border bg-bento-card">
+      <TabsList className="grid grid-cols-1 mb-4 rounded-xl border border-[#D0C8A0] bg-white">
         <TabsTrigger 
           value="analyses" 
-          className="rounded-md data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
+          className="rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary flex items-center justify-center"
         >
           <div className="flex items-center gap-1.5">
-            <Search className="h-4 w-4" />
-            <span>Recent Analyses</span>
-          </div>
-        </TabsTrigger>
-        <TabsTrigger 
-          value="drafts" 
-          className="rounded-md data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
-        >
-          <div className="flex items-center gap-1.5">
-            <FileText className="h-4 w-4" />
-            <span>Recent Drafts</span>
+            <Search className="h-5 w-5" />
+            <span className="font-medium">Recent Analyses</span>
           </div>
         </TabsTrigger>
       </TabsList>
       
       <TabsContent value="analyses" className="mt-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {documents.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-bento-textSecondary border border-bento-border bg-bento-card rounded-xl p-6">
+            <div className="col-span-full text-center py-8 text-bento-textSecondary border border-[#D0C8A0] bg-white rounded-xl p-6">
               <Search className="h-10 w-10 mx-auto mb-2 opacity-30 text-primary" />
               <p className="text-bento-text">No document analyses yet</p>
               <p className="text-sm opacity-70 mt-1">Upload a document to get started</p>
@@ -106,9 +97,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
       </TabsContent>
       
       <TabsContent value="drafts" className="mt-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {contracts.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-bento-textSecondary border border-bento-border bg-bento-card rounded-xl p-6">
+            <div className="col-span-full text-center py-8 text-bento-textSecondary border border-[#D0C8A0] bg-white rounded-xl p-6">
               <FileText className="h-10 w-10 mx-auto mb-2 opacity-30 text-primary" />
               <p className="text-bento-text">No contract drafts yet</p>
               <p className="text-sm opacity-70 mt-1">Use the create tab to draft a contract</p>

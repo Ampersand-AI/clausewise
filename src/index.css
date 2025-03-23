@@ -31,6 +31,11 @@
     --bento-text: 240 10% 3.9%;
     --bento-textSecondary: 240 3.8% 46.1%;
     --bento-background: 0 0% 98%;
+    
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
   }
 
   .dark {
@@ -87,12 +92,6 @@
 
 .glow-orange {
   text-shadow: 0 0 15px rgba(249, 115, 22, 0.5), 0 0 10px rgba(249, 115, 22, 0.3);
-}
-
-.gradient-card {
-  background: linear-gradient(135deg, rgba(242, 252, 226, 0.7), rgba(254, 247, 205, 0.7), rgba(254, 198, 161, 0.7));
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .tab-content-container {

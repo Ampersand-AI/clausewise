@@ -33,13 +33,12 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       )}
     >
       {/* Icons-only header */}
-      <header className="p-4 flex items-center justify-end bg-transparent">
+      <header className="p-4 flex items-center justify-end">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="hover:bg-white/30"
           >
             <Home className="h-5 w-5" />
           </Button>
@@ -49,7 +48,6 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-white/30"
               >
                 <Settings className="h-5 w-5" />
               </Button>
@@ -113,15 +111,14 @@ export function AppLayout({ children, className }: AppLayoutProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="hover:bg-white/30"
           >
             <User className="h-5 w-5" />
           </Button>
         </div>
       </header>
       
-      <main className="flex-1 flex items-center justify-center py-8 px-4">
-        <div className={cn("w-full max-w-6xl mx-auto", className)}>
+      <main className="flex-1 flex items-center justify-center py-8 px-4 mt-8">
+        <div className={cn("w-full max-w-3xl mx-auto", className)}>
           {children}
         </div>
       </main>
