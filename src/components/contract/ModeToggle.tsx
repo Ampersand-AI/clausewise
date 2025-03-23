@@ -14,21 +14,21 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
         type="single" 
         value={mode} 
         onValueChange={(value) => value && onModeChange(value as "create" | "analyze")} 
-        className="border border-bento-gray-200 dark:border-bento-brown-700 p-1 rounded-md bg-bento-gray-50 dark:bg-bento-brown-800"
+        className="border border-terminal-cyan/30 p-1 rounded-sm bg-terminal-background font-mono"
       >
         <ToggleGroupItem 
           value="create" 
-          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded flex items-center gap-1 text-sm px-4"
+          className="data-[state=on]:bg-terminal-cyan/20 data-[state=on]:text-terminal-cyan rounded-sm flex items-center gap-1 text-sm px-4"
         >
           <FileText className="h-4 w-4" />
-          Create
+          <span>Create</span>
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="analyze" 
-          className="data-[state=on]:bg-gradient-to-r data-[state=on]:from-bento-yellow-500 data-[state=on]:to-bento-brown-600 data-[state=on]:text-white rounded flex items-center gap-1 text-sm px-4"
+          className="data-[state=on]:bg-terminal-cyan/20 data-[state=on]:text-terminal-cyan rounded-sm flex items-center gap-1 text-sm px-4"
         >
           <Search className="h-4 w-4" />
-          Analyze
+          <span>Analyze</span>
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

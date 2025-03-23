@@ -63,54 +63,26 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// New colors based on Bento site
-				bento: {
-					gray: {
-						50: '#f9f9f9',
-						100: '#f3f3f3',
-						200: '#e5e5e5',
-						300: '#d4d4d4',
-						400: '#a3a3a3',
-						500: '#737373',
-						600: '#525252',
-						700: '#404040',
-						800: '#262626',
-						900: '#171717',
-					},
-					yellow: {
-						50: '#FEF7CD',
-						100: '#FEEF9B',
-						500: '#EAB308',
-						600: '#CA8A04',
-					},
-					orange: {
-						50: '#FFF7ED', 
-						100: '#FFEDD5',
-						300: '#FDBA74',
-						400: '#FB923C',
-						500: '#F97316',
-						600: '#EA580C',
-					},
-					brown: {
-						100: '#f5f5f4',
-						500: '#78716c',
-						600: '#57534e',
-						700: '#44403c',
-						800: '#292524',
-					}
+				// Terminal-like colors
+				terminal: {
+					background: '#121212',
+					foreground: '#A0A0A0',
+					cyan: '#00CCCC',
+					darkCyan: '#008B8B',
+					lightCyan: '#00FFFF',
+					green: '#00CC00',
+					darkGreen: '#008800',
+					gray: '#444444',
+					lightGray: '#666666',
+					darkGray: '#222222',
+					black: '#0A0A0A',
 				},
-				// Adding lovable gradient colors
-				lovable: {
-					purple: '#8B5CF6',
-					pink: '#D946EF',
-					orange: '#F97316',
-					blue: '#0EA5E9',
-					yellow: '#EAB308',
-				}
 			},
 			fontFamily: {
 				sans: ['Inter var', 'sans-serif'],
 				mono: ['JetBrains Mono', 'monospace'],
+				terminal: ['VT323', 'monospace'],
+				code: ['Source Code Pro', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -167,6 +139,27 @@ export default {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' },
 				},
+				'crt-flicker': {
+					'0%': { opacity: '0.9' },
+					'10%': { opacity: '1' },
+					'15%': { opacity: '0.9' },
+					'20%': { opacity: '1' },
+					'70%': { opacity: '0.9' },
+					'80%': { opacity: '1' },
+					'100%': { opacity: '0.9' },
+				},
+				'scan-line': {
+					'0%': { transform: 'translateY(0)' },
+					'100%': { transform: 'translateY(100vh)' },
+				},
+				'blink-cursor': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' },
+				},
+				'type-text': {
+					'0%': { width: '0' },
+					'100%': { width: '100%' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -181,20 +174,13 @@ export default {
 				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 				'float': 'float 3s ease-in-out infinite',
 				'shimmer': 'shimmer 2s linear infinite',
-			},
-			backdropBlur: {
-				xs: '2px',
+				'crt-flicker': 'crt-flicker 2s infinite',
+				'scan-line': 'scan-line 8s linear infinite',
+				'blink-cursor': 'blink-cursor 1s step-end infinite',
+				'type-text': 'type-text 3s steps(40, end)',
 			},
 			backgroundImage: {
-				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'glass-gradient': 'linear-gradient(119deg, rgba(255, 255, 255, 0.3) -20%, rgba(255, 255, 255, 0.05) 90%)',
-				'glass-gradient-dark': 'linear-gradient(119deg, rgba(79, 70, 229, 0.3) -20%, rgba(79, 70, 229, 0.05) 90%)',
-				'primary-gradient': 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #818CF8 100%)',
-				'primary-gradient-hover': 'linear-gradient(135deg, #4F46E5 0%, #3730A3 50%, #6366F1 100%)',
-				'dark-gradient': 'linear-gradient(135deg, #818CF8 0%, #6366F1 50%, #4F46E5 100%)',
-				'dark-gradient-hover': 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #3730A3 100%)',
-				'lovable-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 50%, #F97316 100%)',
-				'lovable-gradient-hover': 'linear-gradient(135deg, #7C3AED 0%, #C026D3 50%, #EA580C 100%)',
+				'crt-effect': 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
 			},
 		},
 	},

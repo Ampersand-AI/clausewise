@@ -36,10 +36,10 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
 
   return (
     <Tabs defaultValue="analyses" value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid grid-cols-2 mb-4 rounded-lg border border-bento-gray-200 dark:border-bento-gray-700 bg-bento-gray-50 dark:bg-bento-gray-800/80">
+      <TabsList className="grid grid-cols-2 mb-4 rounded-sm border border-terminal-cyan/30 bg-terminal-background font-mono">
         <TabsTrigger 
           value="analyses" 
-          className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-bento-gray-700"
+          className="rounded-sm data-[state=active]:bg-terminal-cyan/20 data-[state=active]:text-terminal-cyan"
         >
           <div className="flex items-center gap-1.5">
             <Search className="h-4 w-4" />
@@ -48,7 +48,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
         </TabsTrigger>
         <TabsTrigger 
           value="drafts" 
-          className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-bento-gray-700"
+          className="rounded-sm data-[state=active]:bg-terminal-cyan/20 data-[state=active]:text-terminal-cyan"
         >
           <div className="flex items-center gap-1.5">
             <FileText className="h-4 w-4" />
@@ -60,9 +60,10 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
       <TabsContent value="analyses" className="mt-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {documents.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-bento-gray-500 dark:text-bento-gray-400">
-              <Search className="h-10 w-10 mx-auto mb-2 opacity-30" />
-              <p>No document analyses yet</p>
+            <div className="col-span-full text-center py-8 text-terminal-foreground border border-terminal-cyan/20 bg-terminal-darkGray rounded-sm p-6">
+              <Search className="h-10 w-10 mx-auto mb-2 opacity-30 text-terminal-cyan" />
+              <p className="text-terminal-cyan">No document analyses yet</p>
+              <p className="text-sm opacity-70 mt-1">ID: j3kwugu2k</p>
             </div>
           ) : (
             documents.map((doc) => {
@@ -107,9 +108,10 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({ documents, contracts, onDel
       <TabsContent value="drafts" className="mt-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {contracts.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-bento-gray-500 dark:text-bento-gray-400">
-              <FileText className="h-10 w-10 mx-auto mb-2 opacity-30" />
-              <p>No contract drafts yet</p>
+            <div className="col-span-full text-center py-8 text-terminal-foreground border border-terminal-cyan/20 bg-terminal-darkGray rounded-sm p-6">
+              <FileText className="h-10 w-10 mx-auto mb-2 opacity-30 text-terminal-cyan" />
+              <p className="text-terminal-cyan">No contract drafts yet</p>
+              <p className="text-sm opacity-70 mt-1">ID: j3kwugu2k</p>
             </div>
           ) : (
             contracts.map((contract) => (
