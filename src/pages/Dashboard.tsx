@@ -2,12 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, ListFilter, MicOff, RefreshCw, Download, Copy, Check } from "lucide-react";
+import { Upload, FileText, Mic, Send, MicOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -18,12 +16,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import ModeToggle from "@/components/contract/ModeToggle";
 import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
 import DocumentTabs from "@/components/document/DocumentTabs";
@@ -39,13 +31,6 @@ const popularAgreements = [
   { label: "Convertible Note", value: "convertiblenote" },
   { label: "Equity Agreement", value: "equity" },
 ];
-
-// CSS for glow effect
-const glowStyles = `
-  .glow-purple {
-    text-shadow: 0 0 15px rgba(139, 92, 246, 0.5), 0 0 10px rgba(139, 92, 246, 0.3);
-  }
-`;
 
 // Define document types
 type AnalyzingDocument = {
@@ -456,21 +441,34 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      {/* Add the glow styles */}
-      <style>{glowStyles}</style>
-      
-      <div className="flex flex-col items-center space-y-8 py-12 max-w-5xl mx-auto px-4">
+      <div className="flex flex-col items-center space-y-6 py-8 max-w-5xl mx-auto px-4">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-lg bg-primary/10 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-center h-14 w-14 rounded-lg bg-primary/10 shadow-sm overflow-hidden">
             <div className="w-full h-full bg-primary/10 transform rotate-12 scale-150"></div>
           </div>
           <h1 className="text-3xl font-bold text-center">
             LabBit
           </h1>
           <p className="text-muted-foreground text-center max-w-lg">
-            Draft contracts or upload existing documents
+            AI based Legal Drafts and Analyze Contracts
           </p>
+          
+          {/* Menu icons below subtitle */}
+          <div className="flex items-center gap-4 mt-2">
+            <Button variant="outline" size="sm" className="rounded-full">
+              <FileText className="h-4 w-4 mr-2" />
+              Contracts
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-full">
+              <Upload className="h-4 w-4 mr-2" />
+              Analyse
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-full">
+              <Send className="h-4 w-4 mr-2" />
+              Share
+            </Button>
+          </div>
         </div>
 
         {/* Mode toggle between create and analyze */}
@@ -488,10 +486,11 @@ const Dashboard = () => {
                 <h3 className="text-lg font-medium text-center">Analyzing Document...</h3>
                 <div className="relative pt-1">
                   <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-secondary">
-                    <div 
-                      className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary" 
-                      style={{ width: `${analysisProgress}%` }}
-                    ></div>
+                    <Progress 
+                      value={analysisProgress} 
+                      className="h-2"
+                      showGradient={true}
+                    />
                   </div>
                   <div className="text-sm text-center mt-2 text-muted-foreground">
                     {analysisProgress}% - Extracting information and analyzing content
@@ -562,70 +561,15 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Documents with Tabs */}
-        <div className="w-full max-w-2xl mt-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Recent Documents</h2>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1">
-                    <ListFilter className="h-4 w-4" />
-                    Filter
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <div className="p-2">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Status</p>
-                    <DropdownMenuCheckboxItem
-                      checked={filterOptions.status.analyzing}
-                      onCheckedChange={(checked) => handleFilterChange('status', 'analyzing', checked)}
-                    >
-                      Analyzing
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={filterOptions.status.completed}
-                      onCheckedChange={(checked) => handleFilterChange('status', 'completed', checked)}
-                    >
-                      Completed
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={filterOptions.status.error}
-                      onCheckedChange={(checked) => handleFilterChange('status', 'error', checked)}
-                    >
-                      Error
-                    </DropdownMenuCheckboxItem>
-                  </div>
-                  
-                  <div className="p-2 border-t">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Risk Level</p>
-                    <DropdownMenuCheckboxItem
-                      checked={filterOptions.risk.low}
-                      onCheckedChange={(checked) => handleFilterChange('risk', 'low', checked)}
-                    >
-                      Low Risk
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={filterOptions.risk.medium}
-                      onCheckedChange={(checked) => handleFilterChange('risk', 'medium', checked)}
-                    >
-                      Medium Risk
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={filterOptions.risk.high}
-                      onCheckedChange={(checked) => handleFilterChange('risk', 'high', checked)}
-                    >
-                      High Risk
-                    </DropdownMenuCheckboxItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            
-            <DocumentTabs 
-              documents={filteredDocuments} 
-              contracts={contracts}
-              onDelete={handleDeleteDocument}
-            />
-          </div>
+        <div className="w-full max-w-5xl mt-6">
+          <DocumentTabs 
+            documents={filteredDocuments} 
+            contracts={contracts}
+            onDelete={handleDeleteDocument}
+            filterOptions={filterOptions}
+            onFilterChange={handleFilterChange}
+          />
+        </div>
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>

@@ -1,6 +1,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { AlertCircle } from "lucide-react";
 
 export type QuotaData = {
   contractsUsed: number;
@@ -43,7 +44,7 @@ export function QuotaDisplay({ data, compact = false, className }: QuotaDisplayP
           <Progress 
             value={(data.contractsUsed / data.contractsLimit) * 100} 
             className="h-1.5" 
-            indicatorClassName={getQuotaColor(data.contractsUsed, data.contractsLimit)}
+            showGradient={true}
           />
         </div>
         <div>
@@ -56,7 +57,7 @@ export function QuotaDisplay({ data, compact = false, className }: QuotaDisplayP
           <Progress 
             value={(data.analysesUsed / data.analysesLimit) * 100} 
             className="h-1.5" 
-            indicatorClassName={getQuotaColor(data.analysesUsed, data.analysesLimit)}
+            showGradient={true}
           />
         </div>
       </div>
@@ -75,14 +76,19 @@ export function QuotaDisplay({ data, compact = false, className }: QuotaDisplayP
         <Progress 
           value={(data.contractsUsed / data.contractsLimit) * 100} 
           className="h-2" 
-          indicatorClassName={cn("gradient-animation", data.contractsUsed === data.contractsLimit && "!bg-red-500")}
+          showGradient={true}
         />
-        <p className="text-xs text-muted-foreground mt-1">
-          {data.contractsUsed >= data.contractsLimit 
-            ? "Limit reached. Upgrade to create more contracts."
-            : `${data.contractsLimit - data.contractsUsed} contracts remaining today.`
-          }
-        </p>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+          {data.contractsUsed >= data.contractsLimit && (
+            <AlertCircle className="h-3 w-3 text-red-500" />
+          )}
+          <p>
+            {data.contractsUsed >= data.contractsLimit 
+              ? "Limit reached. Upgrade to create more contracts."
+              : `${data.contractsLimit - data.contractsUsed} contracts remaining today.`
+            }
+          </p>
+        </div>
       </div>
       
       <div>
@@ -95,14 +101,19 @@ export function QuotaDisplay({ data, compact = false, className }: QuotaDisplayP
         <Progress 
           value={(data.analysesUsed / data.analysesLimit) * 100} 
           className="h-2" 
-          indicatorClassName={cn("gradient-animation", data.analysesUsed === data.analysesLimit && "!bg-red-500")}
+          showGradient={true}
         />
-        <p className="text-xs text-muted-foreground mt-1">
-          {data.analysesUsed >= data.analysesLimit 
-            ? "Limit reached. Upgrade to analyze more documents."
-            : `${data.analysesLimit - data.analysesUsed} analyses remaining today.`
-          }
-        </p>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+          {data.analysesUsed >= data.analysesLimit && (
+            <AlertCircle className="h-3 w-3 text-red-500" />
+          )}
+          <p>
+            {data.analysesUsed >= data.analysesLimit 
+              ? "Limit reached. Upgrade to analyze more documents."
+              : `${data.analysesLimit - data.analysesUsed} analyses remaining today.`
+            }
+          </p>
+        </div>
       </div>
     </div>
   );

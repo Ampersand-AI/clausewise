@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Progress } from "../ui/progress";
+import { QuotaDisplay, QuotaData } from "../quota/QuotaDisplay";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -34,18 +35,11 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   const navigate = useNavigate();
 
   // Quota data (would come from a real API in production)
-  const quota = {
+  const quota: QuotaData = {
     contractsUsed: 1,
     contractsLimit: 2,
     analysesUsed: 3,
     analysesLimit: 5,
-  };
-
-  const getQuotaColor = (used: number, limit: number) => {
-    const percentage = (used / limit) * 100;
-    if (percentage < 50) return "bg-green-500";
-    if (percentage < 80) return "bg-yellow-500";
-    return "bg-red-500";
   };
 
   return (
@@ -55,7 +49,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       )}
     >
       {/* Icons-only header */}
-      <header className="p-4 flex items-center justify-end">
+      <header className="p-3 flex items-center justify-end">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -84,30 +78,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               <TooltipContent className="w-60 p-0">
                 <div className="p-3">
                   <h3 className="font-medium mb-2">Your Usage Quota</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span>Contract Creation: {quota.contractsUsed}/{quota.contractsLimit}</span>
-                        <span>{Math.round((quota.contractsUsed / quota.contractsLimit) * 100)}%</span>
-                      </div>
-                      <Progress 
-                        value={(quota.contractsUsed / quota.contractsLimit) * 100} 
-                        className="h-1.5" 
-                        indicatorClassName={getQuotaColor(quota.contractsUsed, quota.contractsLimit)}
-                      />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span>Document Analysis: {quota.analysesUsed}/{quota.analysesLimit}</span>
-                        <span>{Math.round((quota.analysesUsed / quota.analysesLimit) * 100)}%</span>
-                      </div>
-                      <Progress 
-                        value={(quota.analysesUsed / quota.analysesLimit) * 100} 
-                        className="h-1.5" 
-                        indicatorClassName={getQuotaColor(quota.analysesUsed, quota.analysesLimit)}
-                      />
-                    </div>
-                  </div>
+                  <QuotaDisplay data={quota} compact={true} />
                   <div className="mt-3 text-xs text-muted-foreground">
                     Upgrade to Premium for 10,000 tokens (2 contracts + 5 analyses per day)
                   </div>
@@ -190,8 +161,8 @@ export function AppLayout({ children, className }: AppLayoutProps) {
         </div>
       </header>
       
-      <main className="flex-1 flex items-center justify-center py-8 px-4 mt-8">
-        <div className={cn("w-full max-w-3xl mx-auto", className)}>
+      <main className="flex-1 flex items-center justify-center py-4 px-4">
+        <div className={cn("w-full max-w-5xl mx-auto", className)}>
           {children}
         </div>
       </main>
