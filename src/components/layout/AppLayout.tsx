@@ -1,6 +1,5 @@
 
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "../mode-toggle";
 import { Home, Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
@@ -30,26 +29,25 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   return (
     <div 
       className={cn(
-        "min-h-screen flex flex-col bg-bento-background text-bento-text relative overflow-hidden",
+        "min-h-screen flex flex-col bg-background text-foreground relative",
       )}
     >
       {/* Header */}
-      <header className="border-b border-bento-border p-4 flex items-center justify-between">
+      <header className="border-b p-4 flex items-center justify-between">
         <div 
           className="flex items-center gap-2 cursor-pointer" 
           onClick={() => navigate("/dashboard")}
         >
           <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-white text-xs">L</span>
+            <span className="text-primary-foreground text-xs">L</span>
           </div>
-          <h1 className="text-bento-text font-medium text-xl">Lawbit</h1>
+          <h1 className="font-medium text-xl">Lawbit</h1>
         </div>
         
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
-            className="text-bento-text hover:bg-bento-card"
             onClick={() => navigate("/dashboard")}
           >
             <Home className="h-5 w-5" />
@@ -60,26 +58,25 @@ export function AppLayout({ children, className }: AppLayoutProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-bento-text hover:bg-bento-card"
               >
                 <Settings className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent className="bg-bento-card border-bento-border text-bento-text">
+            <SheetContent>
               <SheetHeader>
-                <SheetTitle className="text-bento-text text-xl">Settings</SheetTitle>
-                <SheetDescription className="text-bento-textSecondary">
+                <SheetTitle>Settings</SheetTitle>
+                <SheetDescription>
                   Configure your preferences.
                 </SheetDescription>
               </SheetHeader>
               <div className="py-6 space-y-6">
                 <div className="space-y-4">
-                  <h3 className="text-sm text-bento-text font-medium">System Parameters</h3>
+                  <h3 className="text-sm font-medium">System Parameters</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="notifications" className="flex flex-col gap-1">
                         <span>Notifications</span>
-                        <span className="text-xs font-normal text-bento-textSecondary">
+                        <span className="text-xs font-normal text-muted-foreground">
                           Receive system alerts
                         </span>
                       </Label>
@@ -92,7 +89,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     <div className="flex items-center justify-between">
                       <Label htmlFor="autosave" className="flex flex-col gap-1">
                         <span>Auto Save</span>
-                        <span className="text-xs font-normal text-bento-textSecondary">
+                        <span className="text-xs font-normal text-muted-foreground">
                           Automated data backup
                         </span>
                       </Label>
@@ -105,7 +102,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     <div className="flex items-center justify-between">
                       <Label htmlFor="compact-view" className="flex flex-col gap-1">
                         <span>Compact View</span>
-                        <span className="text-xs font-normal text-bento-textSecondary">
+                        <span className="text-xs font-normal text-muted-foreground">
                           Minimize UI elements
                         </span>
                       </Label>
@@ -124,14 +121,13 @@ export function AppLayout({ children, className }: AppLayoutProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="text-bento-text hover:bg-bento-card"
           >
             <User className="h-5 w-5" />
           </Button>
         </div>
       </header>
       
-      <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+      <main className="flex-1 flex items-center justify-center p-4">
         <div className={cn("w-full max-w-6xl mx-auto", className)}>
           {children}
         </div>
