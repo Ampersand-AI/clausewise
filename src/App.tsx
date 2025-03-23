@@ -23,7 +23,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light">
       <TooltipProvider>
-        <div className="min-h-screen bg-[#FEF7CD]">
+        <div className="min-h-screen bg-background">
           <Toaster />
           <Sonner />
           <BrowserRouter>

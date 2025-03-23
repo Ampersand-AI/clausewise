@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 88%;  /* #E0E0E0 */
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -92,6 +92,19 @@
 
 .glow-orange {
   text-shadow: 0 0 15px rgba(249, 115, 22, 0.5), 0 0 10px rgba(249, 115, 22, 0.3);
+}
+
+/* Gradient animations */
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-animation {
+  background: linear-gradient(-45deg, #10b981, #fbbf24, #f59e0b);
+  background-size: 200% 200%;
+  animation: gradient-flow 5s ease infinite;
 }
 
 .tab-content-container {

@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { Home, Settings, User } from "lucide-react";
+import { Home, Settings, User, Database } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import {
@@ -14,6 +14,13 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Progress } from "../ui/progress";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,6 +32,21 @@ export function AppLayout({ children, className }: AppLayoutProps) {
   const [autoSave, setAutoSave] = useState(true);
   const [compactView, setCompactView] = useState(false);
   const navigate = useNavigate();
+
+  // Quota data (would come from a real API in production)
+  const quota = {
+    contractsUsed: 1,
+    contractsLimit: 2,
+    analysesUsed: 3,
+    analysesLimit: 5,
+  };
+
+  const getQuotaColor = (used: number, limit: number) => {
+    const percentage = (used / limit) * 100;
+    if (percentage < 50) return "bg-green-500";
+    if (percentage < 80) return "bg-yellow-500";
+    return "bg-red-500";
+  };
 
   return (
     <div 
@@ -42,6 +64,57 @@ export function AppLayout({ children, className }: AppLayoutProps) {
           >
             <Home className="h-5 w-5" />
           </Button>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                  onClick={() => {
+                    // Show upgrade modal in a real implementation
+                    alert("Upgrade to Premium for more tokens!");
+                  }}
+                >
+                  <Database className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary"></span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="w-60 p-0">
+                <div className="p-3">
+                  <h3 className="font-medium mb-2">Your Usage Quota</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span>Contract Creation: {quota.contractsUsed}/{quota.contractsLimit}</span>
+                        <span>{Math.round((quota.contractsUsed / quota.contractsLimit) * 100)}%</span>
+                      </div>
+                      <Progress 
+                        value={(quota.contractsUsed / quota.contractsLimit) * 100} 
+                        className="h-1.5" 
+                        indicatorClassName={getQuotaColor(quota.contractsUsed, quota.contractsLimit)}
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span>Document Analysis: {quota.analysesUsed}/{quota.analysesLimit}</span>
+                        <span>{Math.round((quota.analysesUsed / quota.analysesLimit) * 100)}%</span>
+                      </div>
+                      <Progress 
+                        value={(quota.analysesUsed / quota.analysesLimit) * 100} 
+                        className="h-1.5" 
+                        indicatorClassName={getQuotaColor(quota.analysesUsed, quota.analysesLimit)}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-3 text-xs text-muted-foreground">
+                    Upgrade to Premium for 10,000 tokens (2 contracts + 5 analyses per day)
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           <Sheet>
             <SheetTrigger asChild>
