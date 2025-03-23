@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Home, Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
@@ -32,18 +31,8 @@ export function AppLayout({ children, className }: AppLayoutProps) {
         "min-h-screen flex flex-col bg-background text-foreground relative",
       )}
     >
-      {/* Header */}
-      <header className="border-b p-4 flex items-center justify-between bg-background">
-        <div 
-          className="flex items-center gap-2 cursor-pointer" 
-          onClick={() => navigate("/dashboard")}
-        >
-          <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground text-xs">L</span>
-          </div>
-          <h1 className="font-medium text-xl">Lawbit</h1>
-        </div>
-        
+      {/* Icons-only header */}
+      <header className="border-b p-4 flex items-center justify-end bg-background">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"

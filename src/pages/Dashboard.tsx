@@ -40,6 +40,13 @@ const popularAgreements = [
   { label: "Equity Agreement", value: "equity" },
 ];
 
+// CSS for glow effect
+const glowStyles = `
+  .glow-purple {
+    text-shadow: 0 0 15px rgba(139, 92, 246, 0.5), 0 0 10px rgba(139, 92, 246, 0.3);
+  }
+`;
+
 // Define document types
 type AnalyzingDocument = {
   id: string;
@@ -81,7 +88,7 @@ type FilterOptions = {
   status: {
     analyzing: boolean;
     completed: boolean;
-    error: boolean;
+    error: boolean,
   };
   risk: {
     low: boolean;
@@ -448,6 +455,9 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
+      {/* Add the glow styles */}
+      <style>{glowStyles}</style>
+      
       <div className="flex flex-col items-center space-y-8 py-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2">
@@ -491,7 +501,6 @@ const Dashboard = () => {
               <>
                 {mode === "create" ? (
                   <div className="p-4">
-                    <h3 className="font-medium mb-4 text-center">Create Legal Contract</h3>
                     <ContractForm 
                       onGenerate={handleGenerateContract} 
                       popularAgreements={popularAgreements}

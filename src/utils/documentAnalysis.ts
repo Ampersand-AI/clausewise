@@ -21,15 +21,15 @@ export const analyzeDocument = async (file: File): Promise<AnalysisResult> => {
   return new Promise((resolve) => {
     // Simulate API call delay
     setTimeout(() => {
-      const isFromContractForm = file.name.includes('generated_contract');
+      const isFromContractForm = file.name.includes('generated_contract') || file.name.includes('contract');
       
       if (isFromContractForm) {
-        // For generated contracts, return low risk analysis
+        // For generated contracts, always return low risk analysis (under 30%)
         resolve({
           documentTitle: file.name.split('.')[0],
-          riskScore: 15, // Low risk score
-          clauses: 12,
-          summary: 'This is a well-drafted agreement with clear terms and balanced obligations. The document uses standard legal language and follows best practices for this type of agreement. All key sections are properly defined with specific obligations and rights for all parties.',
+          riskScore: 15, // Low risk score (under 30%)
+          clauses: 15,
+          summary: 'This is a well-drafted agreement with clear terms and balanced obligations. The document uses standard legal language and follows best practices for this type of agreement. All key sections are properly defined with specific obligations and rights for all parties. The contract includes comprehensive protections and is structured for maximum clarity and legal protection.',
           jurisdiction: 'United States',
           keyFindings: [
             {
@@ -52,6 +52,20 @@ export const analyzeDocument = async (file: File): Promise<AnalysisResult> => {
               riskLevel: 'low',
               extractedText: 'Any dispute arising out of or relating to this Agreement shall first be attempted to be resolved through good faith negotiation. If the dispute cannot be resolved through negotiation, the parties agree to attempt to resolve the dispute through mediation.',
               mitigationOptions: ['No changes needed', 'The dispute resolution process is clear and fair']
+            },
+            {
+              title: 'Comprehensive Confidentiality Provisions',
+              description: 'The document contains detailed and enforceable confidentiality provisions that protect all parties.',
+              riskLevel: 'low',
+              extractedText: 'Each party shall maintain the confidentiality of all Confidential Information received from the other party and shall not disclose such Confidential Information to any third party without prior written consent from the disclosing party.',
+              mitigationOptions: ['No changes needed', 'The confidentiality provisions are robust and provide adequate protection']
+            },
+            {
+              title: 'Balanced Termination Rights',
+              description: 'The agreement provides fair and balanced termination rights to both parties.',
+              riskLevel: 'low',
+              extractedText: 'Either party may terminate this Agreement upon thirty (30) days written notice to the other party. Upon termination, all rights and licenses granted under this Agreement shall immediately terminate.',
+              mitigationOptions: ['No changes needed', 'The termination provisions are equitable and protect both parties']
             }
           ]
         });
