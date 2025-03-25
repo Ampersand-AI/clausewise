@@ -3,6 +3,9 @@ import { QuotaDisplay, QuotaData } from "../quota/QuotaDisplay";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Brain, ChevronDown, FileText, Settings, User, Menu, X, Command, Search, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -39,6 +42,9 @@ interface AppLayoutProps {
 export function AppLayout({ children, className }: AppLayoutProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+  const { signOut } = useAuthContext();
+  const { toast } = useToast();
   const quota: QuotaData = {
     contractsUsed: 1,
     contractsLimit: 2,
@@ -79,6 +85,31 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       });
     };
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "You have been signed out.",
+        });
+        navigate("/");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred while signing out.",
+      });
+    }
+  };
 
   return (
     <div className={cn(
@@ -128,14 +159,6 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                 </div>
                 <div className="flex flex-col gap-2">
                   <Button variant="ghost" className="justify-start gap-2 legal-hover">
-                    <FileText className="h-4 w-4" />
-                    Documents
-                  </Button>
-                  <Button variant="ghost" className="justify-start gap-2 legal-hover">
-                    <Command className="h-4 w-4" />
-                    AI Tools
-                  </Button>
-                  <Button variant="ghost" className="justify-start gap-2 legal-hover">
                     <Settings className="h-4 w-4" />
                     Settings
                   </Button>
@@ -163,62 +186,6 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                 LawBit
               </span>
             </motion.a>
-            <NavigationMenu className="hidden md:flex">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="legal-hover">Documents</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 w-[400px] grid-cols-2">
-                      <li className="col-span-2">
-                        <NavigationMenuLink asChild>
-                          <a href="#" className="flex gap-2 items-start p-3 hover:bg-accent/10 rounded-lg transition-colors legal-hover">
-                            <FileText className="h-5 w-5 text-primary" />
-                            <div>
-                              <div className="font-medium mb-1">Document Analysis</div>
-                              <p className="text-sm text-muted-foreground">Upload and analyze contracts with AI</p>
-                            </div>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a href="#" className="block p-3 hover:bg-accent rounded-lg transition-colors">
-                            <div className="font-medium mb-1">Templates</div>
-                            <p className="text-sm text-muted-foreground">Pre-built contract templates</p>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a href="#" className="block p-3 hover:bg-accent rounded-lg transition-colors">
-                            <div className="font-medium mb-1">History</div>
-                            <p className="text-sm text-muted-foreground">View analyzed documents</p>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>AI Tools</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 w-[400px]">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a href="#" className="flex gap-2 items-start p-3 hover:bg-accent rounded-lg transition-colors">
-                            <Command className="h-5 w-5 text-primary" />
-                            <div>
-                              <div className="font-medium mb-1">AI Assistant</div>
-                              <p className="text-sm text-muted-foreground">Get help with contract analysis and drafting</p>
-                            </div>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
           </div>
 
           {/* Right Side Actions */}
@@ -248,7 +215,12 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                 <DropdownMenuItem className="legal-hover">Settings</DropdownMenuItem>
                 <DropdownMenuItem className="legal-hover">Billing</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="legal-hover">Log out</DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="legal-hover text-red-600 focus:text-red-600"
+                  onClick={handleSignOut}
+                >
+                  Log out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

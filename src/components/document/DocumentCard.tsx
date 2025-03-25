@@ -86,148 +86,91 @@ export function DocumentCard(props: DocumentCardProps) {
   const riskInfo = getRiskLevel(riskScore);
 
   return (
-    <div className="group relative">
-      <Link 
-        to={`/document/${id}`}
-        className={cn(
-          "enhanced-card group relative block",
-          "p-5 h-full transition-all duration-300",
-          "hover:shadow-lg hover:-translate-y-1",
-          status === "analyzing" && "animate-pulse",
-          className
-        )}
-      >
-        <div className="flex items-start gap-4">
-          <div className={cn(
-            "h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0",
-            "bg-gradient-to-br from-primary/10 to-primary/5",
-            "border border-primary/10"
-          )}>
-            {status === "analyzing" ? (
-              <File className="h-5 w-5 text-primary" />
-            ) : (
-              <FileText className="h-5 w-5 text-primary" />
-            )}
+    <div className={cn(
+      "group relative overflow-hidden rounded-xl border bg-card/50 backdrop-blur-sm transition-all duration-300",
+      "hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
+      "dark:bg-slate-900/30 dark:border-violet-700/50 dark:hover:border-violet-500",
+      className
+    )}>
+      {/* Gradient border effect */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      <div className="relative p-6 space-y-4">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <h3 className="font-semibold leading-none tracking-tight">{title}</h3>
+            <p className="text-sm text-muted-foreground">{formattedDate}</p>
           </div>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between w-full gap-3">
-              <h3 className="font-semibold text-base truncate pr-2 mb-1">
-                {title}
-              </h3>
-              
-              {isCompleted && riskScore !== undefined && (
-                <Badge 
-                  variant={riskInfo.color as "success" | "warning" | "destructive"} 
-                  className={cn(
-                    "px-2 py-0.5 text-xs font-medium shrink-0",
-                    "shadow-sm"
-                  )}
-                >
-                  {riskInfo.text}
-                </Badge>
-              )}
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => onDelete(id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        {isAnalyzing && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Analyzing document...</span>
+              <span className="font-medium">{progress}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+        )}
+
+        {isCompleted && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge variant={riskInfo.color as any} className="font-medium">
+                {riskInfo.text}
+              </Badge>
+              <Badge variant="outline" className="font-medium">
+                {clauses} Clauses
+              </Badge>
             </div>
             
-            <p className="text-sm text-muted-foreground mb-3">
-              {formattedDate}
-            </p>
-            
-            <div className="flex items-center gap-3 mb-3">
-              <StatusBadge status={status} />
-              
-              {isCompleted && clauses !== undefined && (
-                <div className="flex items-center">
-                  <AlertTriangle className="h-4 w-4 mr-1.5 text-warning" />
-                  <span className="text-sm font-medium">{clauses} clauses</span>
-                </div>
-              )}
-            </div>
-            
-            {isAnalyzing && progress !== undefined && (
-              <div className="mt-3 w-full">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">Processing</span>
-                  <span className="text-sm text-primary font-medium">{progress}%</span>
-                </div>
-                <Progress 
-                  value={progress} 
-                  className="h-2 enhanced-progress" 
-                  showGradient={true} 
-                />
-              </div>
-            )}
-            
-            {isCompleted && riskScore !== undefined && (
-              <div className="mt-3 w-full">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">Risk score</span>
-                  <span 
-                    className={cn(
-                      "text-sm font-medium",
-                      riskScore < 30 ? "text-green-600" : 
-                      riskScore < 70 ? "text-yellow-600" : 
-                      "text-red-600"
-                    )}
-                  >
-                    {riskScore}%
-                  </span>
-                </div>
-                <Progress 
-                  value={riskScore} 
-                  className="h-2 enhanced-progress" 
-                  showGradient={true}
-                />
-              </div>
+            {summary && (
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {summary}
+              </p>
             )}
             
             {keyFindings && keyFindings.length > 0 && (
-              <div className="mt-4">
-                <div className="flex gap-2 flex-wrap">
-                  {keyFindings.slice(0, 2).map((finding, idx) => (
-                    <Badge 
-                      key={idx} 
-                      variant={finding.riskLevel === 'low' ? 'success' : finding.riskLevel === 'medium' ? 'warning' : 'destructive'}
-                      className="text-xs px-2 py-1 shadow-sm hover-scale"
-                    >
-                      {finding.title}
-                    </Badge>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <AlertTriangle className="h-4 w-4 text-warning" />
+                  <span>Key Findings</span>
+                </div>
+                <div className="space-y-1">
+                  {keyFindings.slice(0, 2).map((finding, index) => (
+                    <div key={index} className="flex items-center gap-2 text-sm">
+                      <div className={cn(
+                        "h-1.5 w-1.5 rounded-full",
+                        finding.riskLevel === "low" ? "bg-success" :
+                        finding.riskLevel === "medium" ? "bg-warning" :
+                        "bg-destructive"
+                      )} />
+                      <span className="text-muted-foreground line-clamp-1">
+                        {finding.title}
+                      </span>
+                    </div>
                   ))}
                   {keyFindings.length > 2 && (
-                    <Badge 
-                      variant="outline" 
-                      className="text-xs px-2 py-1 text-muted-foreground hover-scale"
-                    >
-                      +{keyFindings.length - 2} more
-                    </Badge>
+                    <p className="text-xs text-muted-foreground">
+                      +{keyFindings.length - 2} more findings
+                    </p>
                   )}
                 </div>
               </div>
             )}
           </div>
-        </div>
-      </Link>
-      
-      {onDelete && (
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn(
-            "absolute -top-2 -right-2 h-8 w-8",
-            "opacity-0 group-hover:opacity-100 transition-all duration-200",
-            "border-destructive text-destructive",
-            "hover:bg-destructive hover:text-destructive-foreground",
-            "shadow-sm z-10"
-          )}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onDelete(id);
-          }}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
+        )}
+      </div>
     </div>
   );
 }

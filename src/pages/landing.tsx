@@ -40,6 +40,28 @@ const features = [
 const Landing = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
+        <div className="container px-4 mx-auto h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <Brain className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold">
+              <span className="legal-gradient-text">Law</span>
+              <span className="text-primary">Bit</span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/login">
+              <Button variant="ghost">Login</Button>
+            </Link>
+            <Link to="/signup">
+              <Button>Sign Up</Button>
+            </Link>
+            <ModeToggle />
+          </div>
+        </div>
+      </nav>
+
       {/* Background Elements */}
       <div className="fixed inset-0 z-0">
         {/* Gradient Mesh */}
@@ -60,7 +82,7 @@ const Landing = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         {/* Content */}
         <div className="container px-4 mx-auto text-center relative z-10">
           {/* Logo with enhanced animation */}
@@ -110,7 +132,7 @@ const Landing = () => {
               transition={{ duration: 0.5, delay: 0.5 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link to="/dashboard">
+              <Link to="/signup">
                 <Button size="lg" className="legal-button min-w-[180px] gap-2">
                   <span>Get Started</span>
                   <ArrowRight className="h-4 w-4" />
@@ -121,12 +143,6 @@ const Landing = () => {
               </Button>
             </motion.div>
           </motion.div>
-        </div>
-
-        {/* Theme Toggle */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Choose theme</span>
-          <ModeToggle />
         </div>
       </section>
 

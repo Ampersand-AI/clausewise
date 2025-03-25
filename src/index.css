@@ -41,6 +41,8 @@
     --warning-foreground: 0 0% 98%;
 
     --ai-pattern: 24 95% 53%;
+    --legal-gradient-start: 24 95% 53%;
+    --legal-gradient-end: 24 95% 53%;
   }
 
   .dark {
@@ -73,6 +75,8 @@
     --bento-background: 20 14.3% 3.9%;
 
     --ai-pattern: 24 95% 53%;
+    --legal-gradient-start: 24 95% 53%;
+    --legal-gradient-end: 24 95% 53%;
   }
 }
 
@@ -473,6 +477,7 @@
 }
 
 .legal-button:hover::before {
+  
   @apply bg-transparent;
 }
 
@@ -537,12 +542,15 @@
 
 /* Professional Gradient Text */
 .legal-gradient-text {
-  @apply bg-clip-text text-transparent font-bold;
-  background-image: linear-gradient(
+  background: linear-gradient(
     135deg,
-    hsl(var(--primary)) 0%,
-    hsl(var(--ai-accent)) 100%
+    hsl(var(--legal-gradient-start)) 0%,
+    hsl(var(--legal-gradient-end)) 100%
   );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
 }
 
 /* Professional Background Pattern */

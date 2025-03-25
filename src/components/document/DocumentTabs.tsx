@@ -60,61 +60,63 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
   return (
     <div className="w-full animate-fade-in">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold tracking-tight">Recent Documents</h2>
+        <h2 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+          Recent Documents
+        </h2>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="enhanced-button gap-1">
+              <Button variant="outline" size="sm" className="gap-1 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40">
                 <ListFilter className="h-4 w-4" />
                 Filter
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 enhanced-card">
+            <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-sm border-primary/20">
               <div className="p-2">
                 <p className="text-xs font-medium text-muted-foreground mb-2">Status</p>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.status.analyzing}
                   onCheckedChange={(checked) => onFilterChange('status', 'analyzing', checked)}
-                  className="hover-scale"
+                  className="hover:bg-primary/10"
                 >
                   Analyzing
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.status.completed}
                   onCheckedChange={(checked) => onFilterChange('status', 'completed', checked)}
-                  className="hover-scale"
+                  className="hover:bg-primary/10"
                 >
                   Completed
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.status.error}
                   onCheckedChange={(checked) => onFilterChange('status', 'error', checked)}
-                  className="hover-scale"
+                  className="hover:bg-primary/10"
                 >
                   Error
                 </DropdownMenuCheckboxItem>
               </div>
               
-              <div className="p-2 border-t">
+              <div className="p-2 border-t border-primary/10">
                 <p className="text-xs font-medium text-muted-foreground mb-2">Risk Level</p>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.risk.low}
                   onCheckedChange={(checked) => onFilterChange('risk', 'low', checked)}
-                  className="hover-scale"
+                  className="hover:bg-primary/10"
                 >
                   Low Risk
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.risk.medium}
                   onCheckedChange={(checked) => onFilterChange('risk', 'medium', checked)}
-                  className="hover-scale"
+                  className="hover:bg-primary/10"
                 >
                   Medium Risk
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.risk.high}
                   onCheckedChange={(checked) => onFilterChange('risk', 'high', checked)}
-                  className="hover-scale"
+                  className="hover:bg-primary/10"
                 >
                   High Risk
                 </DropdownMenuCheckboxItem>
@@ -124,9 +126,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {documents.length === 0 && contracts.length === 0 ? (
-          <div className="col-span-full text-center py-12 enhanced-card">
+          <div className="col-span-full text-center py-12 rounded-xl border bg-background/50 backdrop-blur-sm border-primary/20">
             <p className="text-lg font-medium">No documents yet</p>
             <p className="text-sm text-muted-foreground mt-2">Upload a document or create a contract to get started</p>
           </div>

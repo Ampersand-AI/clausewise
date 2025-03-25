@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, MicOff, Home, Settings, User, Quote, Brain } from "lucide-react";
+import { Upload, FileText, Mic, Send, MicOff, Home, Settings, User, Quote, Brain, Check, Loader2, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -16,12 +15,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import ModeToggle from "@/components/contract/ModeToggle";
 import ContractForm, { GeneratedContract } from "@/components/contract/ContractForm";
 import DocumentTabs from "@/components/document/DocumentTabs";
 import { QuotaDisplay, QuotaData } from "@/components/quota/QuotaDisplay";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { DashboardAnalytics } from '@/components/dashboard/DashboardAnalytics';
+import { documentService } from '@/services/documentService';
+import { aiService } from '@/services/aiService';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import pdfParse from 'pdf-parse';
 
 // Define top most used agreement types
 const popularAgreements = [
@@ -109,14 +115,6 @@ const Dashboard = () => {
   });
   const { toast } = useToast();
   const navigate = useNavigate();
-  
-  // Quota data (would come from a real API in production)
-  const quota: QuotaData = {
-    contractsUsed: 1,
-    contractsLimit: 2,
-    analysesUsed: 3,
-    analysesLimit: 5,
-  };
   
   // Voice recognition setup
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -250,23 +248,21 @@ const Dashboard = () => {
     
     try {
       const file = files[0];
-      
-      // Extract content using OCR API for images and PDFs
-      let extractedText = "";
       const fileType = file.type.toLowerCase();
       
       setIsAnalyzing(true);
       setAnalysisProgress(0);
       
-      if (fileType.includes('image') || fileType.includes('pdf') || fileType.includes('word')) {
-        // Mock OCR extraction for demo purposes
-        // In a real app, this would call an actual OCR API
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        extractedText = "This is a sample extracted text from a document. It represents what would be extracted from the uploaded file using OCR. The actual implementation would integrate with a real OCR service.";
-        console.log("OCR extracted text:", extractedText);
-      } else if (fileType.includes('text')) {
-        // For text files, read directly
+      let extractedText = "";
+      
+      if (fileType.includes('text')) {
         extractedText = await file.text();
+      } else if (fileType === 'application/pdf') {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfData = await pdfParse(arrayBuffer);
+        extractedText = pdfData.text;
+      } else {
+        throw new Error("Unsupported file type. Please upload a text or PDF file.");
       }
       
       if (!extractedText || extractedText.trim().length < 50) {
@@ -310,13 +306,9 @@ const Dashboard = () => {
       progress: 0,
     };
     
-    // Add the new document to the list
     setDocuments(prev => [newDoc, ...prev]);
     
-    // Create a virtual file from the text
-    const textBlob = new Blob([text], { type: 'text/plain' });
-    const textFile = new File([textBlob], "extracted_content.txt", { type: 'text/plain' });
-    
+    try {
     // Simulate analysis progress
     let progress = 0;
     const analysisInterval = setInterval(() => {
@@ -336,19 +328,8 @@ const Dashboard = () => {
       }
     }, 200);
     
-    try {
-      // Call the API to analyze the document
-      const result = await analyzeDocument(textFile);
-      
-      // Add redrafted clauses to each key finding
-      const enhancedKeyFindings = result.keyFindings.map(finding => ({
-        ...finding,
-        redraftedClauses: [
-          "We suggest replacing the clause with: \"The parties hereby agree that any disputes arising out of this agreement shall be resolved through arbitration in accordance with the rules of the Dubai International Arbitration Centre.\"",
-          "Alternative redraft: \"The parties agree to resolve all disputes through mediation first, before proceeding to arbitration or litigation.\"",
-          "Simplified version: \"Disputes will be resolved through arbitration in Dubai, UAE.\"",
-        ],
-      }));
+      // Call AI service for analysis
+      const result = await aiService.analyzeText(text);
       
       // Update the document with the analysis results
       setDocuments(prev => 
@@ -363,7 +344,7 @@ const Dashboard = () => {
                 clauses: result.clauses,
                 summary: result.summary,
                 jurisdiction: result.jurisdiction,
-                keyFindings: enhancedKeyFindings
+                keyFindings: result.keyFindings
               }
             : doc
         )
@@ -376,7 +357,6 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error analyzing document:", error);
       
-      // Update document to error state
       setDocuments(prev => 
         prev.map(doc => 
           doc.id === newDocId
@@ -396,7 +376,6 @@ const Dashboard = () => {
         variant: "destructive",
       });
     } finally {
-      clearInterval(analysisInterval);
       setIsAnalyzing(false);
       setDocumentText("");
       setIsRecording(false);
@@ -451,54 +430,290 @@ const Dashboard = () => {
     setContracts(prev => [contract, ...prev]);
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date } | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'risk' | 'title'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  // Update document filtering
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const filters = {
+          searchTerm,
+          dateRange,
+          sortBy,
+          sortOrder,
+        };
+        const results = await documentService.searchDocuments(filters);
+        setFilteredDocuments(results);
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch documents",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchDocuments();
+  }, [searchTerm, dateRange, sortBy, sortOrder]);
+
+  // Update the mode switching handlers
+  const handleCreateMode = () => {
+    setMode("create");
+    setDocumentText("");
+    setIsAnalyzing(false);
+    setAnalysisProgress(0);
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsRecording(false);
+  };
+
+  const handleAnalyzeMode = () => {
+    setMode("analyze");
+    setDocumentText("");
+    setIsAnalyzing(false);
+    setAnalysisProgress(0);
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsRecording(false);
+  };
+
   return (
-    <AppLayout>
-      <div className="flex flex-col items-center space-y-6 pt-4 pb-8 max-w-5xl mx-auto px-4">
-        {/* Enhanced Logo and Title */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center space-y-3"
-        >
-          <div className="relative h-16 w-16">
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse" />
-            <div className="absolute inset-0 rounded-xl border-2 border-dashed border-primary/30 animate-spin-slow" />
-            <div className="absolute inset-2 rounded-lg bg-background/80 backdrop-blur-sm flex items-center justify-center">
-              <Brain className="h-8 w-8 text-primary animate-pulse" />
+    <div className="container mx-auto px-4 py-6">
+      <div className="flex flex-col gap-6">
+        {/* New Header Section */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10 p-8">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:32px_32px]" />
+          
+          {/* Content */}
+          <div className="relative z-10">
+            {/* Main Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <div className="flex items-center gap-4">
+                <div className="relative h-16 w-16">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse" />
+                  <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-primary/30 animate-spin-slow" />
+                  <div className="absolute inset-2 rounded-xl bg-background/80 backdrop-blur-sm flex items-center justify-center">
+                    <Brain className="h-8 w-8 text-primary animate-pulse" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                    LawBit
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    AI-powered Legal Document Analysis
+                  </p>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  variant={mode === "create" ? "default" : "outline"}
+                  onClick={handleCreateMode}
+                  className="transition-all duration-300 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Create Contract
+                </Button>
+                <Button
+                  variant={mode === "analyze" ? "default" : "outline"}
+                  onClick={handleAnalyzeMode}
+                  className="transition-all duration-300 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+                >
+                  <Brain className="w-4 h-4 mr-2" />
+                  Analyze Document
+                </Button>
+              </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+              <div className="group relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Documents</p>
+                      <h3 className="text-2xl font-bold mt-1">{documents.length}</h3>
+                    </div>
+                    <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <FileText className="h-5 w-5 text-primary" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 p-6 transition-all duration-300 hover:shadow-lg hover:border-green-500/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Completed</p>
+                      <h3 className="text-2xl font-bold mt-1">
+                        {documents.filter(doc => doc.status === "completed").length}
+                      </h3>
+                    </div>
+                    <div className="p-2 rounded-full bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
+                      <Check className="h-5 w-5 text-green-500" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 p-6 transition-all duration-300 hover:shadow-lg hover:border-yellow-500/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Processing</p>
+                      <h3 className="text-2xl font-bold mt-1">
+                        {documents.filter(doc => doc.status === "analyzing").length}
+                      </h3>
+                    </div>
+                    <div className="p-2 rounded-full bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-colors">
+                      <Loader2 className="h-5 w-5 text-yellow-500 animate-spin" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 p-6 transition-all duration-300 hover:shadow-lg hover:border-red-500/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Error Rate</p>
+                      <h3 className="text-2xl font-bold mt-1">
+                        {documents.length > 0
+                          ? `${Math.round((documents.filter(doc => doc.status === "error").length / documents.length) * 100)}%`
+                          : "0%"}
+                      </h3>
+                    </div>
+                    <div className="p-2 rounded-full bg-red-500/10 group-hover:bg-red-500/20 transition-colors">
+                      <AlertTriangle className="h-5 w-5 text-red-500" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Charts Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+              <div className="group relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 p-6 transition-all duration-300 hover:shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <h3 className="text-sm font-medium mb-4">Documents by Status</h3>
+                  <div className="h-[200px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: "Completed", value: documents.filter(doc => doc.status === "completed").length },
+                            { name: "Processing", value: documents.filter(doc => doc.status === "analyzing").length },
+                            { name: "Error", value: documents.filter(doc => doc.status === "error").length }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          <Cell fill="#22c55e" />
+                          <Cell fill="#eab308" />
+                          <Cell fill="#ef4444" />
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 p-6 transition-all duration-300 hover:shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <h3 className="text-sm font-medium mb-4">Documents by Risk Level</h3>
+                  <div className="h-[200px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          { name: "Low", value: documents.filter(doc => doc.status === "completed" && doc.riskScore < 30).length },
+                          { name: "Medium", value: documents.filter(doc => doc.status === "completed" && doc.riskScore >= 30 && doc.riskScore < 70).length },
+                          { name: "High", value: documents.filter(doc => doc.status === "completed" && doc.riskScore >= 70).length }
+                        ]}
+                      >
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#3b82f6" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="text-center">
-            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-              LawBit
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              AI-powered Legal Document Analysis
-            </p>
+        </div>
+
+        {/* Analytics Section */}
+        <DashboardAnalytics />
+
+        {/* Search and Filter Section */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex-1">
+            <Input
+              placeholder="Search documents..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-sm"
+            />
           </div>
-        </motion.div>
+          <div className="flex gap-4">
+            <DateRangePicker
+              value={dateRange}
+              onChange={setDateRange}
+              className="w-[300px]"
+            />
+            <Select value={sortBy} onValueChange={(value: 'date' | 'risk' | 'title') => setSortBy(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Date</SelectItem>
+                <SelectItem value="risk">Risk</SelectItem>
+                <SelectItem value="title">Title</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
+            </Button>
+          </div>
+        </div>
 
-        {/* Enhanced Mode Toggle */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <ModeToggle mode={mode} onModeChange={setMode} />
-        </motion.div>
-
-        {/* Enhanced Chat Interface */}
+        {/* Main Content */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="w-full max-w-2xl relative rounded-xl overflow-hidden group"
+          className="w-full max-w-2xl mx-auto relative rounded-xl overflow-hidden group"
         >
           <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 p-[1.5px]">
             <div className="absolute inset-0 rounded-lg bg-background/80 backdrop-blur-sm"></div>
           </div>
           
-          <div className="w-full max-w-2xl overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg rounded-xl z-10">
+          <div className="w-full overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg rounded-xl z-10">
             {isAnalyzing ? (
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-center space-x-2">
@@ -533,12 +748,15 @@ const Dashboard = () => {
                   <div className="p-6">
                     <h3 className="font-medium mb-4 text-center text-lg">Analyze Legal Document or Clauses</h3>
                     <div className="flex flex-col space-y-4">
+                      <div className="relative">
                       <Textarea 
                         placeholder="Paste your legal document text here for analysis..."
-                        className="min-h-[200px] text-sm resize-none rounded-lg border-primary/20 focus:border-primary/40 transition-colors"
+                          className="min-h-[200px] text-sm resize-none rounded-lg border-primary/20 focus:border-primary/40 transition-colors bg-background/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/70"
                         value={documentText}
                         onChange={(e) => setDocumentText(e.target.value)}
                       />
+                        <div className="absolute inset-0 pointer-events-none rounded-lg bg-gradient-to-b from-transparent via-background/5 to-background/10" />
+                      </div>
                     
                       <div className="flex justify-between items-center px-1">
                         <div className="flex items-center gap-2">
@@ -583,12 +801,12 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Enhanced Document Tabs */}
+        {/* Document Tabs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="w-full max-w-5xl mt-6"
+          className="w-full max-w-5xl mx-auto"
         >
           <DocumentTabs 
             documents={filteredDocuments} 
@@ -619,7 +837,7 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AppLayout>
+    </div>
   );
 };
 
