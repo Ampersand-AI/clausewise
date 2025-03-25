@@ -1,4 +1,3 @@
-
 import { File, FileText, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
@@ -91,70 +90,81 @@ export function DocumentCard(props: DocumentCardProps) {
       <Link 
         to={`/document/${id}`}
         className={cn(
-          "group relative block rounded-xl transition-all duration-300",
-          "border border-border bg-white shadow-sm text-bento-text",
-          "hover:border-primary/50 p-4 h-full",
+          "enhanced-card group relative block",
+          "p-5 h-full transition-all duration-300",
+          "hover:shadow-lg hover:-translate-y-1",
           status === "analyzing" && "animate-pulse",
           className
         )}
       >
-        <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center flex-shrink-0 border border-border">
+        <div className="flex items-start gap-4">
+          <div className={cn(
+            "h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0",
+            "bg-gradient-to-br from-primary/10 to-primary/5",
+            "border border-primary/10"
+          )}>
             {status === "analyzing" ? (
-              <File className="h-4 w-4 text-primary" />
+              <File className="h-5 w-5 text-primary" />
             ) : (
-              <FileText className="h-4 w-4 text-primary" />
+              <FileText className="h-5 w-5 text-primary" />
             )}
           </div>
           
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between w-full">
-              <h3 className="font-semibold text-sm truncate pr-2 mb-0.5 flex-1">
+            <div className="flex items-start justify-between w-full gap-3">
+              <h3 className="font-semibold text-base truncate pr-2 mb-1">
                 {title}
               </h3>
               
               {isCompleted && riskScore !== undefined && (
                 <Badge 
                   variant={riskInfo.color as "success" | "warning" | "destructive"} 
-                  className="px-1.5 py-0.5 text-xs font-medium shrink-0"
+                  className={cn(
+                    "px-2 py-0.5 text-xs font-medium shrink-0",
+                    "shadow-sm"
+                  )}
                 >
                   {riskInfo.text}
                 </Badge>
               )}
             </div>
             
-            <p className="text-xs text-muted-foreground mb-2">
+            <p className="text-sm text-muted-foreground mb-3">
               {formattedDate}
             </p>
             
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-3 mb-3">
               <StatusBadge status={status} />
               
               {isCompleted && clauses !== undefined && (
                 <div className="flex items-center">
-                  <AlertTriangle className="h-3 w-3 mr-1 text-warning" />
-                  <span className="text-xs font-medium">{clauses} clauses</span>
+                  <AlertTriangle className="h-4 w-4 mr-1.5 text-warning" />
+                  <span className="text-sm font-medium">{clauses} clauses</span>
                 </div>
               )}
             </div>
             
             {isAnalyzing && progress !== undefined && (
-              <div className="mt-2 w-full">
-                <div className="flex justify-between mb-1 text-xs">
-                  <span className="font-medium">Processing</span>
-                  <span className="text-primary font-medium">{progress}%</span>
+              <div className="mt-3 w-full">
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">Processing</span>
+                  <span className="text-sm text-primary font-medium">{progress}%</span>
                 </div>
-                <Progress value={progress} className="h-1.5" showGradient={true} />
+                <Progress 
+                  value={progress} 
+                  className="h-2 enhanced-progress" 
+                  showGradient={true} 
+                />
               </div>
             )}
             
             {isCompleted && riskScore !== undefined && (
-              <div className="mt-2 w-full">
-                <div className="flex justify-between mb-1 text-xs">
-                  <span className="font-medium">Risk score</span>
+              <div className="mt-3 w-full">
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">Risk score</span>
                   <span 
                     className={cn(
-                      "font-medium",
+                      "text-sm font-medium",
                       riskScore < 30 ? "text-green-600" : 
                       riskScore < 70 ? "text-yellow-600" : 
                       "text-red-600"
@@ -165,26 +175,29 @@ export function DocumentCard(props: DocumentCardProps) {
                 </div>
                 <Progress 
                   value={riskScore} 
-                  className="h-1.5" 
+                  className="h-2 enhanced-progress" 
                   showGradient={true}
                 />
               </div>
             )}
             
             {keyFindings && keyFindings.length > 0 && (
-              <div className="mt-2">
-                <div className="flex gap-1 flex-wrap">
+              <div className="mt-4">
+                <div className="flex gap-2 flex-wrap">
                   {keyFindings.slice(0, 2).map((finding, idx) => (
                     <Badge 
                       key={idx} 
                       variant={finding.riskLevel === 'low' ? 'success' : finding.riskLevel === 'medium' ? 'warning' : 'destructive'}
-                      className="text-xs"
+                      className="text-xs px-2 py-1 shadow-sm hover-scale"
                     >
                       {finding.title}
                     </Badge>
                   ))}
                   {keyFindings.length > 2 && (
-                    <Badge variant="outline" className="text-xs text-muted-foreground">
+                    <Badge 
+                      variant="outline" 
+                      className="text-xs px-2 py-1 text-muted-foreground hover-scale"
+                    >
                       +{keyFindings.length - 2} more
                     </Badge>
                   )}
@@ -199,14 +212,20 @@ export function DocumentCard(props: DocumentCardProps) {
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-2 right-2 h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity border-destructive text-destructive hover:bg-destructive/20 hover:text-destructive"
+          className={cn(
+            "absolute -top-2 -right-2 h-8 w-8",
+            "opacity-0 group-hover:opacity-100 transition-all duration-200",
+            "border-destructive text-destructive",
+            "hover:bg-destructive hover:text-destructive-foreground",
+            "shadow-sm z-10"
+          )}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onDelete(id);
           }}
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       )}
     </div>
@@ -216,7 +235,10 @@ export function DocumentCard(props: DocumentCardProps) {
 function StatusBadge({ status }: { status: DocumentStatus }) {
   if (status === "analyzing") {
     return (
-      <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+      <Badge 
+        variant="secondary" 
+        className="text-sm px-2 py-0.5 shadow-sm bg-primary/10 text-primary font-medium"
+      >
         Analyzing
       </Badge>
     );
@@ -224,14 +246,20 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
   
   if (status === "error") {
     return (
-      <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+      <Badge 
+        variant="destructive" 
+        className="text-sm px-2 py-0.5 shadow-sm"
+      >
         Error
       </Badge>
     );
   }
   
   return (
-    <Badge variant="success" className="text-xs px-1.5 py-0.5 bg-green-500/20 text-green-600 font-medium">
+    <Badge 
+      variant="success" 
+      className="text-sm px-2 py-0.5 shadow-sm bg-green-500/10 text-green-600 font-medium"
+    >
       Completed
     </Badge>
   );

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Dashboard from "./pages/Dashboard";
 import DocumentView from "./pages/DocumentView";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/landing";
 
 // Create a QueryClient for data fetching
 const queryClient = new QueryClient({
@@ -28,7 +28,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/" element={<Landing />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/document/:id" element={<DocumentView />} />
               <Route path="*" element={<NotFound />} />

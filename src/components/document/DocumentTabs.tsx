@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DocumentCard } from "@/components/document/DocumentCard";
@@ -59,57 +58,63 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
   onFilterChange
 }) => {
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Recent Documents</h2>
+    <div className="w-full animate-fade-in">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold tracking-tight">Recent Documents</h2>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
+              <Button variant="outline" size="sm" className="enhanced-button gap-1">
                 <ListFilter className="h-4 w-4" />
                 Filter
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 enhanced-card">
               <div className="p-2">
-                <p className="text-xs font-medium text-muted-foreground mb-1">Status</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Status</p>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.status.analyzing}
                   onCheckedChange={(checked) => onFilterChange('status', 'analyzing', checked)}
+                  className="hover-scale"
                 >
                   Analyzing
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.status.completed}
                   onCheckedChange={(checked) => onFilterChange('status', 'completed', checked)}
+                  className="hover-scale"
                 >
                   Completed
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.status.error}
                   onCheckedChange={(checked) => onFilterChange('status', 'error', checked)}
+                  className="hover-scale"
                 >
                   Error
                 </DropdownMenuCheckboxItem>
               </div>
               
               <div className="p-2 border-t">
-                <p className="text-xs font-medium text-muted-foreground mb-1">Risk Level</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Risk Level</p>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.risk.low}
                   onCheckedChange={(checked) => onFilterChange('risk', 'low', checked)}
+                  className="hover-scale"
                 >
                   Low Risk
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.risk.medium}
                   onCheckedChange={(checked) => onFilterChange('risk', 'medium', checked)}
+                  className="hover-scale"
                 >
                   Medium Risk
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={filterOptions.risk.high}
                   onCheckedChange={(checked) => onFilterChange('risk', 'high', checked)}
+                  className="hover-scale"
                 >
                   High Risk
                 </DropdownMenuCheckboxItem>
@@ -119,51 +124,49 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {documents.length === 0 && contracts.length === 0 ? (
-          <div className="col-span-full text-center py-8 text-bento-textSecondary border border-border bg-white rounded-xl p-6">
-            <p className="text-bento-text">No documents yet</p>
-            <p className="text-sm opacity-70 mt-1">Upload a document or create a contract to get started</p>
+          <div className="col-span-full text-center py-12 enhanced-card">
+            <p className="text-lg font-medium">No documents yet</p>
+            <p className="text-sm text-muted-foreground mt-2">Upload a document or create a contract to get started</p>
           </div>
         ) : (
           <>
-            {documents.map((doc) => {
-              // Ensure we pass the correct props based on document status
+            {documents.map((doc, index) => {
+              const baseProps = {
+                key: doc.id,
+                ...doc,
+                onDelete,
+                className: `animate-fade-in hover-scale [animation-delay:${index * 50}ms]`
+              };
+
               if (doc.status === "analyzing" && doc.progress !== undefined) {
                 return (
                   <DocumentCard 
-                    key={doc.id} 
-                    {...doc} 
+                    {...baseProps}
                     status="analyzing"
                     progress={doc.progress}
-                    onDelete={onDelete}
                   />
                 );
               } else if (doc.status === "completed" && doc.riskScore !== undefined) {
                 return (
                   <DocumentCard 
-                    key={doc.id} 
-                    {...doc} 
+                    {...baseProps}
                     status="completed"
                     riskScore={doc.riskScore}
-                    onDelete={onDelete}
                   />
                 );
               } else {
                 return (
                   <DocumentCard 
-                    key={doc.id} 
-                    id={doc.id}
-                    title={doc.title}
-                    date={doc.date}
+                    {...baseProps}
                     status="error"
-                    onDelete={onDelete}
                   />
                 );
               }
             })}
             
-            {contracts.map((contract) => (
+            {contracts.map((contract, index) => (
               <DocumentCard 
                 key={contract.id} 
                 id={contract.id}
@@ -174,6 +177,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                 clauses={contract.riskAnalysis.length}
                 keyFindings={contract.riskAnalysis}
                 onDelete={onDelete}
+                className={`animate-fade-in hover-scale [animation-delay:${(documents.length + index) * 50}ms]`}
               />
             ))}
           </>

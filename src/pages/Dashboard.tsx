@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Mic, Send, MicOff, Home, Settings, User, Quote } from "lucide-react";
+import { Upload, FileText, Mic, Send, MicOff, Home, Settings, User, Quote, Brain } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeDocument } from "@/utils/documentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -21,6 +21,7 @@ import ContractForm, { GeneratedContract } from "@/components/contract/ContractF
 import DocumentTabs from "@/components/document/DocumentTabs";
 import { QuotaDisplay, QuotaData } from "@/components/quota/QuotaDisplay";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 // Define top most used agreement types
 const popularAgreements = [
@@ -453,74 +454,64 @@ const Dashboard = () => {
   return (
     <AppLayout>
       <div className="flex flex-col items-center space-y-6 pt-4 pb-8 max-w-5xl mx-auto px-4">
-        {/* Logo and Title */}
-        <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center justify-center h-14 w-14 rounded-lg bg-primary/10 shadow-sm overflow-hidden">
-            <div className="w-full h-full bg-primary/10 transform rotate-12 scale-150"></div>
-          </div>
-          <h1 className="text-3xl font-bold text-center">
-            LabBit
-          </h1>
-          <p className="text-muted-foreground text-center max-w-lg">
-            AI based Legal Drafts and Analyze Contracts
-          </p>
-          
-          {/* Menu icons below subtitle - moved from header */}
-          <div className="flex items-center gap-4 mt-2">
-            <Button variant="outline" size="sm" className="rounded-full" onClick={() => navigate("/dashboard")}>
-              <Home className="h-4 w-4 mr-2" />
-              Home
-            </Button>
-            <Button variant="outline" size="sm" className="rounded-full">
-              <Quote className="h-4 w-4 mr-2" />
-              Contracts
-            </Button>
-            <Button variant="outline" size="sm" className="rounded-full">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
-            <Button variant="outline" size="sm" className="rounded-full">
-              <User className="h-4 w-4 mr-2" />
-              Profile
-            </Button>
-            
-            {/* Add Quota Button with tooltip functionality */}
-            <div className="relative">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-full"
-                onClick={() => {
-                  // Show upgrade modal in a real implementation
-                  alert("Upgrade to Premium for more tokens!");
-                }}
-              >
-                <div className="h-4 w-20 relative">
-                  <QuotaDisplay data={quota} compact={true} />
-                </div>
-              </Button>
+        {/* Enhanced Logo and Title */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center space-y-3"
+        >
+          <div className="relative h-16 w-16">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse" />
+            <div className="absolute inset-0 rounded-xl border-2 border-dashed border-primary/30 animate-spin-slow" />
+            <div className="absolute inset-2 rounded-lg bg-background/80 backdrop-blur-sm flex items-center justify-center">
+              <Brain className="h-8 w-8 text-primary animate-pulse" />
             </div>
           </div>
-        </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+              LawBit
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              AI-powered Legal Document Analysis
+            </p>
+          </div>
+        </motion.div>
 
-        {/* Mode toggle between create and analyze */}
-        <ModeToggle mode={mode} onModeChange={setMode} />
+        {/* Enhanced Mode Toggle */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <ModeToggle mode={mode} onModeChange={setMode} />
+        </motion.div>
 
-        {/* Chat-like interface */}
-        <div className="w-full max-w-2xl relative rounded-xl overflow-hidden group">
-          <div className="absolute -z-10 inset-0 rounded-xl bg-primary/10 p-[1.5px]">
-            <div className="absolute inset-0 rounded-lg bg-background"></div>
+        {/* Enhanced Chat Interface */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full max-w-2xl relative rounded-xl overflow-hidden group"
+        >
+          <div className="absolute -z-10 inset-0 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 p-[1.5px]">
+            <div className="absolute inset-0 rounded-lg bg-background/80 backdrop-blur-sm"></div>
           </div>
           
-          <div className="w-full max-w-2xl overflow-hidden border border-border bg-card shadow-sm rounded-xl z-10">
+          <div className="w-full max-w-2xl overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg rounded-xl z-10">
             {isAnalyzing ? (
               <div className="p-6 space-y-4">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse delay-100" />
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse delay-200" />
+                </div>
                 <h3 className="text-lg font-medium text-center">Analyzing Document...</h3>
                 <div className="relative pt-1">
                   <div className="overflow-hidden h-2 mb-2 text-xs flex rounded-full bg-secondary">
                     <Progress 
                       value={analysisProgress} 
-                      className="h-2"
+                      className="h-2 bg-gradient-to-r from-primary to-accent"
                       showGradient={true}
                     />
                   </div>
@@ -532,27 +523,27 @@ const Dashboard = () => {
             ) : (
               <>
                 {mode === "create" ? (
-                  <div className="p-4">
+                  <div className="p-6">
                     <ContractForm 
                       onGenerate={handleGenerateContract} 
                       popularAgreements={popularAgreements}
                     />
                   </div>
                 ) : (
-                  <div className="p-4">
-                    <h3 className="font-medium mb-2 text-center">Analyze Legal Document or Clauses</h3>
+                  <div className="p-6">
+                    <h3 className="font-medium mb-4 text-center text-lg">Analyze Legal Document or Clauses</h3>
                     <div className="flex flex-col space-y-4">
                       <Textarea 
                         placeholder="Paste your legal document text here for analysis..."
-                        className="min-h-[200px] text-sm resize-none rounded-lg"
+                        className="min-h-[200px] text-sm resize-none rounded-lg border-primary/20 focus:border-primary/40 transition-colors"
                         value={documentText}
                         onChange={(e) => setDocumentText(e.target.value)}
                       />
                     
                       <div className="flex justify-between items-center px-1">
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-2">
                           <label htmlFor="file-upload" className="cursor-pointer">
-                            <div className="p-2 rounded-md hover:bg-secondary text-primary flex items-center gap-2">
+                            <div className="p-2 rounded-md hover:bg-secondary/50 text-primary flex items-center gap-2 transition-colors">
                               <Upload className="h-4 w-4" />
                               <span className="text-sm">Upload</span>
                             </div>
@@ -568,7 +559,7 @@ const Dashboard = () => {
                           <Button 
                             variant={isRecording ? "destructive" : "ghost"} 
                             size="sm" 
-                            className={isRecording ? "text-white" : "text-primary hover:bg-secondary"}
+                            className={isRecording ? "text-white" : "text-primary hover:bg-secondary/50"}
                             onClick={toggleRecording}
                           >
                             {isRecording ? <MicOff className="h-4 w-4 mr-1" /> : <Mic className="h-4 w-4 mr-1" />}
@@ -579,7 +570,7 @@ const Dashboard = () => {
                         <Button 
                           onClick={() => analyzeTextDocument(documentText)}
                           disabled={!documentText.trim() || documentText.trim().length < 50}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                          className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground transition-all duration-300"
                         >
                           <Send className="h-4 w-4 mr-1" /> Analyze
                         </Button>
@@ -590,10 +581,15 @@ const Dashboard = () => {
               </>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Recent Documents with Tabs */}
-        <div className="w-full max-w-5xl mt-6">
+        {/* Enhanced Document Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="w-full max-w-5xl mt-6"
+        >
           <DocumentTabs 
             documents={filteredDocuments} 
             contracts={contracts}
@@ -601,11 +597,11 @@ const Dashboard = () => {
             filterOptions={filterOptions}
             onFilterChange={handleFilterChange}
           />
-        </div>
+        </motion.div>
       </div>
 
       <AlertDialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-card/95 backdrop-blur-sm border-border/50">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -616,6 +612,7 @@ const Dashboard = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => documentToDelete && handleDeleteDocument(documentToDelete)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
